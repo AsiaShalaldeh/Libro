@@ -7,11 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.5.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\Libro.Application\Libro.Application.csproj" />
+    <ProjectReference Include="..\Libro.Domain\Libro.Domain.csproj" />
+    <ProjectReference Include="..\Libro.Infrastructure\Libro.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
