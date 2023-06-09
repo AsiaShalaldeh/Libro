@@ -1,0 +1,55 @@
+1. User Registraion and Authentication 
+POST /api/register
+POST /api/login
+GET /api/users/{userId}
+PUT /api/users/{userId}
+DELETE /api/users/{userId}
+
+2. Searching and Browsing Books
+GET /api/books
+GET /api/books/{bookId}
+GET /api/books/search?title=&author=&genre=
+
+
+3. Book Transactions
+POST /api/books/{bookId}/reserve
+POST /api/books/{bookId}/checkout
+POST /api/books/{bookId}/return
+GET /api/books/{bookId}/due-date
+GET /api/books/overdue
+
+4. Patron Profiles
+GET /api/patrons/{patronId}/profile
+PUT /api/patrons/{patronId}/profile
+GET /api/patrons/{patronId}/borrowing-history
+
+5. Book and Author Management
+POST /api/books
+PUT /api/books/{bookId}
+DELETE /api/books/{bookId}
+POST /api/authors
+PUT /api/authors/{authorId}
+DELETE /api/authors/{authorId}
+POST /api/librarians
+PUT /api/librarians/{librarianId}
+DELETE /api/librarians/{librarianId}
+
+6. Reading Lists
+POST /api/patrons/{patronId}/reading-lists
+GET /api/patrons/{patronId}/reading-lists
+PUT /api/reading-lists/{listId}
+DELETE /api/reading-lists/{listId}
+
+7. Book Reviews and Ratings
+POST /api/books/{bookId}/reviews
+PUT /api/books/{bookId}/reviews/{reviewId}
+DELETE /api/books/{bookId}/reviews/{reviewId}
+GET /api/books/{bookId}/reviews
+
+8. Notifications
+POST /api/patrons/{patronId}/notifications
+GET /api/patrons/{patronId}/notifications
+
+9. Book Recommendations
+GET /api/patrons/{patronId}/recommendations
+
