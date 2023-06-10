@@ -39,20 +39,26 @@ namespace Libro.Infrastructure.Repositories
             return await Task.FromResult(_books.FirstOrDefault(b => b.ISBN.Equals(ISBN)));
         }
 
-        public async Task<PaginatedResult<Book>> SearchAsync(string searchTerm, int pageNumber, int pageSize)
+        public async Task<PaginatedResult<Book>> SearchAsync(string title, string author,
+            string genre, int pageNumber, int pageSize)
         {
-            if (!string.IsNullOrEmpty(searchTerm))
+            var query = _books.AsQueryable();
+
+            if (!string.IsNullOrEmpty(title))
             {
-                var query = _books.Where(b =>
-                    b.Title.Contains(searchTerm) ||
-                    b.Author.Name.Contains(searchTerm) ||
-                    b.Genre.ToString().Contains(searchTerm)).AsQueryable();
-                return await PaginatedResult<Book>.CreateAsync(query, pageNumber, pageSize);
+                query = query.Where(b => b.Title.Contains(title));
             }
-            else
+
+            if (!string.IsNullOrEmpty(author))
             {
-                return null;
+                query = query.Where(b => b.Author.Name.Contains(author));
             }
+
+            if (!string.IsNullOrEmpty(genre))
+            {
+                query = query.Where(b => b.Genre.ToString().Contains(genre));
+            }
+            return await PaginatedResult<Book>.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<PaginatedResult<Book>> GetAllAsync(int pageNumber, int pageSize)

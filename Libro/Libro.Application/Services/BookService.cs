@@ -24,9 +24,10 @@ namespace Libro.Application.Services
             return await _bookRepository.GetByIdAsync(ISBN);
         }
 
-        public async Task<PaginatedResult<BookDto>> SearchBooksAsync(string searchTerm, int pageNumber, int pageSize)
+        public async Task<PaginatedResult<BookDto>> SearchBooksAsync(string title, string author,
+            string genre, int pageNumber, int pageSize)
         {
-            var paginatedResult = await _bookRepository.SearchAsync(searchTerm, pageNumber, pageSize);
+            var paginatedResult = await _bookRepository.SearchAsync(title, author, genre, pageNumber, pageSize);
 
             var bookDtos = _mapper.Map<IEnumerable<BookDto>>(paginatedResult.Items);
 

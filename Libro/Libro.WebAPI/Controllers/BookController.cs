@@ -8,7 +8,7 @@ using System.Net;
 namespace Libro.WebAPI.Controllers
 {
     [ApiController]
-    [Microsoft.AspNetCore.Mvc.Route("api/books")]
+    [Route("api/books")]
     public class BookController : ControllerBase
     {
         private readonly IBookService _bookService;
@@ -46,18 +46,24 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchBooks([FromQuery] string searchTerm, 
+        public async Task<IActionResult> SearchBooks([FromQuery] string? title = null, 
+            [FromQuery] string? author = null, [FromQuery] string? genre = null, 
             [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var paginatedBooks = await _bookService.SearchBooksAsync(searchTerm, pageNumber, pageSize);
+                if (title == null && author == null && genre == null)
+                    return BadRequest("You should provide any search term !!");
 
-                if (paginatedBooks == null)
+                var paginatedBooks = await _bookService.SearchBooksAsync(title, author, genre,
+                    pageNumber, pageSize);
+
+                if (paginatedBooks == null || paginatedBooks.TotalCount == 0)
                 {
-                    throw new ResourceNotFoundException("Books", "SearchTerm", searchTerm);
+                    return NotFound("No books found.");
                 }
 
+                // Some repition here 
                 var bookDtos = _mapper.Map<IEnumerable<BookDto>>(paginatedBooks.Items);
                 var response = new
                 {

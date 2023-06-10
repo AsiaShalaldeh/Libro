@@ -1,9 +1,7 @@
 1. User Registraion and Authentication 
-POST /api/register
-POST /api/login
-GET /api/users/{userId}
-PUT /api/users/{userId}
-DELETE /api/users/{userId}
+POST /api/users/register
+POST /api/users/login
+POST /api/users/assign-role
 
 2. Searching and Browsing Books
 GET /api/books

@@ -7,7 +7,7 @@ namespace Libro.Domain.Dtos
         public string ISBN { get; set; }
         public string Title { get; set; }
         public DateTime PublicatinDate { get; set; }
-        public Genre Genre { get; set; }
+        public string Genre { get; set; }
         public bool IsAvailable { get; set; }
         public string AuthorName { get; set; } 
     }
