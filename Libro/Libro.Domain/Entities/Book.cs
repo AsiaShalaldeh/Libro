@@ -12,6 +12,7 @@ namespace Libro.Domain.Entities
         public Genre Genre { get; set; }
         public bool IsAvailable { get; set; }
         public int AuthorId { get; set; }
+        public Author Author { get; set; }
         public ICollection<Review> Reviews { get; set; }
         public ICollection<Transaction> Transactions { get; set; }
         public ICollection<BookList> BookLists { get; set; }

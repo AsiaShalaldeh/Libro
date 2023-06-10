@@ -2,6 +2,7 @@
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Libro.WebAPI.Controllers
 {
@@ -48,7 +49,6 @@ namespace Libro.WebAPI.Controllers
         {
             _authenticationService.AssignRole(request.UserId, request.Role);
             return Ok("Role assigned successfully");
-            //return StatusCode(403, "Access denied. Only administrators can assign roles.");
         }
     }
 }
