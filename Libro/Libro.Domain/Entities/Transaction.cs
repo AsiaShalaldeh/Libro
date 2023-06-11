@@ -4,7 +4,7 @@ namespace Libro.Domain.Entities
 {
     public class Transaction
     {
-        public int TransactionId { get; set; }
+        public string TransactionId { get; set; }
 
         [ForeignKey("Book")]
         public string BookId { get; set; }

@@ -2,7 +2,6 @@
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Libro.WebAPI.Controllers
 {

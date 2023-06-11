@@ -3,7 +3,7 @@
     public enum UserRole
     {
         Administrator,
-        Patron,
-        Librarian
+        Librarian,
+        Patron
     }
 }

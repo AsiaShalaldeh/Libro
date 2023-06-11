@@ -2,6 +2,7 @@
 using Libro.Domain.Dtos;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -109,6 +110,126 @@ namespace Libro.WebAPI.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
             }
         }
+        [HttpPost("{isbn}/reserve")]
+        [Authorize(Roles = "Patron")]
+        public async Task<IActionResult> ReserveBook(string isbn, int patronId)
+        {
+            try
+            {
+                var transaction = await _bookService.ReserveBookAsync(isbn, patronId);
+                return Ok(transaction);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+            }
+        }
+
+        [HttpPost("{isbn}/checkout")]
+        [Authorize(Roles = "Librarian")]
+        public async Task<IActionResult> CheckoutBook(string isbn, int patronId, int librarianId)
+        {
+            try
+            {
+                var transaction = await _bookService.CheckoutBookAsync(isbn, patronId, librarianId);
+                return Ok(transaction);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+            }
+        }
+
+        [HttpPost("{isbn}/return")]
+        [Authorize(Roles = "Librarian")]
+        public async Task<IActionResult> ReturnBook(string isbn, int patronId)
+        {
+            try
+            {
+                var transaction = await _bookService.ReturnBookAsync(isbn, patronId);
+                return Ok(transaction);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+            }
+        }
+        [HttpGet("borrowed-books/overdue")]
+        [Authorize(Roles = "Librarian")]
+        public async Task<IActionResult> GetOverdueBooks()
+        {
+            try
+            {
+                var overdueBooks = await _bookService.GetOverdueBooksAsync();
+
+                if (overdueBooks == null || !overdueBooks.Any())
+                {
+                    return NotFound("No overdue books found.");
+                }
+
+                var bookDtos = _mapper.Map<IEnumerable<BookDto>>(overdueBooks);
+                return Ok(bookDtos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+            }
+        }
+        [HttpGet("borrowed-books")]
+        [Authorize(Roles = "Librarian")]
+        public async Task<IActionResult> GetBorrowedBooks()
+        {
+            try
+            {
+                var borrowedBooks = await _bookService.GetBorrowedBooksAsync();
+
+                if (borrowedBooks == null || !borrowedBooks.Any())
+                {
+                    return NotFound("No borrowed books found.");
+                }
+
+                var bookDtos = _mapper.Map<IEnumerable<BookDto>>(borrowedBooks);
+                return Ok(bookDtos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+            }
+        }
+        [HttpGet("borrowed-books/{ISBN}")]
+        [Authorize(Roles = "Librarian")]
+        public async Task<IActionResult> GetBorrowedBookById(string ISBN)
+        {
+            try
+            {
+                var borrowedBook = await _bookService.GetBorrowedBookByIdAsync(ISBN);
+
+                if (borrowedBook == null)
+                {
+                    return NotFound("Book not found or not borrowed.");
+                }
+
+                var bookDto = _mapper.Map<BookDto>(borrowedBook);
+                return Ok(bookDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+            }
+        }
+
 
     }
 
