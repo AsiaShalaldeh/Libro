@@ -12,8 +12,8 @@ namespace Libro.Domain.Interfaces.IRepositories
         Task<Transaction> ReserveAsync(string ISBN, int patronId);
         Task<Transaction> CheckoutAsync(string ISBN, int patronId, int librarianId);
         Task<Transaction> ReturnAsync(string ISBN, int patronId);
-        Task<IEnumerable<string>> GetOverdueBooksAsync();
-        Task<IEnumerable<string>> GetBorrowedBooksAsync();
-        Task<string> GetBorrowedBookByIdAsync(string ISBN);
+        IEnumerable<string> GetOverdueBooksAsync(); // Will be replaced with Task<>
+        IEnumerable<string> GetBorrowedBooksAsync();
+        string GetBorrowedBookByIdAsync(string ISBN);
     }
 }

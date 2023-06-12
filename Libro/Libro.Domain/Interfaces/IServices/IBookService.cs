@@ -15,6 +15,6 @@ namespace Libro.Domain.Interfaces.IServices
         Task<Transaction> ReturnBookAsync(string isbn, int patronId);
         Task<IEnumerable<Book>> GetOverdueBooksAsync();
         Task<IEnumerable<Book>> GetBorrowedBooksAsync();
-        Task<Book> GetBorrowedBookByIdAsync(string ISBN)
+        Task<Book> GetBorrowedBookByIdAsync(string ISBN);
     }
 }

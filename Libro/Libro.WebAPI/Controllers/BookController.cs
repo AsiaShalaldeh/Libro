@@ -110,13 +110,14 @@ namespace Libro.WebAPI.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
             }
         }
-        [HttpPost("{isbn}/reserve")]
+        [HttpPost("reserve")]
         [Authorize(Roles = "Patron")]
-        public async Task<IActionResult> ReserveBook(string isbn, int patronId)
+        public async Task<IActionResult> ReserveBook([FromBody] BookTransactionDto bookTransactionDto)
         {
             try
             {
-                var transaction = await _bookService.ReserveBookAsync(isbn, patronId);
+                var transaction = await _bookService.ReserveBookAsync(bookTransactionDto.ISBN, 
+                    bookTransactionDto.PatronID);
                 return Ok(transaction);
             }
             catch (ArgumentException ex)
@@ -129,13 +130,14 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
-        [HttpPost("{isbn}/checkout")]
+        [HttpPost("checkout")]
         [Authorize(Roles = "Librarian")]
-        public async Task<IActionResult> CheckoutBook(string isbn, int patronId, int librarianId)
+        public async Task<IActionResult> CheckoutBook([FromBody] CheckoutBookDto checkoutBookDto)
         {
             try
             {
-                var transaction = await _bookService.CheckoutBookAsync(isbn, patronId, librarianId);
+                var transaction = await _bookService.CheckoutBookAsync(checkoutBookDto.ISBN,
+                    checkoutBookDto.PatronID, checkoutBookDto.LibrarianId);
                 return Ok(transaction);
             }
             catch (ArgumentException ex)
@@ -148,16 +150,21 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
-        [HttpPost("{isbn}/return")]
+        [HttpPost("return")]
         [Authorize(Roles = "Librarian")]
-        public async Task<IActionResult> ReturnBook(string isbn, int patronId)
+        public async Task<IActionResult> ReturnBook([FromBody] BookTransactionDto bookTransactionDto)
         {
             try
             {
-                var transaction = await _bookService.ReturnBookAsync(isbn, patronId);
+                var transaction = await _bookService.ReturnBookAsync(bookTransactionDto.ISBN,
+                    bookTransactionDto.PatronID);
                 return Ok(transaction);
             }
             catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch(InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
             }

@@ -10,9 +10,9 @@ GET /api/books/search?title=&author=&genre=
 
 
 3. Book Transactions
-POST /api/books/{bookId}/reserve
-POST /api/books/{bookId}/checkout
-POST /api/books/{bookId}/return
+POST /api/books/reserve
+POST /api/books/checkout
+POST /api/books/return
 GET /api/books/borrowed-books
 GET /api/books/borrowed-books/{bookId}
 GET /api/books/borrowed-books/overdue

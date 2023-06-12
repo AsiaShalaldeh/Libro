@@ -81,31 +81,36 @@ namespace Libro.Application.Services
         }
         public async Task<IEnumerable<Book>> GetOverdueBooksAsync()
         {
-            var overdueBookIds = await _bookRepository.GetOverdueBooksAsync();
+            var overdueBookIds = _bookRepository.GetOverdueBooksAsync();
             var overdueBooks = new List<Book>();
 
-            foreach (var bookId in overdueBookIds)
+            if (overdueBookIds.Any())
             {
-                var book = await _bookRepository.GetByIdAsync(bookId);
-                if (book != null)
+                foreach (var bookId in overdueBookIds)
                 {
-                    overdueBooks.Add(book);
+                    var book = await _bookRepository.GetByIdAsync(bookId);
+                    if (book != null)
+                    {
+                        overdueBooks.Add(book);
+                    }
                 }
             }
-
             return overdueBooks;
         }
         public async Task<IEnumerable<Book>> GetBorrowedBooksAsync()
         {
-            var borrowedBookIds = await _bookRepository.GetBorrowedBooksAsync();
+            var borrowedBookIds = _bookRepository.GetBorrowedBooksAsync();
             var borrowedBooks = new List<Book>();
 
-            foreach (var bookId in borrowedBookIds)
+            if (borrowedBookIds.Any())
             {
-                var book = await _bookRepository.GetByIdAsync(bookId);
-                if (book != null)
+                foreach (var bookId in borrowedBookIds)
                 {
-                    borrowedBooks.Add(book);
+                    var book = await _bookRepository.GetByIdAsync(bookId);
+                    if (book != null)
+                    {
+                        borrowedBooks.Add(book);
+                    }
                 }
             }
             return borrowedBooks;
@@ -114,7 +119,7 @@ namespace Libro.Application.Services
         {
             if (string.IsNullOrEmpty(ISBN))
                 throw new ArgumentException("ISBN is required.", nameof(ISBN));
-            var borrowedBookId = await _bookRepository.GetBorrowedBookByIdAsync(ISBN);
+            var borrowedBookId = _bookRepository.GetBorrowedBookByIdAsync(ISBN);
             if (string.IsNullOrEmpty(borrowedBookId))
                 return null;
             var borrowedBook = await _bookRepository.GetByIdAsync(borrowedBookId);

@@ -37,8 +37,32 @@ namespace Libro.Infrastructure.Repositories
             },
         };
             _transactions = new List<Transaction>();
-            _patrons = new List<Patron>();
-            _librarians = new List<Librarian>();
+            _patrons = new List<Patron>
+            {
+                new Patron
+                {
+                    PatronId = 1,
+                    Name = "John Doe"
+                },
+                new Patron
+                {
+                    PatronId = 2,
+                    Name = "Jane Smith"
+                },
+            };
+            _librarians = new List<Librarian>
+            {
+                new Librarian
+                {
+                    LibrarianId = 1,
+                    Name = "Emily Johnson"
+                },
+                new Librarian
+                {
+                    LibrarianId = 2,
+                    Name = "Michael Anderson"
+                },
+            };
         }
 
         public async Task<Book> GetByIdAsync(string ISBN)
@@ -176,31 +200,31 @@ namespace Libro.Infrastructure.Repositories
                 throw new ArgumentException("Invalid ISBN or patron ID.");
             }
         }
-        public async Task<IEnumerable<string>> GetOverdueBooksAsync()
+        public IEnumerable<string> GetOverdueBooksAsync()
         {
             var currentDate = DateTime.Now.Date;
-            var overdueBookIds = await _transactions
+            var overdueBookIds = _transactions
                 .Where(t => t.DueDate < currentDate && !t.IsReturned)
                 .Select(t => t.BookId)
-                .ToListAsync(); 
+                .ToList(); 
 
             return overdueBookIds;
         }
-        public async Task<IEnumerable<string>> GetBorrowedBooksAsync()
+        public IEnumerable<string> GetBorrowedBooksAsync()
         {
-            var borrowedBookIds = await _transactions
+            var borrowedBookIds = _transactions
                 .Where(t => t.IsReturned == false)
                 .Select(t => t.BookId)
-                .ToListAsync();
+                .ToList();
 
             return borrowedBookIds;
         }
-        public async Task<string> GetBorrowedBookByIdAsync(string ISBN)
+        public string GetBorrowedBookByIdAsync(string ISBN)
         {
-            var borrowedBookId = await _transactions
+            var borrowedBookId = _transactions
                 .Where(t => !t.IsReturned && t.BookId.Equals(ISBN))
                 .Select(t => t.BookId)
-                .FirstOrDefaultAsync();
+                .FirstOrDefault();
 
             return borrowedBookId;
         }
