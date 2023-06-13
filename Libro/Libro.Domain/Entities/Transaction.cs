@@ -8,8 +8,11 @@ namespace Libro.Domain.Entities
 
         [ForeignKey("Book")]
         public string BookId { get; set; }
+        public Book Book { get; set; }
         public int PatronId { get; set; }
+        public Patron Patron { get; set; }
         public int LibrarianId { get; set; }
+        public Librarian Librarian { get; set; }
         public DateTime Date { get; set; }
         public DateTime DueDate { get; set; }
         public bool IsReturned { get; set; }

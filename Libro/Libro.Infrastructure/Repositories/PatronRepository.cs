@@ -1,4 +1,5 @@
 ﻿using Libro.Domain.Entities;
+using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
 
 namespace Libro.Infrastructure.Repositories
@@ -7,6 +8,7 @@ namespace Libro.Infrastructure.Repositories
     {
         //private readonly DbContext _dbContext;
         private readonly IList<Patron> _patrons;
+        private readonly IList<Transaction> _transactions;
 
 
         public PatronRepository()
@@ -24,6 +26,7 @@ namespace Libro.Infrastructure.Repositories
                     Name = "Jane Smith"
                 },
             };
+            _transactions = new List<Transaction>();
         }
 
         public Patron GetPatronByIdAsync(int patronId)
@@ -38,6 +41,21 @@ namespace Libro.Infrastructure.Repositories
             //_patrons.Update(patron);
             //await _dbContext.SaveChangesAsync();
             return patron;
+        }
+        public IEnumerable<Transaction> GetBorrowingHistoryAsync(int patronId)
+        {
+            var patron = _patrons.Where(p => p.PatronId == patronId).FirstOrDefault();
+            if (patron == null)
+            {
+                throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
+            }
+
+            var transactions = _transactions
+                //.Include(t => t.Book)
+                .Where(t => t.PatronId == patronId)
+                .ToList();
+
+            return transactions;
         }
     }
 }

@@ -64,6 +64,24 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        [HttpGet("{patronId}/borrowing-history")]
+        public async Task<IActionResult> GetBorrowingHistory(int patronId)
+        {
+            try
+            {
+                var borrowingHistory = await _patronService.GetBorrowingHistoryAsync(patronId);
+                return Ok(borrowingHistory);
+            }
+            catch(ResourceNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+            }
+        }
+
     }
 
 }

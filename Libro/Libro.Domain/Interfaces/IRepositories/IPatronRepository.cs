@@ -6,5 +6,6 @@ namespace Libro.Domain.Interfaces.IRepositories
     {
         Patron GetPatronByIdAsync(int patronId); // Will be replaced by Task<>
         Patron UpdatePatronAsync(Patron patron);
+        IEnumerable<Transaction> GetBorrowingHistoryAsync(int patronId);
     }
 }

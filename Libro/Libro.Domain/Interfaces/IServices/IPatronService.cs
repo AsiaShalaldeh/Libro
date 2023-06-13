@@ -1,4 +1,5 @@
-﻿using Libro.Domain.Entities;
+﻿using Libro.Domain.Dtos;
+using Libro.Domain.Entities;
 
 namespace Libro.Domain.Interfaces.IServices
 {
@@ -6,5 +7,6 @@ namespace Libro.Domain.Interfaces.IServices
     {
         Task<Patron> GetPatronProfileAsync(int patronId);
         Task<Patron> UpdatePatronProfileAsync(Patron patron);
+        Task<IEnumerable<BorrowingHistoryDTO>> GetBorrowingHistoryAsync(int patronId);
     }
 }

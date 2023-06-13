@@ -1,4 +1,5 @@
-﻿using Libro.Domain.Entities;
+﻿using Libro.Domain.Dtos;
+using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
@@ -34,6 +35,22 @@ namespace Libro.Application.Services
             _patronRepository.UpdatePatronAsync(patron);
 
             return patron;
+        }
+        public async Task<IEnumerable<BorrowingHistoryDTO>> GetBorrowingHistoryAsync(int patronId)
+        {
+            var transactions = _patronRepository.GetBorrowingHistoryAsync(patronId);
+
+            // should bereplaced with map
+            var borrowingHistory = transactions.Select(t => new BorrowingHistoryDTO
+            {
+                TransactionId = t.TransactionId,
+                BookTitle = t.Book.Title,
+                BorrowDate = t.Date,
+                DueDate = t.DueDate
+                //ReturnDate = t.IsReturned ? t.ReturnDate : null
+            });
+
+            return borrowingHistory;
         }
     }
 }
