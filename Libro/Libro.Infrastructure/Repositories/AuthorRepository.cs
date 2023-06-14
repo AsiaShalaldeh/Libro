@@ -5,29 +5,54 @@ namespace Libro.Infrastructure.Repositories
 {
     public class AuthorRepository : IAuthorRepository
     {
-        public Task AddAsync(Author author)
+        private readonly IList<Author> _authors;
+
+        public AuthorRepository()
         {
-            throw new NotImplementedException();
+            _authors = new List<Author>
+            {
+                new Author { AuthorId = 1, Name = "John Doe" },
+                new Author { AuthorId = 2, Name = "Jane Smith" },
+                new Author { AuthorId = 3, Name = "Michael Johnson" }
+            };
         }
 
-        public Task<IEnumerable<Author>> GetAllAsync()
+        public IEnumerable<Author> GetAllAuthorsAsync()
         {
-            throw new NotImplementedException();
+            return _authors;
         }
 
-        public Task<Author> GetByIdAsync(int authorId)
+        public Author GetAuthorByIdAsync(int authorId)
         {
-            throw new NotImplementedException();
+            return _authors.FirstOrDefault(a => a.AuthorId == authorId);
         }
 
-        public Task RemoveAsync(int authorId)
+        public int AddAuthorAsync(Author author)
         {
-            throw new NotImplementedException();
+            author.AuthorId = _authors.Any() ? _authors.Max(a => a.AuthorId) + 1 : 1;
+            _authors.Add(author);
+            return author.AuthorId;
         }
 
-        public Task UpdateAsync(Author author)
+        public bool UpdateAuthorAsync(Author author)
         {
-            throw new NotImplementedException();
+            var existingAuthor = _authors.FirstOrDefault(a => a.AuthorId == author.AuthorId);
+            if (existingAuthor == null)
+                return false;
+
+            existingAuthor.Name = author.Name;
+            return true;
+        }
+
+        public bool DeleteAuthorAsync(int authorId)
+        {
+            var author = _authors.FirstOrDefault(a => a.AuthorId == authorId);
+            if (author == null)
+                return false;
+
+            _authors.Remove(author);
+            return true;
         }
     }
+
 }

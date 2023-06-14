@@ -131,7 +131,7 @@ namespace Libro.Application.Services
         }
         public async Task AddBookAsync(RequestBookDto bookDto)
         {
-            var author = await _authorRepository.GetByIdAsync(bookDto.AuthorId);
+            var author = _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId);
             if (author == null)
             {
                 throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());
@@ -149,7 +149,7 @@ namespace Libro.Application.Services
                 throw new ResourceNotFoundException("Book", "ID", bookId);
             }
 
-            var author = await _authorRepository.GetByIdAsync(bookDto.AuthorId);
+            var author = _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId);
             if (author == null)
             {
                 throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());

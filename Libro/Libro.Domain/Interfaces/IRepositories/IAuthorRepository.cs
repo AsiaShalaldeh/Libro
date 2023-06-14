@@ -4,10 +4,10 @@ namespace Libro.Domain.Interfaces.IRepositories
 {
     public interface IAuthorRepository
     {
-        Task<Author> GetByIdAsync(int authorId);
-        Task<IEnumerable<Author>> GetAllAsync();
-        Task AddAsync(Author author);
-        Task UpdateAsync(Author author);
-        Task RemoveAsync(int authorId);
+        IEnumerable<Author> GetAllAuthorsAsync(); // Task
+        Author GetAuthorByIdAsync(int authorId);
+        int AddAuthorAsync(Author author);
+        bool UpdateAuthorAsync(Author author);
+        bool DeleteAuthorAsync(int authorId);
     }
 }
