@@ -15,5 +15,8 @@ namespace Libro.Domain.Interfaces.IRepositories
         IEnumerable<string> GetOverdueBooksAsync(); // Will be replaced with Task<>
         IEnumerable<string> GetBorrowedBooksAsync();
         string GetBorrowedBookByIdAsync(string ISBN);
+        Task AddAsync(Book book);
+        Task UpdateAsync(Book book);
+        Task DeleteAsync(string bookId);
     }
 }

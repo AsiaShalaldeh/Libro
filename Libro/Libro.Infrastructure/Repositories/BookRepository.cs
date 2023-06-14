@@ -21,7 +21,7 @@ namespace Libro.Infrastructure.Repositories
             {
                 ISBN = "1234567890",
                 Title = "Book1",
-                PublicatinDate = new DateTime(2022, 1, 1),
+                PublicationDate = new DateTime(2022, 1, 1),
                 Genre = Genre.ScienceFiction,
                 IsAvailable = true,
                 Author = new Author {AuthorId = 1 ,Name = "John Doe" }
@@ -30,7 +30,7 @@ namespace Libro.Infrastructure.Repositories
             {
                 ISBN = "0987654321",
                 Title = "Book2",
-                PublicatinDate = new DateTime(2021, 5, 15),
+                PublicationDate = new DateTime(2021, 5, 15),
                 Genre = Genre.Mystery,
                 IsAvailable = true,
                 Author = new Author {AuthorId = 2 ,Name = "Tom Cruise" }
@@ -187,6 +187,7 @@ namespace Libro.Infrastructure.Repositories
                 {
                     transaction.IsReturned = true;
                     book.IsAvailable = true;
+                    transaction.ReturnDate = DateTime.Now;
 
                     return await Task.FromResult(transaction);
                 }
@@ -228,7 +229,27 @@ namespace Libro.Infrastructure.Repositories
 
             return borrowedBookId;
         }
+        public async Task AddAsync(Book book)
+        {
+            _books.Add(book);
+            //await _dbContext.SaveChangesAsync();
+        }
 
+        public async Task UpdateAsync(Book book)
+        {
+            //_books.Update(book);
+            //await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(string bookId)
+        {
+            var book = await GetByIdAsync(bookId);
+            if (book != null)
+            {
+                //_dbContext.Books.Remove(book);
+                //await _dbContext.SaveChangesAsync();
+            }
+        }
     }
 
 }

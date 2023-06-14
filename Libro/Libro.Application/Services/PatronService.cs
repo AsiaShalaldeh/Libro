@@ -46,8 +46,9 @@ namespace Libro.Application.Services
                 TransactionId = t.TransactionId,
                 BookTitle = t.Book.Title,
                 BorrowDate = t.Date,
-                DueDate = t.DueDate
-                //ReturnDate = t.IsReturned ? t.ReturnDate : null
+                DueDate = t.DueDate,
+                ReturnDate = t.IsReturned ? t.ReturnDate : null,
+                IsOverdue = !t.IsReturned && DateTime.Now > t.DueDate
             });
 
             return borrowingHistory;

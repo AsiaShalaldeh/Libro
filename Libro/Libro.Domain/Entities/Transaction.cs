@@ -16,5 +16,6 @@ namespace Libro.Domain.Entities
         public DateTime Date { get; set; }
         public DateTime DueDate { get; set; }
         public bool IsReturned { get; set; }
+        public DateTime ReturnDate { get; set; }
     }
 }

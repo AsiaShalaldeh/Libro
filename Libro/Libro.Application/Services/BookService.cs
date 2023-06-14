@@ -2,6 +2,7 @@
 using Libro.Domain.Common;
 using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
+using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
 
@@ -11,11 +12,14 @@ namespace Libro.Application.Services
     {
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
+        private readonly IAuthorRepository _authorRepository;
 
-        public BookService(IBookRepository bookRepository, IMapper mapper)
+        public BookService(IBookRepository bookRepository, IMapper mapper, 
+            IAuthorRepository authorRepository)
         {
             _bookRepository = bookRepository;
             _mapper = mapper;
+            _authorRepository = authorRepository;
         }
 
         public async Task<Book> GetBookByIdAsync(string ISBN)
@@ -125,9 +129,51 @@ namespace Libro.Application.Services
             var borrowedBook = await _bookRepository.GetByIdAsync(borrowedBookId);
             return borrowedBook;
         }
+        public async Task AddBookAsync(RequestBookDto bookDto)
+        {
+            var author = await _authorRepository.GetByIdAsync(bookDto.AuthorId);
+            if (author == null)
+            {
+                throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());
+            }
 
+            var book = _mapper.Map<Book>(bookDto);
+            await _bookRepository.AddAsync(book);
+        }
 
+        public async Task UpdateBookAsync(string bookId, RequestBookDto bookDto)
+        {
+            var existingBook = await _bookRepository.GetByIdAsync(bookId);
+            if (existingBook == null)
+            {
+                throw new ResourceNotFoundException("Book", "ID", bookId);
+            }
 
+            var author = await _authorRepository.GetByIdAsync(bookDto.AuthorId);
+            if (author == null)
+            {
+                throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());
+            }
+
+            existingBook.Title = bookDto.Title;
+            existingBook.PublicationDate = bookDto.PublicationDate;
+            existingBook.Genre = bookDto.Genre;
+            existingBook.IsAvailable = bookDto.IsAvailable;
+            existingBook.Author = author;
+
+            await _bookRepository.UpdateAsync(existingBook);
+        }
+
+        public async Task RemoveBookAsync(string bookId)
+        {
+            var existingBook = await _bookRepository.GetByIdAsync(bookId);
+            if (existingBook == null)
+            {
+                throw new ResourceNotFoundException($"Book", "ISBN", bookId);
+            }
+
+            await _bookRepository.DeleteAsync(bookId);
+        }
     }
 
 }

@@ -8,7 +8,7 @@ namespace Libro.Domain.Entities
         [Key]
         public string ISBN { get; set; }
         public string Title { get; set; }
-        public DateTime PublicatinDate { get; set; }
+        public DateTime PublicationDate { get; set; }
         public Genre Genre { get; set; }
         public bool IsAvailable { get; set; }
         public int AuthorId { get; set; }

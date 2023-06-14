@@ -4,6 +4,7 @@ using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace Libro.WebAPI.Controllers
@@ -236,7 +237,70 @@ namespace Libro.WebAPI.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
             }
         }
+        [HttpPost]
+        [Authorize(Roles = "Librarian, Administrator")]
+        public async Task<IActionResult> AddBook(RequestBookDto bookDto)
+        {
+            try
+            {
+                await _bookService.AddBookAsync(bookDto);
+                return CreatedAtAction(nameof(GetBookById), new { bookDto.ISBN }, bookDto);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+            }
+        }
 
+        [HttpPut("{ISBN}")]
+        [Authorize(Roles = "Librarian, Administrator")]
+        public async Task<IActionResult> UpdateBook(string ISBN, RequestBookDto bookDto)
+        {
+            try
+            {
+                if (!ISBN.Equals(bookDto.ISBN))
+                {
+                    return BadRequest("Book ISBN Mismatch");
+                }
+                await _bookService.UpdateBookAsync(ISBN, bookDto);
+                return NoContent();
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+            }
+        }
+
+        [HttpDelete("{ISBN}")]
+        [Authorize(Roles = "Librarian, Administrator")]
+        public async Task<IActionResult> RemoveBook(string ISBN)
+        {
+            try
+            {
+                await _bookService.RemoveBookAsync(ISBN);
+                return NoContent();
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+            }
+        }
 
     }
 

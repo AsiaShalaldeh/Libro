@@ -2,13 +2,13 @@
 
 namespace Libro.Domain.Dtos
 {
-    public class BookDto
+    public class RequestBookDto
     {
         public string ISBN { get; set; }
         public string Title { get; set; }
         public DateTime PublicationDate { get; set; }
-        public string Genre { get; set; }
+        public Genre Genre { get; set; }
         public bool IsAvailable { get; set; }
-        public string AuthorName { get; set; } 
+        public int AuthorId { get; set; }
     }
 }

@@ -20,6 +20,7 @@ builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IPatronRepository, PatronRepository>();
 builder.Services.AddScoped<IPatronService, PatronService>();
+//builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 
 //JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
