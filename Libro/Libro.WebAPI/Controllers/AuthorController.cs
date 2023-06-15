@@ -1,6 +1,7 @@
 ﻿using Libro.Domain.Dtos;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -18,6 +19,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Librarian, Administrator")]
         public async Task<IActionResult> GetAllAuthors()
         {
             try
@@ -32,6 +34,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpGet("{authorId}")]
+        [Authorize(Roles = "Librarian, Administrator")]
         public async Task<IActionResult> GetAuthorById(int authorId)
         {
             try
@@ -53,6 +56,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Librarian, Administrator")]
         public async Task<IActionResult> AddAuthor(AuthorDto authorDto)
         {
             try
@@ -70,6 +74,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpPut("{authorId}")]
+        [Authorize(Roles = "Librarian, Administrator")]
         public async Task<IActionResult> UpdateAuthor(int authorId, AuthorDto authorDto)
         {
             try
@@ -97,6 +102,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpDelete("{authorId}")]
+        [Authorize(Roles = "Librarian, Administrator")]
         public async Task<IActionResult> DeleteAuthor(int authorId)
         {
             try

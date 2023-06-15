@@ -1,4 +1,6 @@
-﻿namespace Libro.Domain.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace Libro.Domain.Entities
 {
     public class Librarian
     {
