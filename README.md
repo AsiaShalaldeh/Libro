@@ -5,23 +5,29 @@ Libro is a comprehensive Book Management System designed to facilitate the easy 
 
 <h3>Main Features:</h3>
 
-<b>1- User Registration and Authentication:</b> Users can register and log in to the system with different access levels (patrons, librarians, administrators).
+<ul>
+    <b>User Registration and Authentication:</b> Users can register and log in to the system with different access levels (patrons, librarians, administrators).
 
-<b>2- Searching and Browsing Books:</b> Users can search for books by title, author, genre, and other criteria, and browse all available books. Book information includes details like title, author, publication date, genre, and availability status.
+<li><b>Searching and Browsing Books:</b> Users can search for books by title, author, genre, and other criteria, and browse all available books. Book information includes details like title, author, publication date, genre, and availability status.</li>
 
-<b>3- Book Transactions:</b> Patrons can reserve available books, librarians can check out books to patrons, and accept returned books. The system tracks due dates for borrowed books and identifies overdue books.
+<li><b>Book Transactions:</b> Patrons can reserve available books, librarians can check out books to patrons, and accept returned books. The system tracks due dates for borrowed books and identifies overdue books.</li>
 
-<b>4- Patron Profiles:</b> Patrons can view their own profile, including borrowing history and current or overdue loans. Librarians and administrators can view and edit patron profiles.
+<li><b>Patron Profiles:</b> Patrons can view their own profile, including borrowing history and current or overdue loans. Librarians and administrators can view and edit patron profiles.</li>
 
-<b>5- Book and Author Management:</b> Librarians and administrators can add, edit, or remove books and authors in the system. Administrators can manage librarian accounts.
+<li><b>Book and Author Management:</b> Librarians and administrators can add, edit, or remove books and authors in the system. Administrators can manage librarian accounts.</li>
+</ul>
 
-<b>6- Reading Lists:</b> Patrons can create and manage custom reading lists.
+<h3>Additional Features:</h3>
 
-<b>7- Book Reviews and Ratings:</b> Patrons can rate and review books, and view reviews and ratings by other patrons.
+<ul>
+<li><b>1- Reading Lists:</b> Patrons can create and manage custom reading lists.</li>
 
-<b>8- Notifications:</b> The system can send notifications to patrons about due dates, reserved books, or other important events.
+<li><b>2- Book Reviews and Ratings:</b> Patrons can rate and review books, and view reviews and ratings by other patrons.</li>
 
-<b>9- Book Recommendations:</b> The system can provide personalized book recommendations to patrons based on their borrowing history or favorite genres.
+<li><b>3- Notifications:</b> The system can send notifications to patrons about due dates, reserved books, or other important events.</li>
+
+<li><b>4- Book Recommendations:</b> The system can provide personalized book recommendations to patrons based on their borrowing history or favorite genres.</li>
+</ul>
 
 <h3>Technologies Used:</h3>
 <ul>

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Libro.Domain.Dtos;
+using Libro.Domain.Enums;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
@@ -238,13 +239,21 @@ namespace Libro.WebAPI.Controllers
             }
         }
         [HttpPost]
-        [Authorize(Roles = "Librarian, Administrator")]
-        public async Task<IActionResult> AddBook(RequestBookDto bookDto)
+        //[Authorize(Roles = "Librarian, Administrator")]
+        public async Task<IActionResult> AddBook([FromBody] RequestBookDto bookDto)
         {
             try
             {
+                if (!Enum.TryParse(typeof(Genre), bookDto.Genre, out var genre))
+                {
+                    return BadRequest("Invalid genre value");
+                }
                 await _bookService.AddBookAsync(bookDto);
                 return CreatedAtAction(nameof(GetBookById), new { bookDto.ISBN }, bookDto);
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (ValidationException ex)
             {
@@ -257,14 +266,18 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpPut("{ISBN}")]
-        [Authorize(Roles = "Librarian, Administrator")]
-        public async Task<IActionResult> UpdateBook(string ISBN, RequestBookDto bookDto)
+        //[Authorize(Roles = "Librarian, Administrator")]
+        public async Task<IActionResult> UpdateBook(string ISBN, [FromBody] RequestBookDto bookDto)
         {
             try
             {
                 if (!ISBN.Equals(bookDto.ISBN))
                 {
                     return BadRequest("Book ISBN Mismatch");
+                }
+                if (!Enum.TryParse(typeof(Genre), bookDto.Genre, out var genre))
+                {
+                    return BadRequest("Invalid genre value");
                 }
                 await _bookService.UpdateBookAsync(ISBN, bookDto);
                 return NoContent();
@@ -284,7 +297,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpDelete("{ISBN}")]
-        [Authorize(Roles = "Librarian, Administrator")]
+        //[Authorize(Roles = "Librarian, Administrator")]
         public async Task<IActionResult> RemoveBook(string ISBN)
         {
             try

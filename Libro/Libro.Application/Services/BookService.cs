@@ -2,6 +2,7 @@
 using Libro.Domain.Common;
 using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
+using Libro.Domain.Enums;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
@@ -154,13 +155,27 @@ namespace Libro.Application.Services
             {
                 throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());
             }
-
-            existingBook.Title = bookDto.Title;
-            existingBook.PublicationDate = bookDto.PublicationDate;
-            existingBook.Genre = bookDto.Genre;
-            existingBook.IsAvailable = bookDto.IsAvailable;
+            if (string.IsNullOrEmpty(bookDto.ISBN))
+            {
+                existingBook.ISBN = bookDto.ISBN;
+            }
+            if (string.IsNullOrEmpty(bookDto.Title))
+            {
+                existingBook.Title = bookDto.Title;
+            }
+            if (bookDto.PublicationDate != null)
+            {
+                existingBook.PublicationDate = bookDto.PublicationDate;
+            }
+            if (bookDto.Genre != null)
+            {
+                existingBook.Genre = (Genre)Enum.Parse(typeof(Genre), bookDto.Genre);
+            }
+            if (bookDto.IsAvailable != null)
+            {
+                existingBook.IsAvailable = bookDto.IsAvailable;
+            }
             existingBook.Author = author;
-
             await _bookRepository.UpdateAsync(existingBook);
         }
 

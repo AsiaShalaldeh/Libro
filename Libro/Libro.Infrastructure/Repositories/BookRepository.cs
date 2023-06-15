@@ -237,6 +237,8 @@ namespace Libro.Infrastructure.Repositories
 
         public async Task UpdateAsync(Book book)
         {
+            Book existingBook = await GetByIdAsync(book.ISBN);
+            existingBook = book;
             //_books.Update(book);
             //await _dbContext.SaveChangesAsync();
         }
@@ -246,6 +248,7 @@ namespace Libro.Infrastructure.Repositories
             var book = await GetByIdAsync(bookId);
             if (book != null)
             {
+                _books.Remove(book);
                 //_dbContext.Books.Remove(book);
                 //await _dbContext.SaveChangesAsync();
             }
