@@ -6,7 +6,7 @@ Libro is a comprehensive Book Management System designed to facilitate the easy 
 <h3>Main Features:</h3>
 
 <ul>
-    <b>User Registration and Authentication:</b> Users can register and log in to the system with different access levels (patrons, librarians, administrators).
+    <li><b>User Registration and Authentication:</b> Users can register and log in to the system with different access levels (patrons, librarians, administrators).</li>
 
 <li><b>Searching and Browsing Books:</b> Users can search for books by title, author, genre, and other criteria, and browse all available books. Book information includes details like title, author, publication date, genre, and availability status.</li>
 
@@ -20,13 +20,13 @@ Libro is a comprehensive Book Management System designed to facilitate the easy 
 <h3>Additional Features:</h3>
 
 <ul>
-<li><b>1- Reading Lists:</b> Patrons can create and manage custom reading lists.</li>
+<li><b>Reading Lists:</b> Patrons can create and manage custom reading lists.</li>
 
-<li><b>2- Book Reviews and Ratings:</b> Patrons can rate and review books, and view reviews and ratings by other patrons.</li>
+<li><b>Book Reviews and Ratings:</b> Patrons can rate and review books, and view reviews and ratings by other patrons.</li>
 
-<li><b>3- Notifications:</b> The system can send notifications to patrons about due dates, reserved books, or other important events.</li>
+<li><b>Notifications:</b> The system can send notifications to patrons about due dates, reserved books, or other important events.</li>
 
-<li><b>4- Book Recommendations:</b> The system can provide personalized book recommendations to patrons based on their borrowing history or favorite genres.</li>
+<li><b>Book Recommendations:</b> The system can provide personalized book recommendations to patrons based on their borrowing history or favorite genres.</li>
 </ul>
 
 <h3>Technologies Used:</h3>

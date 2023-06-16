@@ -5,7 +5,7 @@ POST /api/users/assign-role
 
 2. Searching and Browsing Books
 GET /api/books
-GET /api/books/{bookId}
+GET /api/books/{ISBN}
 GET /api/books/search?title=&author=&genre=
 
 
@@ -14,7 +14,7 @@ POST /api/books/reserve
 POST /api/books/checkout
 POST /api/books/return
 GET /api/books/borrowed-books
-GET /api/books/borrowed-books/{bookId}
+GET /api/books/borrowed-books/{ISBN}
 GET /api/books/borrowed-books/overdue
 
 4. Patron Profiles
@@ -24,8 +24,8 @@ GET /api/patrons/{patronId}/borrowing-history
 
 5. Book and Author Management
 POST /api/books
-PUT /api/books/{bookId}
-DELETE /api/books/{bookId}
+PUT /api/books/{ISBN}
+DELETE /api/books/{ISBN}
 POST /api/authors
 PUT /api/authors/{authorId}
 DELETE /api/authors/{authorId}
@@ -34,16 +34,20 @@ PUT /api/librarians/{librarianId}
 DELETE /api/librarians/{librarianId}
 
 6. Reading Lists
-POST /api/patrons/{patronId}/reading-lists
-GET /api/patrons/{patronId}/reading-lists
-PUT /api/reading-lists/{listId}
-DELETE /api/reading-lists/{listId}
+POST /api/patrons/{patronId}/reading-lists 
+GET /api/patrons/{patronId}/reading-lists 
+GET /api/patrons/{patronId}/reading-lists/{list_id} 
+POST /api/patrons/{patronId}/reading-lists/{listId}/books/{ISBN}/add
+GET /api/patrons/{patronId}/reading-lists/{listId}/books 
+DELETE POST /api/patrons/{patronId}/reading-lists/{listId}/books/{ISBN}/remove
+DELETE /api/patrons/{patronId}/reading-lists/{listId} 
+PUT /api/patrons/{patronId}/reading-lists/{listId}
 
 7. Book Reviews and Ratings
-POST /api/books/{bookId}/reviews
-PUT /api/books/{bookId}/reviews/{reviewId}
-DELETE /api/books/{bookId}/reviews/{reviewId}
-GET /api/books/{bookId}/reviews
+POST /api/books/{ISBN}/reviews
+PUT /api/books/{ISBN}/reviews/{reviewId}
+DELETE /api/books/{ISBN}/reviews/{reviewId}
+GET /api/books/{ISBN}/reviews
 
 8. Notifications
 POST /api/patrons/{patronId}/notifications
