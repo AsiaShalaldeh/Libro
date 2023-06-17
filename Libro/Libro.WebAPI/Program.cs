@@ -27,6 +27,8 @@ builder.Services.AddScoped<ILibrarianRepository, LibrarianRepository>();
 builder.Services.AddScoped<ILibrarianService, LibrarianService>();
 builder.Services.AddScoped<IReadingListRepository, ReadingListRepository>();
 builder.Services.AddScoped<IReadingListService, ReadingListService>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 //JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {

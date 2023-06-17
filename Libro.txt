@@ -45,9 +45,12 @@ PUT /api/patrons/{patronId}/reading-lists/{listId}
 
 7. Book Reviews and Ratings
 POST /api/books/{ISBN}/reviews
+GET /api/books/{ISBN}/reviews
+GET /api/books/{ISBN}/reviews/average-rating
+GET /api/books/{ISBN}/reviews/{reviewId}
 PUT /api/books/{ISBN}/reviews/{reviewId}
 DELETE /api/books/{ISBN}/reviews/{reviewId}
-GET /api/books/{ISBN}/reviews
+
 
 8. Notifications
 POST /api/patrons/{patronId}/notifications
