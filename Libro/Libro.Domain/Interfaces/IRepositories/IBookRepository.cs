@@ -1,5 +1,6 @@
 ﻿using Libro.Domain.Common;
 using Libro.Domain.Entities;
+using Libro.Domain.Enums;
 
 namespace Libro.Domain.Interfaces.IRepositories
 {
@@ -18,5 +19,6 @@ namespace Libro.Domain.Interfaces.IRepositories
         Task AddAsync(Book book);
         Task UpdateAsync(Book book);
         Task DeleteAsync(string bookId);
+        Task<IEnumerable<Book>> GetBooksByGenres(IEnumerable<Genre> genres);
     }
 }

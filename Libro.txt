@@ -57,5 +57,5 @@ POST /api/notifications/reservation/send
 POST /api/notifications/overdue/send
 
 9. Book Recommendations
-GET /api/patrons/{patronId}/recommendations
+GET /api/recommendations/patrons/{patronId}
 

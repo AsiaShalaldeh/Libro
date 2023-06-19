@@ -20,7 +20,7 @@ namespace Libro.Application.Services
             var patron = _patronRepository.GetPatronByIdAsync(patronId);
             if (patron == null)
             {
-                throw new ResourceNotFoundException("Patron", "ID", patron.PatronId.ToString());
+                throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
             }
             return patron;
         }

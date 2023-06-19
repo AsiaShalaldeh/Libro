@@ -254,6 +254,10 @@ namespace Libro.Infrastructure.Repositories
                 //await _dbContext.SaveChangesAsync();
             }
         }
+        public async Task<IEnumerable<Book>> GetBooksByGenres(IEnumerable<Genre> genres)
+        {
+            return _books.Where(book => genres.Contains(book.Genre)).ToList();
+        }
     }
 
 }

@@ -34,6 +34,7 @@ builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IEmailSender, EmailSenderService>();
 builder.Services.AddScoped<INotificationService, EmailNotificationService>();
+builder.Services.AddScoped<IBookRecommendationService, BookRecommendationService>();
 
 
 var emailConfig = builder.Configuration

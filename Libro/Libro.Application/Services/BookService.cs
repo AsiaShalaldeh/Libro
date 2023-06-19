@@ -189,6 +189,11 @@ namespace Libro.Application.Services
 
             await _bookRepository.DeleteAsync(bookId);
         }
+
+        public async Task<IEnumerable<Book>> GetBooksByGenres(IEnumerable<Genre> genres)
+        {
+            return await _bookRepository.GetBooksByGenres(genres);
+        }
     }
 
 }
