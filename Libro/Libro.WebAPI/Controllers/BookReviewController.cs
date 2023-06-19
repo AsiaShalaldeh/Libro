@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using EmailService.Interface;
+using EmailService.Model;
 using Libro.Domain.Dtos;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
@@ -15,11 +17,14 @@ namespace Libro.WebAPI.Controllers
     {
         private readonly IReviewService _reviewService;
         private readonly IMapper _mapper;
+        private readonly IEmailSender _emailSender;
 
-        public ReviewController(IReviewService reviewService, IMapper mapper)
+        public ReviewController(IReviewService reviewService, IMapper mapper,
+                                IEmailSender emailSender)
         {
             _reviewService = reviewService;
             _mapper = mapper;
+            _emailSender = emailSender;
         }
 
         [HttpGet("{reviewId}")]

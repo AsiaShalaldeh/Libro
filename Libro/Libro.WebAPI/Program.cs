@@ -1,3 +1,6 @@
+using EmailService.Interface;
+using EmailService.Model;
+using EmailService.Service;
 using Libro.Application.Services;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
@@ -29,6 +32,14 @@ builder.Services.AddScoped<IReadingListRepository, ReadingListRepository>();
 builder.Services.AddScoped<IReadingListService, ReadingListService>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IEmailSender, EmailSenderService>();
+builder.Services.AddScoped<INotificationService, EmailNotificationService>();
+
+
+var emailConfig = builder.Configuration
+        .GetSection("EmailConfiguration")
+        .Get<EmailConfiguration>();
+builder.Services.AddSingleton(emailConfig);
 
 //JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {

@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libro.Application", "Libro.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libro.Infrastructure", "Libro.Infrastructure\Libro.Infrastructure.csproj", "{9C410BB1-CBBF-4A36-AF4E-8A5231B095EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService", "EmailService\EmailService.csproj", "{FA991944-BFC0-4AF8-90B0-E607116D9697}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{9C410BB1-CBBF-4A36-AF4E-8A5231B095EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C410BB1-CBBF-4A36-AF4E-8A5231B095EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C410BB1-CBBF-4A36-AF4E-8A5231B095EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA991944-BFC0-4AF8-90B0-E607116D9697}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA991944-BFC0-4AF8-90B0-E607116D9697}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA991944-BFC0-4AF8-90B0-E607116D9697}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA991944-BFC0-4AF8-90B0-E607116D9697}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,7 +6,7 @@
         public string Message { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        //public int PatronId { get; set; }
+        public int PatronId { get; set; }
         public int LibrarianId { get; set; }
 
     }

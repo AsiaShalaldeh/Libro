@@ -181,6 +181,7 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
+                // should be updated to return OverdueBookDto that contains patron name/email
                 var overdueBooks = await _bookService.GetOverdueBooksAsync();
 
                 if (overdueBooks == null || !overdueBooks.Any())

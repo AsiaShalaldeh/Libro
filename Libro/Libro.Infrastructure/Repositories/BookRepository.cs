@@ -112,6 +112,7 @@ namespace Libro.Infrastructure.Repositories
                         TransactionId = IdGenerator.GenerateTransactionId(),
                         BookId = ISBN,
                         PatronId = patronId,
+                        Patron = patron,
                         LibrarianId = 0, // Not borrowed yet
                         Date = DateTime.Now,
                         DueDate = DateTime.Now.AddDays(7),

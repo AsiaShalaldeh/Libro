@@ -53,8 +53,8 @@ DELETE /api/books/{ISBN}/reviews/{reviewId}
 
 
 8. Notifications
-POST /api/patrons/{patronId}/notifications
-GET /api/patrons/{patronId}/notifications
+POST /api/notifications/reservation/send
+POST /api/notifications/overdue/send
 
 9. Book Recommendations
 GET /api/patrons/{patronId}/recommendations
