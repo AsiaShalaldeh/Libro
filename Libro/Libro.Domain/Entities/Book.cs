@@ -13,7 +13,7 @@ namespace Libro.Domain.Entities
         public bool IsAvailable { get; set; }
         public int AuthorId { get; set; }
         public Author Author { get; set; }
-        //public ICollection<Review> Reviews { get; set; }
+        public ICollection<Review> Reviews { get; set; }
         public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
         public ICollection<BookList> BookLists { get; set; }
 

@@ -10,12 +10,12 @@ GET /api/books/search?title=&author=&genre=
 
 
 3. Book Transactions
-POST /api/books/reserve
-POST /api/books/checkout
-POST /api/books/return
-GET /api/books/borrowed-books
-GET /api/books/borrowed-books/{ISBN}
-GET /api/books/borrowed-books/overdue
+POST /api/transactions/books/{ISBN}/reserve
+POST /api/transactions/books/{ISBN}/checkout
+POST /api/transactions/books/{ISBN}/return
+GET /api/transactions/books/borrowed-books
+GET /api/transactions/books/borrowed-books/{ISBN}
+GET /api/transactions/books/borrowed-books/overdue
 
 4. Patron Profiles
 GET /api/patrons/{patronId}/profile

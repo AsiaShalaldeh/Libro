@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Libro.Domain.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Libro.Domain.Entities
 {
-    public class Transaction
+    public class Transaction // junction table between Book and Patron
     {
         public string TransactionId { get; set; }
 
