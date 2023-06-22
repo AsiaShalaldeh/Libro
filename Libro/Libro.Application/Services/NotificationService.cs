@@ -10,17 +10,19 @@ namespace Libro.Application.Services
         private readonly IEmailSender _emailSender;
         private readonly IBookService _bookService;
         private readonly IPatronService _patronService;
+        private readonly ITransactionService _transactionService;
 
         public EmailNotificationService(IEmailSender emailSender, IBookService bookService,
-            IPatronService patronService)
+            IPatronService patronService, ITransactionService transactionService)
         {
             _emailSender = emailSender;
             _bookService = bookService;
             _patronService = patronService;
+            _transactionService = transactionService;
         }
         public async Task<bool> SendOverdueNotification()
         {
-            IEnumerable<Book> overdueBooks = await _bookService.GetOverdueBooksAsync();
+            IEnumerable<Book> overdueBooks = await _transactionService.GetOverdueBooksAsync();
 
             if (overdueBooks.Any())
             {

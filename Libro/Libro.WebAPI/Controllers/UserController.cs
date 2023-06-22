@@ -1,12 +1,15 @@
 ﻿using Libro.Domain.Dtos;
+using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
+using Libro.WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Libro.WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/users")]
+    [Route("api/users/auth")]
     public class UserController : Controller
     {
         private readonly IAuthenticationService _authenticationService;
@@ -17,37 +20,70 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register(UserDto request)
+        public async Task<IActionResult> Register([FromBody] RegisterModel registerModel) 
         {
-            bool isRegistered = _authenticationService.Register(request.UserName, request.Password);
-
-            if (isRegistered)
+            try
             {
-                return Ok("Registration successful");
-            }
+                bool isRegistered = await _authenticationService.Register(registerModel.Username,
+                    registerModel.Email, registerModel.Password);
 
-            return BadRequest("Registration failed");
+                if (isRegistered)
+                {
+                    return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response 
+                    { Status = "Error", Message = "User creation failed! Please check user " +
+                    "details and try again." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+            }
         }
 
         [HttpPost("login")]
-        public IActionResult Login(UserDto request)
+        public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
         {
-            string token = _authenticationService.Login(request.UserName, request.Password);
-
-            if (token != null)
+            try
             {
-                return Ok(token);
-            }
+                string token = await _authenticationService.Login(loginModel.Username, loginModel.Password);
 
-            return Unauthorized("Invalid username or password");
+                if (!token.Equals(""))
+                {
+                    return Ok(token);
+                }
+                return Unauthorized("Invalid username or password");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+            }
         }
 
         [HttpPost("assign-role")]
         [Authorize(Roles = "Administrator")]
-        public IActionResult AssignRole(UserRoleDto request)
+        public async Task<IActionResult> AssignRoleToUser(UserRoleDto request)
         {
-            _authenticationService.AssignRole(request.UserId, request.Role);
-            return Ok("Role assigned successfully");
+            try
+            {
+                var result = await _authenticationService.AssignRole(request.UserId, request.Role);
+                if (!result)
+                {
+                    throw new Exception("Role assignment failed");
+                }
+                return Ok("Role assigned successfully");
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+            }
         }
     }
 }

@@ -18,5 +18,6 @@ namespace Libro.Domain.Entities
         public DateTime DueDate { get; set; }
         public bool IsReturned { get; set; }
         public DateTime ReturnDate { get; set; }
+        public TransactionType Type { get; set; }
     }
 }

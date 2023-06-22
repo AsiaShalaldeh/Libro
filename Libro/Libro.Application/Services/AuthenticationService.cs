@@ -2,88 +2,89 @@
 using Libro.Domain.Enums;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
-using Libro.Domain.Validators;
+using Libro.Application.Validators;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Libro.Domain.Exceptions;
 
 namespace Libro.Application.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IUserRepository _userRepository;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
 
-        public AuthenticationService(IUserRepository userRepository, IConfiguration configuration)
+        public AuthenticationService(IUserRepository userRepository, 
+            IConfiguration configuration, UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _userRepository = userRepository;
             _configuration = configuration;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
-        public bool Register(string username, string password)
+        public async Task<bool> Register(string username, string email, string password)
         {
-            // Perform validation
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                throw new ArgumentException("Username is required.", nameof(username));
-            }
+            //var userExists = await _userManager.FindByNameAsync(username);
+            //if (userExists != null)
+            //    throw new Exception(); // new Response { Status = "Error", Message = "User already exists!" }
 
-            if (string.IsNullOrWhiteSpace(password))
+            IdentityUser user = new()
             {
-                throw new ArgumentException("Password is required.", nameof(password));
-            }
-
-            var newUser = new User
-            {
-                UserName = username,
-                Password = password,
-                Role = UserRole.Patron // Assign default role as a patron
+                Email = email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = username
             };
 
-            var validator = new UserValidator();
-            var validationResult = validator.Validate(newUser);
-            if (!validationResult.IsValid)
+            // Assign the default role Patron to the user
+            if (!await _roleManager.RoleExistsAsync(UserRole.Patron.ToString()))
             {
-                throw new ArgumentException(validationResult.Errors.First().ErrorMessage);
+                await _roleManager.CreateAsync(new IdentityRole(UserRole.Patron.ToString()));
             }
+            await _userManager.AddToRoleAsync(user, UserRole.Patron.ToString());
 
-            _userRepository.Add(newUser);
+            var result = await _userManager.CreateAsync(user, password);
+            if (!result.Succeeded)
+                return false;
+
             return true; 
         }
 
-        public string Login(string username, string password)
+        public async Task<string> Login(string username, string password)
         {
-            // will be replaced by Auhenticate method 
-            var user = _userRepository.GetByUsername(username);
-
-            if (user == null || user.Password != password)
+            var user = await _userManager.FindByNameAsync(username);
+            if (user != null && await _userManager.CheckPasswordAsync(user, password))
             {
-                return null;
-                //throw new UnauthorizedAccessException("Invalid username or password");
+                var token = await GenerateAuthToken(user);
+                return token;
             }
-
-            var token = GenerateAuthToken(user);
 
             // Store the token in the user session
             // HttpContextAccessor.HttpContext.Session.SetString("AuthToken", token);
-
-            return token;
+            return "";
         }
 
-        private string GenerateAuthToken(User user)
+        private async Task<string> GenerateAuthToken(IdentityUser user)
         {
             var secretKey = _configuration["Jwt:Key"];
             var issuer = _configuration["Jwt:Issuer"];
             var audience = _configuration["Jwt:Audience"];
 
+            var userRole = await _userManager.GetRolesAsync(user);
+
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
+                new Claim(ClaimTypes.Role, userRole.FirstOrDefault()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
@@ -101,15 +102,27 @@ namespace Libro.Application.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public void AssignRole(int userId, string role)
+        public async Task<bool> AssignRole(string userId, string role)
         {
-            var user = _userRepository.GetById(userId);
-
-            if (user != null)
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
             {
-                user.Role = (UserRole)Enum.Parse(typeof(UserRole), role);
-                _userRepository.Update(user);
+                throw new ResourceNotFoundException("User", "ID", userId.ToString());
             }
+
+            var roleExists = await _roleManager.RoleExistsAsync(role);
+            if (!roleExists)
+            {
+                throw new ResourceNotFoundException("Role", "Value", role);
+            }
+
+            var result = await _userManager.AddToRoleAsync(user, role);
+            if (!result.Succeeded)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

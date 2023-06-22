@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Libro.Domain.Entities;
 
-namespace Libro.Domain.Validators
+namespace Libro.Application.Validators
 {
     public class UserValidator : AbstractValidator<User>
     {

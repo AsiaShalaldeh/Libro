@@ -29,7 +29,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An Error Occurred.");
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
             }
         }
 
@@ -62,7 +62,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An Error Occurred");
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
             }
         }
 
@@ -84,7 +84,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An Error Occurred");
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
             }
         }
 
@@ -102,7 +102,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An Error Occurred");
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
             }
         }
     }

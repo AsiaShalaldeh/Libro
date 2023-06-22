@@ -29,6 +29,27 @@ Libro is a comprehensive Book Management System designed to facilitate the easy 
 <li><b>Book Recommendations:</b> The system can provide personalized book recommendations to patrons based on their borrowing history or favorite genres.</li>
 </ul>
 
+<h3>Architecture</h4>
+<p>This project follows the Onion Architecture with Domain-Driven Design (DDD) principles to build a scalable and maintainable software system. The Onion Architecture provides a layered architectural approach that promotes separation of concerns and allows for easy testing and evolution of the system.</p>
+<p>
+The inner layer is the Domain Layer and the outer ones are the Infrastructure and WebApi layers. Code is always coupled towards the center which is the Domain Model and, since the Domain Model is the center, it can be only coupled to itself.
+</p>
+<p>By adopting the Onion Architecture with DDD, this project aims to achieve a clear separation of concerns, maintainable codebase, and flexibility to adapt to changing business requirements. The layering structure ensures that each layer has well-defined responsibilities, making the system more modular, testable, and easier to maintain in the long run.</p>
+<img src="C:\Users\Done\Desktop\Programming\CSharp\Project\images/onion.png">
+
+<h3>Project Structure</h3>
+The project is organized into the following four layers:
+<ul>
+<li><b>Libro.Domain:</b> This layer represents the core domain of the application and contains the domain models, Enums, and interfaces that define the behavior of the system. It encapsulates the essential business logic and is independent of any specific technology or framework.</li>
+
+<li><b>Libro.Application:</b> The application layer implements the application services that orchestrate the domain entities. It coordinates the flow of data and actions within the system and enforces the business rules defined in the domain layer. This layer depends on domain layer.</li>
+
+<li><b>Libro.Infrastructure:</b> It includes data access components,implementations for repositories, and other infrastructure-specific implementations. The infrastructure layer handles persistence and data retrieval and takes care of communicating with the external world.</li>
+
+<li><b>Libro.WebApi:</b> Presentation Layer that is the entry point of the application and handles the communication with clients. It exposes the necessary endpoints for clients to interact with the system. This layer is responsible for handling HTTP requests, authentication, authorization, and input/output mapping.</li>
+</ul>
+
+
 <h3>Technologies Used:</h3>
 <ul>
     <li>Programming Language: C#</li>
@@ -37,6 +58,7 @@ Libro is a comprehensive Book Management System designed to facilitate the easy 
     <li>Authentication: JWT (JSON Web Tokens)</li>
     <li>ORM: Entity Framework Core</li>
     <li>API Documentation: Postman</li>
+    <li>Validations: FluentValidation</li>
 </ul>
 
 <h3>Installation and Setup:</h3>

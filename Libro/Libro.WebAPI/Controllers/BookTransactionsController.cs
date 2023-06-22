@@ -8,7 +8,7 @@ using System.Net;
 namespace Libro.WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/transactions/books")]
+    [Route("api/books")]
     public class BookTransactionsController : ControllerBase
     {
         private readonly ITransactionService _trsansactionService;
@@ -36,7 +36,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
             }
         }
 
@@ -56,7 +56,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
             }
         }
 
@@ -80,7 +80,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
             }
         }
         [HttpGet("borrowed-books/overdue")]
@@ -102,7 +102,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
             }
         }
         [HttpGet("borrowed-books")]
@@ -123,7 +123,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
             }
         }
         [HttpGet("borrowed-books/{ISBN}")]
@@ -144,7 +144,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred.");
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
             }
         }
     }

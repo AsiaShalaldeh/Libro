@@ -4,8 +4,8 @@ namespace Libro.Domain.Interfaces.IServices
 {
     public interface IAuthenticationService
     {
-        bool Register(string username, string password);
-        string Login(string username, string password);
-        void AssignRole(int userId, string role);
+        Task<bool> Register(string username, string email, string password);
+        Task<string> Login(string username, string password);
+        Task<bool> AssignRole(string userId, string role);
     }
 }

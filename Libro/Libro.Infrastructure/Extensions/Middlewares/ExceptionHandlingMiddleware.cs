@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Text.Json;
 
-namespace Libro.Infrastructure.Middleware
+namespace Libro.Infrastructure.Middlewares
 {
     public class ErrorResponse
     {

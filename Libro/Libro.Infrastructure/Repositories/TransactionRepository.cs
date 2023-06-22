@@ -1,5 +1,6 @@
 ﻿using Libro.Domain.Common;
 using Libro.Domain.Entities;
+using Libro.Domain.Enums;
 using Libro.Domain.Interfaces.IRepositories;
 
 namespace Libro.Infrastructure.Repositories
@@ -58,12 +59,11 @@ namespace Libro.Infrastructure.Repositories
                     {
                         TransactionId = IdGenerator.GenerateTransactionId(),
                         BookId = ISBN,
+                        Book = book,
                         PatronId = patronId,
                         Patron = patron,
-                        LibrarianId = 0, // Not borrowed yet
                         Date = DateTime.Now,
-                        //DueDate = DateTime.Now.AddDays(7),
-                        IsReturned = false
+                        Type = TransactionType.Reserve
                     };
 
                     book.IsAvailable = false;
@@ -98,16 +98,21 @@ namespace Libro.Infrastructure.Repositories
                     {
                         TransactionId = IdGenerator.GenerateTransactionId(),
                         BookId = ISBN,
+                        Book = book,
                         PatronId = patronId,
+                        Patron = patron,
                         LibrarianId = librarianId,
+                        Librarian = librarian,
                         Date = DateTime.Now,
                         DueDate = DateTime.Now.AddDays(14),
-                        IsReturned = false
+                        IsReturned = false,
+                        Type = TransactionType.Checkout
                     };
 
                     book.IsAvailable = false;
                     book.Transactions.Add(transaction);
                     patron.Transactions.Add(transaction);
+                    librarian.Transactions.Add(transaction);
                     AddTransaction(transaction);
 
                     return transaction;
@@ -144,12 +149,12 @@ namespace Libro.Infrastructure.Repositories
                 }
                 else
                 {
-                    throw new InvalidOperationException("The book is not currently borrowed by the patron.");
+                    throw new InvalidOperationException("The book is not currently borrowed by the patron");
                 }
             }
             else
             {
-                throw new ArgumentException("Invalid ISBN or patron ID.");
+                throw new ArgumentException("Invalid ISBN or patron ID");
             }
         }
         public IEnumerable<string> GetOverdueBooksAsync()
