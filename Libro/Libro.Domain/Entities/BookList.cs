@@ -4,7 +4,7 @@ namespace Libro.Domain.Entities
 {
     public class BookList // junction table between Book and ReadingList
     {
-        public int ListId { get; set; }
+        public int ReadingListId { get; set; }
         public ReadingList ReadingList { get; set; }
 
         [ForeignKey("Book")]

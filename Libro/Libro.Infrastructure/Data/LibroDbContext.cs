@@ -26,27 +26,33 @@ namespace Libro.Infrastructure.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<BookList>()
-            .HasKey(bl => new { bl.ListId, bl.BookId });
+            .HasKey(bl => new { bl.ReadingListId, bl.BookId });
 
             modelBuilder.Entity<BookList>()
                 .HasOne(bl => bl.ReadingList)
                 .WithMany(rl => rl.BookLists)
-                .HasForeignKey(bl => bl.ListId);
+                .HasForeignKey(bl => bl.ReadingListId);
 
             modelBuilder.Entity<BookList>()
                 .HasOne(bl => bl.Book)
                 .WithMany(b => b.BookLists)
                 .HasForeignKey(bl => bl.BookId);
 
+
+            modelBuilder.Entity<Checkout>()
+            .Property(c => c.TotalFee)
+            .HasColumnType("decimal(18, 2)");
+
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
-            modelBuilder.Seed();
+            //modelBuilder.Seed();
         }
 
         public DbSet<Librarian> Librarians { get; set; }
         public DbSet<Patron> Patrons { get; set; }
         public DbSet<Book> Books { get; set; }
         public DbSet<Author> Authors { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<Checkout> Checkouts { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<ReadingList> ReadingLists { get; set; }
 

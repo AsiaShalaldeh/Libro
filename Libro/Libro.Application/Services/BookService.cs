@@ -25,7 +25,12 @@ namespace Libro.Application.Services
 
         public async Task<Book> GetBookByIdAsync(string ISBN)
         {
-            return await _bookRepository.GetByIdAsync(ISBN);
+            Book book = await _bookRepository.GetByIdAsync(ISBN);
+            //if (book != null)
+            //{
+            //    throw new ResourceNotFoundException("Book", "ISBN", ISBN);
+            //}
+            return book;
         }
 
         public async Task<PaginatedResult<BookDto>> SearchBooksAsync(string title, string author,

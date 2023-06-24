@@ -14,7 +14,8 @@ namespace Libro.Domain.Entities
         public int AuthorId { get; set; }
         public Author Author { get; set; }
         public ICollection<Review> Reviews { get; set; }
-        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public ICollection<Checkout> Checkouts { get; set; }
+        public ICollection<Reservation> Reservations { get; set; }
         public ICollection<BookList> BookLists { get; set; }
 
     }

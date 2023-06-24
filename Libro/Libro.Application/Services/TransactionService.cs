@@ -1,27 +1,32 @@
 ﻿using Libro.Domain.Common;
 using Libro.Domain.Entities;
+using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
+using Libro.Domain.Models;
 
 namespace Libro.Application.Services
 {
     public class TransactionService : ITransactionService
     {
         private readonly IBookService _bookService;
-        private readonly IPatronService _patronService;
         private readonly ITransactionRepository _transactionRepository;
-        private readonly ILibrarianService _librarianService;
+        private readonly ILoanPolicyService _loanPolicyService;
 
-        public TransactionService(IBookService bookService, IPatronService patronService,
-            ITransactionRepository transactionRepository, ILibrarianService librarianService)
+        public TransactionService(IBookService bookService, ITransactionRepository transactionRepository,
+            ILoanPolicyService loanPolicyService)
         {
             _bookService = bookService;
-            _patronService = patronService;
             _transactionRepository = transactionRepository;
-            _librarianService = librarianService;
+            _loanPolicyService = loanPolicyService;
+        }
+        public async Task<IEnumerable<Checkout>> GetTransactionsByPatron(int patronId)
+        {
+            var transactions = await _transactionRepository.GetTransactionsByPatron(patronId);
+            return transactions;
         }
 
-        public Transaction GetActiveTransaction(string ISBN, int patronId)
+        public Checkout GetActiveTransaction(string ISBN, int patronId)
         {
             return _transactionRepository.GetActiveTransaction(ISBN, patronId);
         }
@@ -43,6 +48,11 @@ namespace Libro.Application.Services
             }
             return overdueBooks;
         }
+        public IEnumerable<Checkout> GetOverdueTransactionsAsync()
+        {
+            return _transactionRepository.GetOverdueTransactionsAsync();
+        }
+
         public async Task<IEnumerable<Book>> GetBorrowedBooksAsync()
         {
             var borrowedBookIds = _transactionRepository.GetBorrowedBooksAsync();
@@ -71,43 +81,93 @@ namespace Libro.Application.Services
             var borrowedBook = await _bookService.GetBookByIdAsync(borrowedBookId);
             return borrowedBook;
         }
-        public async Task<Transaction> ReserveBookAsync(string isbn, int patronId)
+        public async Task<Reservation> ReserveBookAsync(Book book, Patron patron)
         {
-            if (string.IsNullOrEmpty(isbn))
-                throw new ArgumentException("ISBN is required.", nameof(isbn));
-
-            if (patronId <= 0)
-                throw new ArgumentException("Invalid patron ID.", nameof(patronId));
-
-            var transaction = await _transactionRepository.ReserveAsync(isbn, patronId);
-            return transaction;
+            // Create a reservation record and add it to the user's reserved books
+            var reservation = new Reservation
+            {
+                PatronId = patron.PatronId,
+                BookId = book.ISBN,
+                ReservationDate = DateTime.UtcNow
+            };
+            book.Reservations.Add(reservation);
+            patron.ReservedBooks.Add(reservation);
+            //_transactionRepository.AddTransaction(reservation);
+            return reservation;
         }
 
-        public async Task<Transaction> CheckoutBookAsync(string isbn, int patronId, int librarianId)
+        public async Task<Checkout> CheckoutBookAsync(Book book, Patron patron)
         {
-            if (string.IsNullOrEmpty(isbn))
-                throw new ArgumentException("ISBN is required.", nameof(isbn));
+            // Create a checkout record and associate it with the user and the book
+            var checkout = new Checkout
+            {
+                BookId = book.ISBN, // book = book 
+                CheckoutDate = DateTime.UtcNow,
+                DueDate = DateTime.UtcNow.AddDays(_loanPolicyService.GetLoanDuration()) 
+            };
 
-            if (patronId <= 0)
-                throw new ArgumentException("Invalid patron ID.", nameof(patronId));
+            //book.Transactions.Add(checkout);
+            patron.CheckedoutBooks.Add(checkout);
+            
+            // remove the Reservation from the Transaction List
+            var reservation = patron.ReservedBooks.Where(t => t.BookId.Equals(book.ISBN)).FirstOrDefault();
+            patron.ReservedBooks.Remove(reservation);
 
-            if (librarianId <= 0)
-                throw new ArgumentException("Invalid librarian ID.", nameof(librarianId));
+            //_transactionRepository.AddTransaction(checkout);
 
-            var transaction = await _transactionRepository.CheckoutAsync(isbn, patronId, librarianId);
-            return transaction;
+            // Update the book status to CheckedOut
+            book.IsAvailable = false;
+            //await _bookService.UpdateBookAsync(book);
+            return checkout;
         }
 
-        public async Task<Transaction> ReturnBookAsync(string isbn, int patronId)
+        public async Task<ReturnResponseModel> ReturnBookAsync(Book book, Patron patron)
         {
-            if (string.IsNullOrEmpty(isbn))
-                throw new ArgumentException("ISBN is required.", nameof(isbn));
+            // remove the Checkout from the Transaction List
+            Checkout checkout = patron.CheckedoutBooks.Where(t => t.BookId.Equals(book.ISBN)).FirstOrDefault();
+            if (checkout == null)
+            {
+                throw new ResourceNotFoundException("Checkout Book", "Value", null);
+            }
+            //patron.CheckedoutBooks.Remove(checkout);
+            DateTime returnDate = DateTime.UtcNow;
+            checkout.ReturnDate = returnDate;
+            checkout.IsReturned = true;
+            int days = (DateTime.Now - checkout.DueDate).Days;
+            decimal totalFees = CalculateTotalFees(days);
+            checkout.TotalFee = totalFees;
 
-            if (patronId <= 0)
-                throw new ArgumentException("Invalid patron ID.", nameof(patronId));
+            // _transactionRepository.update(checkout);
 
-            var transaction = await _transactionRepository.ReturnAsync(isbn, patronId);
-            return transaction;
+            ReturnResponseModel response = new ReturnResponseModel
+            {
+                BookId = book.ISBN,
+                PatronId = patron.PatronId,
+                CheckoutDate = checkout.CheckoutDate,
+                DueDate = checkout.DueDate,
+                ReturnDate = returnDate,
+                TotalFee = totalFees
+            };
+
+            return response;
+        }
+        private decimal CalculateTotalFees(int days)
+        {
+            decimal total = Math.Round(_loanPolicyService.GetLoanDuration() * _loanPolicyService.GetBorrowingFeePerDay(), 2);
+            if (days == 0)
+            {
+                return total;
+            }
+            else if (days > 0)
+            {
+                int lateDays = days - _loanPolicyService.GetLoanDuration();
+                return Math.Round(total + (_loanPolicyService.GetLateFeePerDay() * lateDays), 2);
+            }
+            else if (days < 0)
+            {
+                return Math.Round(days * _loanPolicyService.GetBorrowingFeePerDay(), 2);
+            }
+            return 0;
         }
     }
 }

@@ -17,24 +17,24 @@ namespace Libro.Infrastructure.Repositories
         {
             new ReadingList
             {
-                ListId = 1,
+                ReadingListId = 1,
                 Name = "My First Reading List",
                 PatronId = 1,
                 BookLists = new List<BookList>
                 {
-                    new BookList { ListId = 1, BookId = "ISBN1" },
-                    new BookList { ListId = 1, BookId = "ISBN2" }
+                    new BookList { ReadingListId = 1, BookId = "ISBN1" },
+                    new BookList { ReadingListId = 1, BookId = "ISBN2" }
                 }
             },
             new ReadingList
             {
-                ListId = 2,
+                ReadingListId = 2,
                 Name = "My Second Reading List",
                 PatronId = 1,
                 BookLists = new List<BookList>
                 {
-                    new BookList { ListId = 2, BookId = "ISBN3" },
-                    new BookList { ListId = 2, BookId = "ISBN4" }
+                    new BookList { ReadingListId = 2, BookId = "ISBN3" },
+                    new BookList { ReadingListId = 2, BookId = "ISBN4" }
                 }
             }
         };
@@ -77,7 +77,7 @@ namespace Libro.Infrastructure.Repositories
             {
                 throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
             }
-            var list = _readingLists.FirstOrDefault(r => r.ListId == listId && r.PatronId == patronId);
+            var list = _readingLists.FirstOrDefault(r => r.ReadingListId == listId && r.PatronId == patronId);
             if (list == null)
             {
                 throw new ResourceNotFoundException("Reading List", "ID", listId.ToString());
@@ -103,7 +103,7 @@ namespace Libro.Infrastructure.Repositories
 
         public async Task<bool> RemoveReadingListAsync(int listId, int patronId)
         {
-            var readingList = _readingLists.FirstOrDefault(r => r.ListId == listId 
+            var readingList = _readingLists.FirstOrDefault(r => r.ReadingListId == listId 
                                 && r.PatronId == patronId);
             if (readingList == null)
                 return await Task.FromResult(false);
@@ -124,7 +124,7 @@ namespace Libro.Infrastructure.Repositories
             var readingList = GetReadingListByIdAsync(listId, patronId);
             if (readingList != null)
             {
-                readingList.BookLists.Add(new BookList { ListId = listId, BookId = bookId });
+                readingList.BookLists.Add(new BookList { ReadingListId = listId, BookId = bookId });
                 return true;
             }
             else
@@ -133,7 +133,7 @@ namespace Libro.Infrastructure.Repositories
 
         public async Task<bool> RemoveBookFromReadingListAsync(int listId, int patronId, string bookId)
         {
-            var readingList = _readingLists.FirstOrDefault(r => r.ListId == listId && r.PatronId == patronId);
+            var readingList = _readingLists.FirstOrDefault(r => r.ReadingListId == listId && r.PatronId == patronId);
             if (readingList == null)
                 return false;
 

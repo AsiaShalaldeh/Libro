@@ -8,7 +8,7 @@ namespace Libro.Infrastructure.Repositories
     {
         //private readonly DbContext _dbContext;
         private readonly IList<Patron> _patrons;
-        private readonly IList<Transaction> _transactions;
+        private readonly IList<Checkout> _transactions;
 
 
         public PatronRepository()
@@ -26,7 +26,7 @@ namespace Libro.Infrastructure.Repositories
                     Name = "Jane Smith"
                 },
             };
-            _transactions = new List<Transaction>();
+            _transactions = new List<Checkout>();
         }
 
         public Patron GetPatronByIdAsync(int patronId)
@@ -42,7 +42,7 @@ namespace Libro.Infrastructure.Repositories
             //await _dbContext.SaveChangesAsync();
             return patron;
         }
-        public IEnumerable<Transaction> GetBorrowingHistoryAsync(int patronId)
+        public IEnumerable<Checkout> GetBorrowingHistoryAsync(int patronId)
         {
             var patron = _patrons.Where(p => p.PatronId == patronId).FirstOrDefault();
             if (patron == null)
@@ -54,8 +54,20 @@ namespace Libro.Infrastructure.Repositories
                 //.Include(t => t.Book)
                 .Where(t => t.PatronId == patronId)
                 .ToList();
+            List<Checkout> checkouts = transactions
+            .OfType<Checkout>()
+            .Select(t => new Checkout
+            {
+                BookId = t.BookId,
+                PatronId = t.PatronId,
+                CheckoutDate = t.CheckoutDate,
+                DueDate = t.DueDate,
+                IsReturned = t.IsReturned,
+                ReturnDate = t.ReturnDate
+            })
+            .ToList();
 
-            return transactions;
+            return checkouts;
         }
     }
 }

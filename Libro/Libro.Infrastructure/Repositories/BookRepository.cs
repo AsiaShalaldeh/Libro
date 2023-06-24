@@ -8,7 +8,7 @@ namespace Libro.Infrastructure.Repositories
     public class BookRepository : IBookRepository
     {
         private readonly List<Book> _books;
-        private readonly List<Transaction> _transactions;
+        private readonly List<Checkout> _transactions;
         private readonly List<Patron> _patrons;
         private readonly List<Librarian> _librarians;
 
@@ -36,7 +36,7 @@ namespace Libro.Infrastructure.Repositories
                 Author = new Author {AuthorId = 2 ,Name = "Tom Cruise" }
             },
         };
-            _transactions = new List<Transaction>();
+            _transactions = new List<Checkout>();
             _patrons = new List<Patron>
             {
                 new Patron

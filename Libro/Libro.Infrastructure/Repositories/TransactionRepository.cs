@@ -1,171 +1,80 @@
 ﻿using Libro.Domain.Common;
 using Libro.Domain.Entities;
 using Libro.Domain.Enums;
+using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
 
 namespace Libro.Infrastructure.Repositories
 {
     public class TransactionRepository : ITransactionRepository
     {
-        private readonly List<Transaction> _transactions;
+        private readonly List<Checkout> _transactions;
+        private readonly List<Reservation> _reservations;
         private readonly IBookRepository _bookRepository;
         private readonly IPatronRepository _patronRepository;
         private readonly ILibrarianRepository _librarianRepository;
 
         public TransactionRepository(IBookRepository bookRepository, IPatronRepository patronRepository)
         {
-            _transactions = new List<Transaction>();
+            _transactions = new List<Checkout>();
             _bookRepository = bookRepository;
             _patronRepository = patronRepository;
         }
-        public Transaction GetActiveTransaction(string ISBN, int patronId)
+        public Checkout GetActiveTransaction(string ISBN, int patronId)
         {
-            return _transactions.FirstOrDefault(t => t.BookId == ISBN && t.PatronId == patronId && !t.IsReturned);
+            return _transactions.
+                FirstOrDefault(t => t.BookId == ISBN && t.PatronId == patronId && !t.IsReturned);
         }
-        public void AddTransaction(Transaction transaction)
+        public void AddTransaction(Checkout transaction)
         {
             _transactions.Add(transaction);
         }
-        public void UpdateTransaction(Transaction transaction)
+        public async Task<IEnumerable<Checkout>> GetTransactionsByPatron(int patronId)
+        {
+            return _transactions.Where(t => t.PatronId == patronId).ToList();
+        }
+
+        public void UpdateTransaction(Checkout transaction)
         {
             var existingTransaction = _transactions.FirstOrDefault(
-                    t => t.TransactionId == transaction.TransactionId);
-
+                    t => t.CheckoutId == transaction.CheckoutId);        
             if (existingTransaction != null)
             {
                 existingTransaction.BookId = transaction.BookId;
                 existingTransaction.PatronId = transaction.PatronId;
-                existingTransaction.LibrarianId = transaction.LibrarianId;
-                existingTransaction.Date = transaction.Date;
-                existingTransaction.DueDate = transaction.DueDate;
-                existingTransaction.IsReturned = transaction.IsReturned;
-                existingTransaction.ReturnDate = transaction.ReturnDate;
+                existingTransaction.CheckoutDate = transaction.CheckoutDate;
+                if (existingTransaction is Checkout)
+                {
+                    //Checkout checkout = (Checkout)existingTransaction;
+                    //checkout.DueDate = (Checkout)transaction.DueDate;
+                    //checkout.IsReturned = transaction.IsReturned;
+                    //checkout.ReturnDate = transaction.ReturnDate;
+                }     
             }
             else
             {
                 throw new InvalidOperationException("Transaction Not Found");
             }
         }
-        public async Task<Transaction> ReserveAsync(string ISBN, int patronId)
-        {
-            Book book = await _bookRepository.GetByIdAsync(ISBN); // GetBookByISBN
-            Patron patron = _patronRepository.GetPatronByIdAsync(patronId); // GetPatronById
-
-            if (book != null && patron != null)
-            {
-                if (book.IsAvailable)
-                {
-                    var transaction = new Transaction
-                    {
-                        TransactionId = IdGenerator.GenerateTransactionId(),
-                        BookId = ISBN,
-                        Book = book,
-                        PatronId = patronId,
-                        Patron = patron,
-                        Date = DateTime.Now,
-                        Type = TransactionType.Reserve
-                    };
-
-                    book.IsAvailable = false;
-                    book.Transactions.Add(transaction);
-                    patron.Transactions.Add(transaction);
-                    AddTransaction(transaction);
-
-                    return transaction;
-                }
-                else
-                {
-                    throw new InvalidOperationException("The book is not available for reservation.");
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Invalid ISBN or patron ID.");
-            }
-        }
-
-        public async Task<Transaction> CheckoutAsync(string ISBN, int patronId, int librarianId)
-        {
-            Book book = await _bookRepository.GetByIdAsync(ISBN);
-            Patron patron = _patronRepository.GetPatronByIdAsync(patronId);
-            Librarian librarian = _librarianRepository.GetLibrarianByIdAsync(librarianId);
-
-            if (book != null && patron != null && librarian != null)
-            {
-                if (book.IsAvailable)
-                {
-                    var transaction = new Transaction
-                    {
-                        TransactionId = IdGenerator.GenerateTransactionId(),
-                        BookId = ISBN,
-                        Book = book,
-                        PatronId = patronId,
-                        Patron = patron,
-                        LibrarianId = librarianId,
-                        Librarian = librarian,
-                        Date = DateTime.Now,
-                        DueDate = DateTime.Now.AddDays(14),
-                        IsReturned = false,
-                        Type = TransactionType.Checkout
-                    };
-
-                    book.IsAvailable = false;
-                    book.Transactions.Add(transaction);
-                    patron.Transactions.Add(transaction);
-                    librarian.Transactions.Add(transaction);
-                    AddTransaction(transaction);
-
-                    return transaction;
-                }
-                else
-                {
-                    throw new InvalidOperationException("The book is not available for checkout.");
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Invalid ISBN, patron ID, or librarian ID.");
-            }
-        }
-
-        public async Task<Transaction> ReturnAsync(string ISBN, int patronId)
-        {
-            Book book = await _bookRepository.GetByIdAsync(ISBN);
-            Patron patron = _patronRepository.GetPatronByIdAsync(patronId);
-
-            if (book != null && patron != null)
-            {
-                var transaction = GetActiveTransaction(ISBN, patronId);
-
-                if (transaction != null)
-                {
-                    transaction.IsReturned = true;
-                    book.IsAvailable = true;
-                    transaction.ReturnDate = DateTime.Now;
-
-                    UpdateTransaction(transaction);
-
-                    return transaction;
-                }
-                else
-                {
-                    throw new InvalidOperationException("The book is not currently borrowed by the patron");
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Invalid ISBN or patron ID");
-            }
-        }
         public IEnumerable<string> GetOverdueBooksAsync()
         {
             var currentDate = DateTime.Now.Date;
             var overdueBookIds = _transactions
+                .OfType<Checkout>()
                 .Where(t => t.DueDate < currentDate && !t.IsReturned)
                 .Select(t => t.BookId)
                 .ToList();
 
             return overdueBookIds;
+        }
+        public IEnumerable<Checkout> GetOverdueTransactionsAsync()
+        {
+            var currentDate = DateTime.Now.Date;
+            var overdueTransactions = _transactions
+                .Where(t => t.DueDate < currentDate && !t.IsReturned)
+                .ToList();
+
+            return overdueTransactions;
         }
         public IEnumerable<string> GetBorrowedBooksAsync()
         {

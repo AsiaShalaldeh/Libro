@@ -18,10 +18,10 @@ namespace Libro.Application.Services
         public async Task<Patron> GetPatronProfileAsync(int patronId)
         {
             var patron = _patronRepository.GetPatronByIdAsync(patronId);
-            if (patron == null)
-            {
-                throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
-            }
+            //if (patron == null)
+            //{
+            //    throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
+            //}
             return patron;
         }
 
@@ -43,9 +43,9 @@ namespace Libro.Application.Services
             // should bereplaced with map
             var borrowingHistory = transactions.Select(t => new BorrowingHistoryDTO
             {
-                TransactionId = t.TransactionId,
+                TransactionId = t.CheckoutId,
                 BookTitle = t.Book.Title,
-                BorrowDate = t.Date,
+                BorrowDate = t.CheckoutDate,
                 DueDate = t.DueDate,
                 ReturnDate = t.IsReturned ? t.ReturnDate : null,
                 IsOverdue = !t.IsReturned && DateTime.Now > t.DueDate

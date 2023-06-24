@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Libro.Domain.Dtos;
+using Libro.Domain.Entities;
+using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,22 +14,47 @@ namespace Libro.WebAPI.Controllers
     public class BookTransactionsController : ControllerBase
     {
         private readonly ITransactionService _trsansactionService;
+        private readonly INotificationService _notificationService;
+        private readonly IPatronService _patronService;
+        private readonly IBookService _bookService;
         private readonly IMapper _mapper;
 
-        public BookTransactionsController(ITransactionService transactionService, IMapper mapper)
+        public BookTransactionsController(ITransactionService transactionService,
+            IMapper mapper, IPatronService patronService, IBookService bookService,
+            INotificationService notificationService)
         {
             _trsansactionService = transactionService;
             _mapper = mapper;
+            _patronService = patronService;
+            _bookService = bookService;
+            _notificationService = notificationService;
         }
 
         [HttpPost("{ISBN}/reserve")]
         //[Authorize(Roles = "Patron")]
-        public async Task<IActionResult> ReserveBook([FromBody] BookTransactionDto bookTransactionDto)
+        public async Task<IActionResult> ReserveBook([FromBody] BookTransactionDto bookReservation)
         {
             try
             {
-                var transaction = await _trsansactionService.ReserveBookAsync(bookTransactionDto.ISBN,
-                    bookTransactionDto.PatronID);
+                Book book = await _bookService.GetBookByIdAsync(bookReservation.ISBN); // GetBookByISBN
+                Patron patron = await _patronService.GetPatronProfileAsync(bookReservation.PatronID); // GetPatronById
+
+                // check book and patron
+                if (book.IsAvailable)
+                {
+                    return BadRequest("The book is currently available for borrowing.");
+                }
+                //if (patron.Transactions.Any(transaction => transaction.BookId.Equals
+                //(bookReservation.ISBN) && !(transaction is Checkout)))
+                //{
+                //    return BadRequest("You have already reserved this book.");
+                //}
+                if (patron.ReservedBooks.Any(transaction => transaction.BookId.Equals(bookReservation.ISBN)))
+                {
+                    return BadRequest("You have already reserved this book.");
+                }
+                var transaction = await _trsansactionService.ReserveBookAsync(book, patron);
+                await _notificationService.AddPatronToNotificationQueue(patron.PatronId, book.ISBN);
                 return Ok(transaction);
             }
             catch (ArgumentException ex)
@@ -42,13 +69,36 @@ namespace Libro.WebAPI.Controllers
 
         [HttpPost("{ISBN}/checkout")]
         //[Authorize(Roles = "Librarian")]
-        public async Task<IActionResult> CheckoutBook([FromBody] CheckoutBookDto checkoutBookDto)
+        public async Task<IActionResult> CheckoutBook([FromBody] BookTransactionDto bookCheckout)
         {
             try
             {
-                var transaction = await _trsansactionService.CheckoutBookAsync(checkoutBookDto.ISBN,
-                    checkoutBookDto.PatronID, checkoutBookDto.LibrarianId);
+                var book = await _bookService.GetBookByIdAsync(bookCheckout.ISBN);
+                var patron = await _patronService.GetPatronProfileAsync(bookCheckout.PatronID);
+                if (book == null)
+                {
+                    throw new ResourceNotFoundException("Book", "ISBN", bookCheckout.ISBN);
+                }
+                // patron
+                if (!book.IsAvailable)
+                {
+                    return BadRequest("The book is currently not available for checkout");
+                }
+                Dictionary<string, Queue<int>> queues = await _notificationService.GetNotificationQueue();
+                if (queues.Count > 0 && queues.ContainsKey(book.ISBN))
+                {
+                    var queue = queues[book.ISBN];
+                    if (queue.Peek() != bookCheckout.PatronID)
+                    {
+                        return BadRequest("Sorry, It is not your turn to borrow the book !!");
+                    }
+                }
+                var transaction = await _trsansactionService.CheckoutBookAsync(book, patron);
                 return Ok(transaction);
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (ArgumentException ex)
             {
@@ -62,12 +112,26 @@ namespace Libro.WebAPI.Controllers
 
         [HttpPost("{ISBN}/return")]
         //[Authorize(Roles = "Librarian")]
-        public async Task<IActionResult> ReturnBook([FromBody] BookTransactionDto bookTransactionDto)
+        public async Task<IActionResult> ReturnBook([FromBody] BookTransactionDto bookReturn)
         {
             try
             {
-                var transaction = await _trsansactionService.ReturnBookAsync(bookTransactionDto.ISBN,
-                    bookTransactionDto.PatronID);
+                var book = await _bookService.GetBookByIdAsync(bookReturn.ISBN);
+                var patron = await _patronService.GetPatronProfileAsync(bookReturn.PatronID);
+                if (book == null)
+                {
+                    throw new ResourceNotFoundException("Book", "ISBN", bookReturn.ISBN);
+                }
+                // patron
+                if (!book.IsAvailable)
+                {
+                    return BadRequest("The book is currently not available for checkout");
+                }
+                var transaction = await _trsansactionService.ReturnBookAsync(book, patron);
+
+                // Notify the first patron in the queue if there is any
+                await _notificationService.ProcessNotificationQueue(book.ISBN);
+
                 return Ok(transaction);
             }
             catch (ArgumentException ex)

@@ -11,6 +11,7 @@ namespace Libro.Application.Services
         private readonly IBookService _bookService;
         private readonly IPatronService _patronService;
         private readonly ITransactionService _transactionService;
+        Dictionary<string, Queue<int>> booksQueues;
 
         public EmailNotificationService(IEmailSender emailSender, IBookService bookService,
             IPatronService patronService, ITransactionService transactionService)
@@ -19,26 +20,27 @@ namespace Libro.Application.Services
             _bookService = bookService;
             _patronService = patronService;
             _transactionService = transactionService;
+            booksQueues = new Dictionary<string, Queue<int>>();
         }
         public async Task<bool> SendOverdueNotification()
         {
-            IEnumerable<Book> overdueBooks = await _transactionService.GetOverdueBooksAsync();
+            IEnumerable<Checkout> overdueTransactions = _transactionService.GetOverdueTransactionsAsync();
 
-            if (overdueBooks.Any())
+            if (overdueTransactions.Any())
             {
                 var subject = "Overdue Book Notification";
-                foreach (var overdueBook in overdueBooks)
+                foreach (var overdueTransaction in overdueTransactions)
                 {
-                    foreach (var transaction in overdueBook.Transactions)
-                    {
-                        var patron = transaction.Patron;
+                    //foreach (var transaction in overdueBook.Transactions)
+                    //{
+                        var patron = overdueTransaction.Patron;
                         var content = $"Dear {patron.Name},\n\nThis is a friendly reminder that " +
-                            $"the book \"{overdueBook.Title}\" is due on " +
-                            $"{transaction.DueDate.ToShortDateString()}.\nPlease return it to the " +
+                            $"the book \"{overdueTransaction.Book.Title}\" is due on " +
+                            $"{overdueTransaction.DueDate.ToShortDateString()}.\nPlease return it to the " +
                             $"library on time.\n\nBest regards,\nThe Libro";
                         var message = new Message(new List<string> { patron.Email }, subject, content);
                         await _emailSender.SendEmailAsync(message);
-                    }
+                    //}
                 }
                 return true;
             }
@@ -46,7 +48,7 @@ namespace Libro.Application.Services
             {
                 return false;
             }
-            
+
         }
         public async Task SendReservationNotification(string recipientEmail, string bookTitle, int recipientId)
         {
@@ -61,6 +63,62 @@ namespace Libro.Application.Services
             var message = new Message(new List<string> { recipientEmail }, subject, content);
 
             await _emailSender.SendEmailAsync(message);
+        }
+
+        public async Task AddPatronToNotificationQueue(int patronId, string bookId)
+        {
+            if (!booksQueues.ContainsKey(bookId))
+            {
+                booksQueues[bookId] = new Queue<int>();
+            }
+
+            booksQueues[bookId].Enqueue(patronId);
+        }
+        public async Task ProcessNotificationQueue(string bookId)
+        {
+            if (booksQueues.ContainsKey(bookId))
+            {
+                var queue = booksQueues[bookId];
+
+                if (queue.Count > 0)
+                {
+                    var patronId = queue.Peek();
+                    var patron = await _patronService.GetPatronProfileAsync(patronId);
+
+                    if (patron != null)
+                    {
+                        var book = await _bookService.GetBookByIdAsync(bookId);
+
+                        if (book != null)
+                        {
+                            string subject = "Book Available Notification";
+                            string content = $"The book '{book.Title}' is now available for borrowing.";
+
+                            // Use the email service to send the notification
+                            var message = new Message(new List<string> { patron.Email }, subject, content);
+
+                            await _emailSender.SendEmailAsync(message);
+
+                            queue.Dequeue();
+                        }
+                        else
+                        {
+                            // Log or handle the case when the book is not found
+                            queue.Dequeue();
+                        }
+                    }
+                    else
+                    {
+                        // Log or handle the case when the patron profile is not found
+                        queue.Dequeue();
+                    }
+                }
+            }
+        }
+
+        public async Task<Dictionary<string, Queue<int>>> GetNotificationQueue()
+        {
+            return booksQueues;
         }
     }
 }
