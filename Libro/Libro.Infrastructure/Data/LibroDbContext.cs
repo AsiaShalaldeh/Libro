@@ -44,7 +44,7 @@ namespace Libro.Infrastructure.Data
             .HasColumnType("decimal(18, 2)");
 
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
-            //modelBuilder.Seed();
+            modelBuilder.Seed();
         }
 
         public DbSet<Librarian> Librarians { get; set; }

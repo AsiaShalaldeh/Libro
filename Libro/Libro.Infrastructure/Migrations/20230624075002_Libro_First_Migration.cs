@@ -85,7 +85,8 @@ namespace Libro.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Patrons", x => x.PatronId);
+                    table.PrimaryKey("PK_Patrons", x => x.PatronId); 
+                    table.UniqueConstraint("UQ_Patrons_Email", x => x.Email);
                 });
 
             migrationBuilder.CreateTable(

@@ -4,6 +4,7 @@ using Libro.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Libro.Infrastructure.Migrations
 {
     [DbContext(typeof(LibroDbContext))]
-    partial class LibroDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230624102510_SeedData")]
+    partial class SeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -563,22 +565,22 @@ namespace Libro.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "12804f00-c9f8-4d2d-9e5f-eb8aa485368f",
-                            ConcurrencyStamp = "652e8ec1-bc12-4511-b5d3-4a86f0f8515b",
+                            Id = "e6f004ec-feb9-40bf-9e52-09a563fb2fb9",
+                            ConcurrencyStamp = "2750fcd9-ae76-418b-b327-d23c00cca0b4",
                             Name = "Patron",
                             NormalizedName = "PATRON"
                         },
                         new
                         {
                             Id = "e1b13948-d0d2-4e4c-b706-8b70a99c8e6c",
-                            ConcurrencyStamp = "56b4f6e6-d7a4-4b75-94a7-c85357bad7f0",
+                            ConcurrencyStamp = "8e621667-bec5-4236-8fd3-c0e12ecc8855",
                             Name = "Librarian",
                             NormalizedName = "LIBRARIAN"
                         },
                         new
                         {
-                            Id = "e6f004ec-feb9-40bf-9e52-09a563fb2fb9",
-                            ConcurrencyStamp = "59d208d6-8b6c-4854-a04b-87b1e2cd4af5",
+                            Id = "12804f00-c9f8-4d2d-9e5f-eb8aa485368f",
+                            ConcurrencyStamp = "3609c6d9-fb9e-4aff-97e2-fe8fb8add872",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -672,21 +674,6 @@ namespace Libro.Infrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "b74ddd14-6340-4840-95c2-db12554843e5",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "3ff5ce26-a23a-4278-a442-fb87a687045e",
-                            Email = "admin@gmail.com",
-                            EmailConfirmed = false,
-                            LockoutEnabled = false,
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "d85cd344-14e5-4bd7-aa68-ebd8fa460467",
-                            TwoFactorEnabled = false,
-                            UserName = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>

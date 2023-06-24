@@ -1,10 +1,14 @@
-﻿namespace Libro.Domain.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Libro.Domain.Entities
 {
     public class Patron
     {
         public int PatronId { get; set; }
         public string Name { get; set; }
-        public string Email { get; set; } // should be unique
+
+        [Required]
+        public string Email { get; set; } 
         public ICollection<Review> Reviews { get; set; }
         public ICollection<Reservation> ReservedBooks { get; set; } 
         public ICollection<Checkout> CheckedoutBooks { get; set; } 

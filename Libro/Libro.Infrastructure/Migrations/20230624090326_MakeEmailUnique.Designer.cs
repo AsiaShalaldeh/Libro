@@ -4,6 +4,7 @@ using Libro.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Libro.Infrastructure.Migrations
 {
     [DbContext(typeof(LibroDbContext))]
-    partial class LibroDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230624090326_MakeEmailUnique")]
+    partial class MakeEmailUnique
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,33 +39,6 @@ namespace Libro.Infrastructure.Migrations
                     b.HasKey("AuthorId");
 
                     b.ToTable("Authors");
-
-                    b.HasData(
-                        new
-                        {
-                            AuthorId = 1,
-                            Name = "John Green"
-                        },
-                        new
-                        {
-                            AuthorId = 2,
-                            Name = "J.K. Rowling"
-                        },
-                        new
-                        {
-                            AuthorId = 3,
-                            Name = "Stephen King"
-                        },
-                        new
-                        {
-                            AuthorId = 4,
-                            Name = "Agatha Christie"
-                        },
-                        new
-                        {
-                            AuthorId = 5,
-                            Name = "Haruki Murakami"
-                        });
                 });
 
             modelBuilder.Entity("Libro.Domain.Entities.Book", b =>
@@ -92,53 +67,6 @@ namespace Libro.Infrastructure.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("Books");
-
-                    b.HasData(
-                        new
-                        {
-                            ISBN = "9780545010221",
-                            AuthorId = 2,
-                            Genre = 3,
-                            IsAvailable = true,
-                            PublicationDate = new DateTime(1997, 6, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Harry Potter and the Sorcerer's Stone"
-                        },
-                        new
-                        {
-                            ISBN = "9780743273565",
-                            AuthorId = 5,
-                            Genre = 2,
-                            IsAvailable = true,
-                            PublicationDate = new DateTime(2003, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "The Da Vinci Code"
-                        },
-                        new
-                        {
-                            ISBN = "9780061122415",
-                            AuthorId = 4,
-                            Genre = 8,
-                            IsAvailable = true,
-                            PublicationDate = new DateTime(1960, 7, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "To Kill a Mockingbird"
-                        },
-                        new
-                        {
-                            ISBN = "9781451673319",
-                            AuthorId = 1,
-                            Genre = 0,
-                            IsAvailable = true,
-                            PublicationDate = new DateTime(1925, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "The Great Gatsby"
-                        },
-                        new
-                        {
-                            ISBN = "9780143127550",
-                            AuthorId = 3,
-                            Genre = 5,
-                            IsAvailable = true,
-                            PublicationDate = new DateTime(1949, 6, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "1984"
-                        });
                 });
 
             modelBuilder.Entity("Libro.Domain.Entities.BookList", b =>
@@ -190,63 +118,6 @@ namespace Libro.Infrastructure.Migrations
                     b.HasIndex("PatronId");
 
                     b.ToTable("Checkouts");
-
-                    b.HasData(
-                        new
-                        {
-                            CheckoutId = "1",
-                            BookId = "9780143127550",
-                            CheckoutDate = new DateTime(2023, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DueDate = new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsReturned = false,
-                            PatronId = 1,
-                            ReturnDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TotalFee = 0.0m
-                        },
-                        new
-                        {
-                            CheckoutId = "2",
-                            BookId = "9781451673319",
-                            CheckoutDate = new DateTime(2023, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DueDate = new DateTime(2023, 6, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsReturned = true,
-                            PatronId = 2,
-                            ReturnDate = new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TotalFee = 1.99m
-                        },
-                        new
-                        {
-                            CheckoutId = "3",
-                            BookId = "9780061122415",
-                            CheckoutDate = new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DueDate = new DateTime(2023, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsReturned = false,
-                            PatronId = 3,
-                            ReturnDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TotalFee = 0.0m
-                        },
-                        new
-                        {
-                            CheckoutId = "4",
-                            BookId = "9780743273565",
-                            CheckoutDate = new DateTime(2023, 6, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DueDate = new DateTime(2023, 6, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsReturned = true,
-                            PatronId = 4,
-                            ReturnDate = new DateTime(2023, 6, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TotalFee = 3.99m
-                        },
-                        new
-                        {
-                            CheckoutId = "5",
-                            BookId = "9780545010221",
-                            CheckoutDate = new DateTime(2023, 6, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DueDate = new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsReturned = false,
-                            PatronId = 5,
-                            ReturnDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TotalFee = 0.0m
-                        });
                 });
 
             modelBuilder.Entity("Libro.Domain.Entities.Librarian", b =>
@@ -264,33 +135,6 @@ namespace Libro.Infrastructure.Migrations
                     b.HasKey("LibrarianId");
 
                     b.ToTable("Librarians");
-
-                    b.HasData(
-                        new
-                        {
-                            LibrarianId = 1,
-                            Name = "John Smith"
-                        },
-                        new
-                        {
-                            LibrarianId = 2,
-                            Name = "Emily Johnson"
-                        },
-                        new
-                        {
-                            LibrarianId = 3,
-                            Name = "Michael Davis"
-                        },
-                        new
-                        {
-                            LibrarianId = 4,
-                            Name = "Sarah Wilson"
-                        },
-                        new
-                        {
-                            LibrarianId = 5,
-                            Name = "David Thompson"
-                        });
                 });
 
             modelBuilder.Entity("Libro.Domain.Entities.Patron", b =>
@@ -312,38 +156,6 @@ namespace Libro.Infrastructure.Migrations
                     b.HasKey("PatronId");
 
                     b.ToTable("Patrons");
-
-                    b.HasData(
-                        new
-                        {
-                            PatronId = 1,
-                            Email = "johndoe@gmail.com",
-                            Name = "John Doe"
-                        },
-                        new
-                        {
-                            PatronId = 2,
-                            Email = "janesmith@gmail.com",
-                            Name = "Jane Smith"
-                        },
-                        new
-                        {
-                            PatronId = 3,
-                            Email = "michaeljohnson@gmail.com",
-                            Name = "Michael Johnson"
-                        },
-                        new
-                        {
-                            PatronId = 4,
-                            Email = "emilydavis@gmail.com",
-                            Name = "Emily Davis"
-                        },
-                        new
-                        {
-                            PatronId = 5,
-                            Email = "danielwilson@gmail.com",
-                            Name = "Daniel Wilson"
-                        });
                 });
 
             modelBuilder.Entity("Libro.Domain.Entities.ReadingList", b =>
@@ -366,38 +178,6 @@ namespace Libro.Infrastructure.Migrations
                     b.HasIndex("PatronId");
 
                     b.ToTable("ReadingLists");
-
-                    b.HasData(
-                        new
-                        {
-                            ReadingListId = 1,
-                            Name = "Favorites",
-                            PatronId = 1
-                        },
-                        new
-                        {
-                            ReadingListId = 2,
-                            Name = "To Read",
-                            PatronId = 1
-                        },
-                        new
-                        {
-                            ReadingListId = 3,
-                            Name = "Classics",
-                            PatronId = 2
-                        },
-                        new
-                        {
-                            ReadingListId = 4,
-                            Name = "Mystery",
-                            PatronId = 3
-                        },
-                        new
-                        {
-                            ReadingListId = 5,
-                            Name = "Sci-Fi",
-                            PatronId = 4
-                        });
                 });
 
             modelBuilder.Entity("Libro.Domain.Entities.Reservation", b =>
@@ -422,43 +202,6 @@ namespace Libro.Infrastructure.Migrations
                     b.HasIndex("PatronId");
 
                     b.ToTable("Reservations");
-
-                    b.HasData(
-                        new
-                        {
-                            ReservationId = "1",
-                            BookId = "9780545010221",
-                            PatronId = 1,
-                            ReservationDate = new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            ReservationId = "2",
-                            BookId = "9780743273565",
-                            PatronId = 2,
-                            ReservationDate = new DateTime(2023, 6, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            ReservationId = "3",
-                            BookId = "9780061122415",
-                            PatronId = 3,
-                            ReservationDate = new DateTime(2023, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            ReservationId = "4",
-                            BookId = "9781451673319",
-                            PatronId = 4,
-                            ReservationDate = new DateTime(2023, 6, 18, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            ReservationId = "5",
-                            BookId = "9780545010221",
-                            PatronId = 5,
-                            ReservationDate = new DateTime(2023, 6, 19, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("Libro.Domain.Entities.Review", b =>
@@ -490,48 +233,6 @@ namespace Libro.Infrastructure.Migrations
                     b.HasIndex("PatronId");
 
                     b.ToTable("Reviews");
-
-                    b.HasData(
-                        new
-                        {
-                            ReviewId = 1,
-                            BookId = "9780545010221",
-                            Comment = "Great book!",
-                            PatronId = 1,
-                            Rating = 4
-                        },
-                        new
-                        {
-                            ReviewId = 2,
-                            BookId = "9780545010221",
-                            Comment = "Interesting read.",
-                            PatronId = 2,
-                            Rating = 3
-                        },
-                        new
-                        {
-                            ReviewId = 3,
-                            BookId = "9781451673319",
-                            Comment = "Highly recommended!",
-                            PatronId = 3,
-                            Rating = 5
-                        },
-                        new
-                        {
-                            ReviewId = 4,
-                            BookId = "9781451673319",
-                            Comment = "Disappointing.",
-                            PatronId = 4,
-                            Rating = 2
-                        },
-                        new
-                        {
-                            ReviewId = 5,
-                            BookId = "9780743273565",
-                            Comment = "Loved it!",
-                            PatronId = 5,
-                            Rating = 5
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -563,22 +264,22 @@ namespace Libro.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "12804f00-c9f8-4d2d-9e5f-eb8aa485368f",
-                            ConcurrencyStamp = "652e8ec1-bc12-4511-b5d3-4a86f0f8515b",
+                            Id = "6aca3b36-c1a2-47a1-99c9-a8ad0ca70868",
+                            ConcurrencyStamp = "468cf244-813d-4a87-a5b5-f3d39bfe2add",
                             Name = "Patron",
                             NormalizedName = "PATRON"
                         },
                         new
                         {
-                            Id = "e1b13948-d0d2-4e4c-b706-8b70a99c8e6c",
-                            ConcurrencyStamp = "56b4f6e6-d7a4-4b75-94a7-c85357bad7f0",
+                            Id = "bd8f8b4b-c3b6-4081-b26a-feeb34fffee6",
+                            ConcurrencyStamp = "0c49efe4-2bdb-4f69-9e5f-6752b6f3316a",
                             Name = "Librarian",
                             NormalizedName = "LIBRARIAN"
                         },
                         new
                         {
-                            Id = "e6f004ec-feb9-40bf-9e52-09a563fb2fb9",
-                            ConcurrencyStamp = "59d208d6-8b6c-4854-a04b-87b1e2cd4af5",
+                            Id = "f70cbc68-6596-41d1-8933-49f4a2aa1319",
+                            ConcurrencyStamp = "aa9e1483-4c0c-4e57-a6f4-903ad0c30a16",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -672,21 +373,6 @@ namespace Libro.Infrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "b74ddd14-6340-4840-95c2-db12554843e5",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "3ff5ce26-a23a-4278-a442-fb87a687045e",
-                            Email = "admin@gmail.com",
-                            EmailConfirmed = false,
-                            LockoutEnabled = false,
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "d85cd344-14e5-4bd7-aa68-ebd8fa460467",
-                            TwoFactorEnabled = false,
-                            UserName = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>

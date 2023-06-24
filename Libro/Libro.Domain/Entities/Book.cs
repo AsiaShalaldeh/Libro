@@ -1,11 +1,13 @@
 ﻿using Libro.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Libro.Domain.Entities
 {
     public class Book
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string ISBN { get; set; }
         public string Title { get; set; }
         public DateTime PublicationDate { get; set; }
