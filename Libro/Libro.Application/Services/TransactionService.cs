@@ -20,13 +20,13 @@ namespace Libro.Application.Services
             _transactionRepository = transactionRepository;
             _loanPolicyService = loanPolicyService;
         }
-        public async Task<IEnumerable<Checkout>> GetTransactionsByPatron(int patronId)
+        public async Task<IEnumerable<Checkout>> GetTransactionsByPatron(string patronId)
         {
             var transactions = await _transactionRepository.GetTransactionsByPatron(patronId);
             return transactions;
         }
 
-        public Checkout GetActiveTransaction(string ISBN, int patronId)
+        public Checkout GetActiveTransaction(string ISBN, string patronId)
         {
             return _transactionRepository.GetActiveTransaction(ISBN, patronId);
         }
@@ -39,7 +39,7 @@ namespace Libro.Application.Services
             {
                 foreach (var bookId in overdueBookIds)
                 {
-                    var book = await _bookService.GetBookByIdAsync(bookId);
+                    var book = await _bookService.GetBookByISBNAsync(bookId);
                     if (book != null)
                     {
                         overdueBooks.Add(book);
@@ -62,7 +62,7 @@ namespace Libro.Application.Services
             {
                 foreach (var bookId in borrowedBookIds)
                 {
-                    var book = await _bookService.GetBookByIdAsync(bookId);
+                    var book = await _bookService.GetBookByISBNAsync(bookId);
                     if (book != null)
                     {
                         borrowedBooks.Add(book);
@@ -78,7 +78,7 @@ namespace Libro.Application.Services
             var borrowedBookId = _transactionRepository.GetBorrowedBookByIdAsync(ISBN);
             if (string.IsNullOrEmpty(borrowedBookId))
                 return null;
-            var borrowedBook = await _bookService.GetBookByIdAsync(borrowedBookId);
+            var borrowedBook = await _bookService.GetBookByISBNAsync(borrowedBookId);
             return borrowedBook;
         }
         public async Task<Reservation> ReserveBookAsync(Book book, Patron patron)
@@ -139,7 +139,7 @@ namespace Libro.Application.Services
 
             // _transactionRepository.update(checkout);
 
-            ReturnResponseModel response = new ReturnResponseModel
+            ReturnResponseModel response = new()
             {
                 BookId = book.ISBN,
                 PatronId = patron.PatronId,

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using Libro.Application.Validators;
 using Libro.Domain.Common;
 using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
@@ -11,104 +13,85 @@ namespace Libro.Application.Services
 {
     public class BookService : IBookService
     {
+        private readonly IAuthorRepository _authorRepository;
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
-        private readonly IAuthorRepository _authorRepository;
+
 
         public BookService(IBookRepository bookRepository, IMapper mapper, 
             IAuthorRepository authorRepository)
         {
             _bookRepository = bookRepository;
-            _mapper = mapper;
             _authorRepository = authorRepository;
+            _mapper = mapper;
         }
 
-        public async Task<Book> GetBookByIdAsync(string ISBN)
+        public async Task<Book> GetBookByISBNAsync(string ISBN)
         {
-            Book book = await _bookRepository.GetByIdAsync(ISBN);
-            //if (book != null)
-            //{
-            //    throw new ResourceNotFoundException("Book", "ISBN", ISBN);
-            //}
+            Book book = await _bookRepository.GetBookByISBNAsync(ISBN);
             return book;
         }
+        public async Task<PaginatedResult<BookDto>> GetAllBooksAsync(int pageNumber, int pageSize)
+        {
+            var paginatedResult = await _bookRepository.GetAllBooksAsync(pageNumber, pageSize);
 
+            var bookDtos = _mapper.Map<IEnumerable<BookDto>>(paginatedResult.Items);
+
+            return new PaginatedResult<BookDto>(bookDtos, paginatedResult.TotalCount, pageNumber, pageSize);
+        }
         public async Task<PaginatedResult<BookDto>> SearchBooksAsync(string title, string author,
             string genre, int pageNumber, int pageSize)
         {
-            var paginatedResult = await _bookRepository.SearchAsync(title, author, genre, pageNumber, pageSize);
+            var paginatedResult = await _bookRepository.SearchBooksAsync(title, author, genre, pageNumber, pageSize);
 
             var bookDtos = _mapper.Map<IEnumerable<BookDto>>(paginatedResult.Items);
 
             return new PaginatedResult<BookDto>(bookDtos, paginatedResult.TotalCount, pageNumber, pageSize);
         }
-
-        public async Task<PaginatedResult<BookDto>> GetAllBooksAsync(int pageNumber, int pageSize)
+        public async Task<BookDto> AddBookAsync(BookRequest bookDto)
         {
-            var paginatedResult = await _bookRepository.GetAllAsync(pageNumber, pageSize);
-
-            var bookDtos = _mapper.Map<IEnumerable<BookDto>>(paginatedResult.Items);
-
-            return new PaginatedResult<BookDto>(bookDtos, paginatedResult.TotalCount, pageNumber, pageSize);
-        }
-        public async Task AddBookAsync(RequestBookDto bookDto)
-        {
-            var author = _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId);
+            Author author = await _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId);
             if (author == null)
             {
                 throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());
             }
-
             var book = _mapper.Map<Book>(bookDto);
-            await _bookRepository.AddAsync(book);
+            if (author.Books == null)
+            {
+                author.Books = new List<Book>();
+            }
+            await _bookRepository.AddBookAsync(book, author);
+            return _mapper.Map<BookDto>(book);
         }
 
-        public async Task UpdateBookAsync(string bookId, RequestBookDto bookDto)
+        public async Task UpdateBookAsync(string ISBN, BookRequest bookDto)
         {
-            var existingBook = await _bookRepository.GetByIdAsync(bookId);
+            var existingBook = await _bookRepository.GetBookByISBNAsync(ISBN);
             if (existingBook == null)
             {
-                throw new ResourceNotFoundException("Book", "ID", bookId);
+                throw new ResourceNotFoundException("Book", "ID", ISBN);
             }
-
-            var author = _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId);
-            if (author == null)
+            if (bookDto.AuthorId != null)
             {
-                throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());
+                Author author = await _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId);
+                if (author == null)
+                {
+                    throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());
+                }
+                existingBook.Author = author;
             }
-            if (string.IsNullOrEmpty(bookDto.ISBN))
-            {
-                existingBook.ISBN = bookDto.ISBN;
-            }
-            if (string.IsNullOrEmpty(bookDto.Title))
-            {
-                existingBook.Title = bookDto.Title;
-            }
-            if (bookDto.PublicationDate != null)
-            {
-                existingBook.PublicationDate = bookDto.PublicationDate;
-            }
-            if (bookDto.Genre != null)
-            {
-                existingBook.Genre = (Genre)Enum.Parse(typeof(Genre), bookDto.Genre);
-            }
-            if (bookDto.IsAvailable != null)
-            {
-                existingBook.IsAvailable = bookDto.IsAvailable;
-            }
-            existingBook.Author = author;
-            await _bookRepository.UpdateAsync(existingBook);
+            await _bookRepository.UpdateBookAsync(existingBook);
         }
 
-        public async Task RemoveBookAsync(string bookId)
+        public async Task RemoveBookAsync(string ISBN)
         {
-            var existingBook = await _bookRepository.GetByIdAsync(bookId);
+            var existingBook = await _bookRepository.GetBookByISBNAsync(ISBN);
             if (existingBook == null)
             {
-                throw new ResourceNotFoundException($"Book", "ISBN", bookId);
+                throw new ResourceNotFoundException("Book", "ISBN", ISBN);
             }
 
-            await _bookRepository.DeleteAsync(bookId);
+            await _bookRepository.DeleteBookAsync(existingBook);
         }
 
         public async Task<IEnumerable<Book>> GetBooksByGenres(IEnumerable<Genre> genres)

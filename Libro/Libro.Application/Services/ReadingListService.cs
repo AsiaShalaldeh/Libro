@@ -21,7 +21,7 @@ namespace Libro.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ReadingList> GetReadingListByIdAsync(int listId, int patronId)
+        public async Task<ReadingList> GetReadingListByIdAsync(int listId, string patronId)
         {
             var readingList = _readingListRepository.GetReadingListByIdAsync(listId, patronId);
             if (readingList == null)
@@ -30,13 +30,13 @@ namespace Libro.Application.Services
             return readingList;
         }
 
-        public async Task<IEnumerable<ReadingList>> GetReadingListsByPatronIdAsync(int patronId)
+        public async Task<IEnumerable<ReadingList>> GetReadingListsByPatronIdAsync(string patronId)
         {
             var readingLists = await _readingListRepository.GetReadingListsByPatronIdAsync(patronId);
             return readingLists;
         }
 
-        public async Task<ReadingListDto> CreateReadingListAsync(ReadingListDto readingListDto, int patronId)
+        public async Task<ReadingListDto> CreateReadingListAsync(ReadingListDto readingListDto, string patronId)
         {
             var patron = _patronRepository.GetPatronByIdAsync(patronId);
             if (patron == null)
@@ -51,7 +51,7 @@ namespace Libro.Application.Services
             return createdListDto;
         }
 
-        public async Task<bool> RemoveReadingListAsync(int listId, int patronId)
+        public async Task<bool> RemoveReadingListAsync(int listId, string patronId)
         {
             var patron = _patronRepository.GetPatronByIdAsync(patronId);
             if (patron == null)
@@ -65,13 +65,13 @@ namespace Libro.Application.Services
             }
             return await _readingListRepository.RemoveReadingListAsync(listId, patronId);
         }
-        public async Task<IEnumerable<BookDto>> GetBooksByReadingListAsync(int listId, int patronId)
+        public async Task<IEnumerable<BookDto>> GetBooksByReadingListAsync(int listId, string patronId)
         {
             var books = await _readingListRepository.GetBooksByReadingListAsync(listId, patronId);
             return _mapper.Map<IEnumerable<BookDto>>(books);
         }
 
-        public async Task<bool> AddBookToReadingListAsync(int listId, int patronId, string bookId)
+        public async Task<bool> AddBookToReadingListAsync(int listId, string patronId, string bookId)
         {
             //var book = _bookRepository.GetBookById(bookId);
             //if (book == null)
@@ -82,7 +82,7 @@ namespace Libro.Application.Services
             return result;
         }
 
-        public async Task<bool> RemoveBookFromReadingListAsync(int listId, int patronId, string bookId)
+        public async Task<bool> RemoveBookFromReadingListAsync(int listId, string patronId, string bookId)
         {
             var result = await _readingListRepository.RemoveBookFromReadingListAsync(listId, patronId, bookId);
             return result;

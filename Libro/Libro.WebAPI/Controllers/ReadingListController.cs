@@ -23,7 +23,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpPost("{patronId}/reading-lists")]
-        public async Task<IActionResult> CreateReadingList(int patronId, [FromBody] ReadingListDto readingListDto)
+        public async Task<IActionResult> CreateReadingList(string patronId, [FromBody] ReadingListDto readingListDto)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpGet("{patronId}/reading-lists")]
-        public async Task<IActionResult> GetReadingListsByPatronId(int patronId)
+        public async Task<IActionResult> GetReadingListsByPatronId(string patronId)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpGet("{patronId}/reading-lists/{listId}", Name = "GetReadingList")]
-        public async Task<IActionResult> GetReadingListById(int patronId, int listId)
+        public async Task<IActionResult> GetReadingListById(string patronId, int listId)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpPost("{patronId}/reading-lists/{listId}/books/{ISBN}/add")]
-        public async Task<IActionResult> AddBookToReadingList(int patronId, int listId, string ISBN)
+        public async Task<IActionResult> AddBookToReadingList(string patronId, int listId, string ISBN)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpGet("{patronId}/reading-lists/{listId}/books")]
-        public async Task<IActionResult> GetBooksOfReadingList(int patronId, int listId)
+        public async Task<IActionResult> GetBooksOfReadingList(string patronId, int listId)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpDelete("{patronId}/reading-lists/{listId}/books/{ISBN}/remove")]
-        public async Task<IActionResult> RemoveBookFromReadingList(int patronId, int listId, string ISBN)
+        public async Task<IActionResult> RemoveBookFromReadingList(string patronId, int listId, string ISBN)
         {
             try
             {
@@ -131,7 +131,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpDelete("{patronId}/reading-lists/{listId}")]
-        public async Task<IActionResult> RemoveReadingList(int patronId, int listId)
+        public async Task<IActionResult> RemoveReadingList(string patronId, int listId)
         {
             try
             {

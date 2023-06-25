@@ -8,7 +8,7 @@ namespace Libro.Domain.Dtos
         public string ISBN { get; set; }
 
         [Required(ErrorMessage = "Patron ID is required")]
-        public int PatronID { get; set; }
+        public string PatronID { get; set; }
         
             //if (patronId <= 0)
             //    throw new ArgumentException("Invalid patron ID.", nameof(patronId));

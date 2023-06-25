@@ -20,7 +20,7 @@ namespace Libro.Infrastructure.Repositories
             _bookRepository = bookRepository;
             _patronRepository = patronRepository;
         }
-        public Checkout GetActiveTransaction(string ISBN, int patronId)
+        public Checkout GetActiveTransaction(string ISBN, string patronId)
         {
             return _transactions.
                 FirstOrDefault(t => t.BookId == ISBN && t.PatronId == patronId && !t.IsReturned);
@@ -29,7 +29,7 @@ namespace Libro.Infrastructure.Repositories
         {
             _transactions.Add(transaction);
         }
-        public async Task<IEnumerable<Checkout>> GetTransactionsByPatron(int patronId)
+        public async Task<IEnumerable<Checkout>> GetTransactionsByPatron(string patronId)
         {
             return _transactions.Where(t => t.PatronId == patronId).ToList();
         }

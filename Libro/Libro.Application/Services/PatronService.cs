@@ -1,4 +1,5 @@
-﻿using Libro.Domain.Dtos;
+﻿using AutoMapper;
+using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
@@ -9,49 +10,50 @@ namespace Libro.Application.Services
     public class PatronService : IPatronService
     {
         private readonly IPatronRepository _patronRepository;
+        private readonly IMapper _mapper;
 
-        public PatronService(IPatronRepository patronRepository)
+        public PatronService(IPatronRepository patronRepository, IMapper mapper)
         {
             _patronRepository = patronRepository;
+            _mapper = mapper;
         }
 
-        public async Task<Patron> GetPatronProfileAsync(int patronId)
+        public async Task<Patron> GetPatronAsync(string patronId)
         {
-            var patron = _patronRepository.GetPatronByIdAsync(patronId);
-            //if (patron == null)
-            //{
-            //    throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
-            //}
+            Patron patron = await _patronRepository.GetPatronByIdAsync(patronId);
             return patron;
         }
-
-        public async Task<Patron> UpdatePatronProfileAsync(Patron patron)
+        public async Task AddPatronAsync(string patronId, string name, string email)
         {
-            var existingPatron = _patronRepository.GetPatronByIdAsync(patron.PatronId);
+            Patron patron = new Patron()
+            {
+                PatronId = patronId,
+                Name = name,
+                Email = email,
+            };
+            await _patronRepository.AddPatronAsync(patron);
+        }
+        public async Task<Patron> UpdatePatronAsync(string patronId, PatronDto patronDto)
+        {
+            Patron existingPatron = await _patronRepository.GetPatronByIdAsync(patronId);
+            if (existingPatron == null)
+            {
+                throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
+            }
+            existingPatron.Name = patronDto.Name;
+            existingPatron.Email = patronDto.Email;
+
+            Patron patron = await _patronRepository.UpdatePatronAsync(existingPatron);
+            return patron;
+        }
+        public async Task<IEnumerable<Checkout>> GetBorrowingHistoryAsync(string patronId)
+        {
+            Patron patron = await _patronRepository.GetPatronByIdAsync(patronId);
             if (patron == null)
             {
-                throw new ResourceNotFoundException("Patron", "ID", patron.PatronId.ToString());
+                throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
             }
-            _patronRepository.UpdatePatronAsync(patron);
-
-            return patron;
-        }
-        public async Task<IEnumerable<BorrowingHistoryDTO>> GetBorrowingHistoryAsync(int patronId)
-        {
-            var transactions = _patronRepository.GetBorrowingHistoryAsync(patronId);
-
-            // should bereplaced with map
-            var borrowingHistory = transactions.Select(t => new BorrowingHistoryDTO
-            {
-                TransactionId = t.CheckoutId,
-                BookTitle = t.Book.Title,
-                BorrowDate = t.CheckoutDate,
-                DueDate = t.DueDate,
-                ReturnDate = t.IsReturned ? t.ReturnDate : null,
-                IsOverdue = !t.IsReturned && DateTime.Now > t.DueDate
-            });
-
-            return borrowingHistory;
+            return patron.CheckedoutBooks;
         }
     }
 }

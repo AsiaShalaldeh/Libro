@@ -2,7 +2,7 @@
 
 namespace Libro.Domain.Dtos
 {
-    public class RequestBookDto
+    public class BookRequest
     {
         public string ISBN { get; set; }
         public string Title { get; set; }

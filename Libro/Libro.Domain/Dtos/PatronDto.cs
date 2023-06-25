@@ -1,8 +1,9 @@
-﻿namespace Libro.Domain.Dtos
+﻿
+namespace Libro.Domain.Dtos
 {
     public class PatronDto
     {
-        public int PatronId { get; set; }
+        public string Email { get; set; }
         public string Name { get; set; }
     }
 }

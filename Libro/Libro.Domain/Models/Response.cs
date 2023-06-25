@@ -1,4 +1,4 @@
-﻿namespace Libro.WebAPI.Models
+﻿namespace Libro.Domain.Models
 {
     public class Response
     {

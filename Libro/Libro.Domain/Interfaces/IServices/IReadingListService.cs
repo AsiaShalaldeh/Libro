@@ -5,12 +5,12 @@ namespace Libro.Domain.Interfaces.IServices
 {
     public interface IReadingListService
     {
-        Task<ReadingList> GetReadingListByIdAsync(int listId, int patronId);
-        Task<IEnumerable<ReadingList>> GetReadingListsByPatronIdAsync(int patronId);
-        Task<ReadingListDto> CreateReadingListAsync(ReadingListDto readingListDto, int patronId);
-        Task<bool> RemoveReadingListAsync(int listId, int patronId);
-        Task<IEnumerable<BookDto>> GetBooksByReadingListAsync(int listId, int patronId);
-        Task<bool> AddBookToReadingListAsync(int listId, int patronId, string bookId);
-        Task<bool> RemoveBookFromReadingListAsync(int listId, int patronId, string bookId);
+        Task<ReadingList> GetReadingListByIdAsync(int listId, string patronId);
+        Task<IEnumerable<ReadingList>> GetReadingListsByPatronIdAsync(string patronId);
+        Task<ReadingListDto> CreateReadingListAsync(ReadingListDto readingListDto, string patronId);
+        Task<bool> RemoveReadingListAsync(int listId, string patronId);
+        Task<IEnumerable<BookDto>> GetBooksByReadingListAsync(int listId, string patronId);
+        Task<bool> AddBookToReadingListAsync(int listId, string patronId, string bookId);
+        Task<bool> RemoveBookFromReadingListAsync(int listId, string patronId, string bookId);
     }
 }

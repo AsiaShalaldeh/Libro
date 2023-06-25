@@ -12,9 +12,9 @@ namespace Libro.Infrastructure.Repositories
             // Add some fake reviews
             _reviews = new List<Review>
             {
-                new Review { ReviewId = 1, PatronId = 1, BookId = "1234567890", Rating = 4, Comment = "Great book!" },
-                new Review { ReviewId = 2, PatronId = 2, BookId = "1234567890", Rating = 5, Comment = "Highly recommended!" },
-                new Review { ReviewId = 3, PatronId = 3, BookId = "ISBN3", Rating = 3, Comment = "Average read." }
+                new Review { ReviewId = 1, PatronId = "1", BookId = "1234567890", Rating = 4, Comment = "Great book!" },
+                new Review { ReviewId = 2, PatronId = "2", BookId = "1234567890", Rating = 5, Comment = "Highly recommended!" },
+                new Review { ReviewId = 3, PatronId = "3", BookId = "ISBN3", Rating = 3, Comment = "Average read." }
             };
         }
         public Review GetReviewByIdAsync(string ISBN, int reviewId)

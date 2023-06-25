@@ -20,7 +20,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpGet("{patronId}")]
-        public IActionResult GetRecommendedBooks(int patronId)
+        public IActionResult GetRecommendedBooks(string patronId)
         {
             try
             {

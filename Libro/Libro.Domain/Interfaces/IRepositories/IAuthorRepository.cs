@@ -1,13 +1,14 @@
-﻿using Libro.Domain.Entities;
+﻿using Libro.Domain.Common;
+using Libro.Domain.Entities;
 
 namespace Libro.Domain.Interfaces.IRepositories
 {
     public interface IAuthorRepository
     {
-        IEnumerable<Author> GetAllAuthorsAsync(); // Task
-        Author GetAuthorByIdAsync(int authorId);
-        int AddAuthorAsync(Author author);
-        bool UpdateAuthorAsync(Author author);
-        bool DeleteAuthorAsync(int authorId);
+        Task<PaginatedResult<Author>> GetAllAuthorsAsync(int pageNumber, int pageSize);
+        Task<Author> GetAuthorByIdAsync(int authorId);
+        Task<Author> AddAuthorAsync(Author author);
+        Task UpdateAuthorAsync(Author author);
+        Task DeleteAuthorAsync(Author author);
     }
 }

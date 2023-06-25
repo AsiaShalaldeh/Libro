@@ -24,7 +24,7 @@ namespace Libro.Application.Services
         }
         public async Task<Review> GetReviewByIdAsync(string ISBN, int reviewId)
         {
-            Book book = await _bookRepository.GetByIdAsync(ISBN);
+            Book book = await _bookRepository.GetBookByISBNAsync(ISBN);
             if (book == null)
             {
                 throw new ResourceNotFoundException("Book", "ISBN", ISBN);
@@ -53,7 +53,7 @@ namespace Libro.Application.Services
 
         public async Task<bool> DeleteReviewAsync(string ISBN, int reviewId)
         {
-            Book book = await _bookRepository.GetByIdAsync(ISBN);
+            Book book = await _bookRepository.GetBookByISBNAsync(ISBN);
             if (book == null)
             {
                 throw new ResourceNotFoundException("Book", "ISBN", ISBN);
@@ -62,7 +62,7 @@ namespace Libro.Application.Services
         }
         public async Task<Review> AddReviewAsync(ReviewDto reviewDto)
         {
-            var book = await _bookRepository.GetByIdAsync(reviewDto.BookId);
+            var book = await _bookRepository.GetBookByISBNAsync(reviewDto.BookId);
             if (book == null)
             {
                 throw new ResourceNotFoundException("Book", "ID", reviewDto.BookId);
@@ -81,7 +81,7 @@ namespace Libro.Application.Services
 
         public async Task<IEnumerable<Review>> GetReviewsByBookIdAsync(string bookId)
         {
-            var book = await _bookRepository.GetByIdAsync(bookId);
+            var book = await _bookRepository.GetBookByISBNAsync(bookId);
             if (book == null)
             {
                 throw new ResourceNotFoundException("Book", "ID", bookId);
@@ -93,7 +93,7 @@ namespace Libro.Application.Services
         }
         public async Task<double> GetAverageRatingByBookIdAsync(string bookId)
         {
-            var book = await _bookRepository.GetByIdAsync(bookId);
+            var book = await _bookRepository.GetBookByISBNAsync(bookId);
             if (book == null)
             {
                 throw new ResourceNotFoundException("Book", "ID", bookId);

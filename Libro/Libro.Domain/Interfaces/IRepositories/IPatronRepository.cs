@@ -4,8 +4,8 @@ namespace Libro.Domain.Interfaces.IRepositories
 {
     public interface IPatronRepository
     {
-        Patron GetPatronByIdAsync(int patronId); // Will be replaced by Task<>
-        Patron UpdatePatronAsync(Patron patron);
-        IEnumerable<Checkout> GetBorrowingHistoryAsync(int patronId);
+        Task<Patron> GetPatronByIdAsync(string patronId);
+        Task AddPatronAsync(Patron patron);
+        Task<Patron> UpdatePatronAsync(Patron patron);
     }
 }

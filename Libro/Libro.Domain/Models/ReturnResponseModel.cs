@@ -3,7 +3,7 @@
     public class ReturnResponseModel
     {
         public string BookId { get; set; }
-        public int PatronId { get; set; }
+        public string PatronId { get; set; }
         public DateTime CheckoutDate { get; set; }
         public DateTime? DueDate { get; set; }
         public DateTime ReturnDate { get; set; }

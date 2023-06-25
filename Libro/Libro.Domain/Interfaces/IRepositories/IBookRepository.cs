@@ -6,13 +6,13 @@ namespace Libro.Domain.Interfaces.IRepositories
 {
     public interface IBookRepository
     {
-        Task<Book> GetByIdAsync(string ISBN);
-        Task<PaginatedResult<Book>> SearchAsync(string title, string author, string genre, 
+        Task<Book> GetBookByISBNAsync(string ISBN);
+        Task<PaginatedResult<Book>> SearchBooksAsync(string title, string author, string genre, 
             int pageNumber, int pageSize);
-        Task<PaginatedResult<Book>> GetAllAsync(int pageNumber, int pageSize);
-        Task AddAsync(Book book);
-        Task UpdateAsync(Book book);
-        Task DeleteAsync(string bookId);
+        Task<PaginatedResult<Book>> GetAllBooksAsync(int pageNumber, int pageSize);
+        Task AddBookAsync(Book book, Author author);
+        Task UpdateBookAsync(Book book);
+        Task DeleteBookAsync(Book book);
         Task<IEnumerable<Book>> GetBooksByGenres(IEnumerable<Genre> genres);
     }
 }

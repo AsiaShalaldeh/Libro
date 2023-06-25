@@ -1,57 +1,49 @@
-﻿using Libro.Domain.Entities;
+﻿using Libro.Domain.Common;
+using Libro.Domain.Entities;
 using Libro.Domain.Interfaces.IRepositories;
+using Libro.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Libro.Infrastructure.Repositories
 {
     public class AuthorRepository : IAuthorRepository
     {
-        private readonly IList<Author> _authors;
+        private readonly LibroDbContext _context;
 
-        public AuthorRepository()
+        public AuthorRepository(LibroDbContext context)
         {
-            _authors = new List<Author>
-            {
-                new Author { AuthorId = 1, Name = "John Doe" },
-                new Author { AuthorId = 2, Name = "Jane Smith" },
-                new Author { AuthorId = 3, Name = "Michael Johnson" }
-            };
+            _context = context;
         }
 
-        public IEnumerable<Author> GetAllAuthorsAsync()
+        public async Task<PaginatedResult<Author>> GetAllAuthorsAsync(int pageNumber, int pageSize)
         {
-            return _authors;
+            var query = _context.Authors.AsQueryable();
+
+            return await PaginatedResult<Author>.CreateAsync(query, pageNumber, pageSize);
         }
 
-        public Author GetAuthorByIdAsync(int authorId)
+        public async Task<Author> GetAuthorByIdAsync(int authorId)
         {
-            return _authors.FirstOrDefault(a => a.AuthorId == authorId);
+            return await _context.Authors.FindAsync(authorId);
         }
 
-        public int AddAuthorAsync(Author author)
+        public async Task<Author> AddAuthorAsync(Author author)
         {
-            author.AuthorId = _authors.Any() ? _authors.Max(a => a.AuthorId) + 1 : 1;
-            _authors.Add(author);
-            return author.AuthorId;
+             _context.Authors.Add(author);
+            await _context.SaveChangesAsync();
+            return author;
         }
 
-        public bool UpdateAuthorAsync(Author author)
+        public async Task UpdateAuthorAsync(Author author)
         {
-            var existingAuthor = _authors.FirstOrDefault(a => a.AuthorId == author.AuthorId);
-            if (existingAuthor == null)
-                return false;
-
-            existingAuthor.Name = author.Name;
-            return true;
+            _context.Authors.Update(author);
+            await _context.SaveChangesAsync();
         }
 
-        public bool DeleteAuthorAsync(int authorId)
+        public async Task DeleteAuthorAsync(Author author)
         {
-            var author = _authors.FirstOrDefault(a => a.AuthorId == authorId);
-            if (author == null)
-                return false;
-
-            _authors.Remove(author);
-            return true;
+            _context.Authors.Remove(author);
+            await _context.SaveChangesAsync();
         }
     }
 

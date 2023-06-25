@@ -10,11 +10,11 @@ namespace Libro.Infrastructure.Extensions
         public static void Seed(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Patron>().HasData(
-                new Patron { PatronId = 1, Name = "John Doe", Email = "johndoe@gmail.com" },
-                new Patron { PatronId = 2, Name = "Jane Smith", Email = "janesmith@gmail.com" },
-                new Patron { PatronId = 3, Name = "Michael Johnson", Email = "michaeljohnson@gmail.com" },
-                new Patron { PatronId = 4, Name = "Emily Davis", Email = "emilydavis@gmail.com" },
-                new Patron { PatronId = 5, Name = "Daniel Wilson", Email = "danielwilson@gmail.com" }
+                new Patron { PatronId = "1", Name = "John Doe", Email = "johndoe@gmail.com" },
+                new Patron { PatronId = "2", Name = "Jane Smith", Email = "janesmith@gmail.com" },
+                new Patron { PatronId = "3", Name = "Michael Johnson", Email = "michaeljohnson@gmail.com" },
+                new Patron { PatronId = "4", Name = "Emily Davis", Email = "emilydavis@gmail.com" },
+                new Patron { PatronId = "5", Name = "Daniel Wilson", Email = "danielwilson@gmail.com" }
             );
             modelBuilder.Entity<Author>().HasData(
                 new Author { AuthorId = 1, Name = "John Green" },
@@ -75,7 +75,7 @@ namespace Libro.Infrastructure.Extensions
                 {
                     CheckoutId = "1",
                     BookId = "9780143127550",
-                    PatronId = 1,
+                    PatronId = "1",
                     CheckoutDate = new DateTime(2023, 6, 1),
                     DueDate = new DateTime(2023, 6, 15),
                     IsReturned = false,
@@ -86,7 +86,7 @@ namespace Libro.Infrastructure.Extensions
                 {
                     CheckoutId = "2",
                     BookId = "9781451673319",
-                    PatronId = 2,
+                    PatronId = "2",
                     CheckoutDate = new DateTime(2023, 6, 5),
                     DueDate = new DateTime(2023, 6, 12),
                     IsReturned = true,
@@ -97,7 +97,7 @@ namespace Libro.Infrastructure.Extensions
                 {
                     CheckoutId = "3",
                     BookId = "9780061122415",
-                    PatronId = 3,
+                    PatronId = "3",
                     CheckoutDate = new DateTime(2023, 6, 10),
                     DueDate = new DateTime(2023, 7, 1),
                     IsReturned = false,
@@ -108,7 +108,7 @@ namespace Libro.Infrastructure.Extensions
                 {
                     CheckoutId = "4",
                     BookId = "9780743273565",
-                    PatronId = 4,
+                    PatronId = "4",
                     CheckoutDate = new DateTime(2023, 6, 2),
                     DueDate = new DateTime(2023, 6, 16),
                     IsReturned = true,
@@ -119,7 +119,7 @@ namespace Libro.Infrastructure.Extensions
                 {
                     CheckoutId = "5",
                     BookId = "9780545010221",
-                    PatronId = 5,
+                    PatronId = "5",
                     CheckoutDate = new DateTime(2023, 6, 8),
                     DueDate = new DateTime(2023, 6, 15),
                     IsReturned = false,
@@ -128,53 +128,53 @@ namespace Libro.Infrastructure.Extensions
                 }
             );
             modelBuilder.Entity<Librarian>().HasData(
-                new Librarian { LibrarianId = 1, Name = "John Smith" },
-                new Librarian { LibrarianId = 2, Name = "Emily Johnson" },
-                new Librarian { LibrarianId = 3, Name = "Michael Davis" },
-                new Librarian { LibrarianId = 4, Name = "Sarah Wilson" },
-                new Librarian { LibrarianId = 5, Name = "David Thompson" }
+                new Librarian { LibrarianId = "1", Name = "John Smith" },
+                new Librarian { LibrarianId = "2", Name = "Emily Johnson" },
+                new Librarian { LibrarianId = "3", Name = "Michael Davis" },
+                new Librarian { LibrarianId = "4", Name = "Sarah Wilson" },
+                new Librarian { LibrarianId = "5", Name = "David Thompson" }
             );
             modelBuilder.Entity<ReadingList>().HasData(
-                new ReadingList { ReadingListId = 1, Name = "Favorites", PatronId = 1 },
-                new ReadingList { ReadingListId = 2, Name = "To Read", PatronId = 1 },
-                new ReadingList { ReadingListId = 3, Name = "Classics", PatronId = 2 },
-                new ReadingList { ReadingListId = 4, Name = "Mystery", PatronId = 3 },
-                new ReadingList { ReadingListId = 5, Name = "Sci-Fi", PatronId = 4 }
+                new ReadingList { ReadingListId = 1, Name = "Favorites", PatronId = "1" },
+                new ReadingList { ReadingListId = 2, Name = "To Read", PatronId = "1" },
+                new ReadingList { ReadingListId = 3, Name = "Classics", PatronId = "2" },
+                new ReadingList { ReadingListId = 4, Name = "Mystery", PatronId = "3" },
+                new ReadingList { ReadingListId = 5, Name = "Sci-Fi", PatronId = "4" }
             );
             modelBuilder.Entity<Reservation>().HasData(
                 new Reservation
                 {
                     ReservationId = "1",
                     BookId = "9780545010221",
-                    PatronId = 1,
+                    PatronId = "1",
                     ReservationDate = new DateTime(2023, 6, 15)
                 },
                 new Reservation
                 {
                     ReservationId = "2",
                     BookId = "9780743273565",
-                    PatronId = 2,
+                    PatronId = "2",
                     ReservationDate = new DateTime(2023, 6, 16)
                 },
                 new Reservation
                 {
                     ReservationId = "3",
                     BookId = "9780061122415",
-                    PatronId = 3,
+                    PatronId = "3",
                     ReservationDate = new DateTime(2023, 6, 17)
                 },
                 new Reservation
                 {
                     ReservationId = "4",
                     BookId = "9781451673319",
-                    PatronId = 4,
+                    PatronId = "4",
                     ReservationDate = new DateTime(2023, 6, 18)
                 },
                 new Reservation
                 {
                     ReservationId = "5",
                     BookId = "9780545010221",
-                    PatronId = 5,
+                    PatronId = "5",
                     ReservationDate = new DateTime(2023, 6, 19)
                 }
             );
@@ -182,7 +182,7 @@ namespace Libro.Infrastructure.Extensions
                 new Review
                 {
                     ReviewId = 1,
-                    PatronId = 1,
+                    PatronId = "1",
                     BookId = "9780545010221",
                     Rating = 4,
                     Comment = "Great book!"
@@ -190,7 +190,7 @@ namespace Libro.Infrastructure.Extensions
                 new Review
                 {
                     ReviewId = 2,
-                    PatronId = 2,
+                    PatronId = "2",
                     BookId = "9780545010221",
                     Rating = 3,
                     Comment = "Interesting read."
@@ -198,7 +198,7 @@ namespace Libro.Infrastructure.Extensions
                 new Review
                 {
                     ReviewId = 3,
-                    PatronId = 3,
+                    PatronId = "3",
                     BookId = "9781451673319",
                     Rating = 5,
                     Comment = "Highly recommended!"
@@ -206,7 +206,7 @@ namespace Libro.Infrastructure.Extensions
                 new Review
                 {
                     ReviewId = 4,
-                    PatronId = 4,
+                    PatronId = "4",
                     BookId = "9781451673319",
                     Rating = 2,
                     Comment = "Disappointing."
@@ -214,26 +214,26 @@ namespace Libro.Infrastructure.Extensions
                 new Review
                 {
                     ReviewId = 5,
-                    PatronId = 5,
+                    PatronId = "1",
                     BookId = "9780743273565",
                     Rating = 5,
                     Comment = "Loved it!"
                 }
             );
-                IdentityUser user = new IdentityUser()
-                {
-                    Id = "b74ddd14-6340-4840-95c2-db12554843e5",
-                    UserName = "Admin",
-                    Email = "admin@gmail.com"
-                };
-                PasswordHasher<IdentityUser> passwordHasher = new PasswordHasher<IdentityUser>();
-                passwordHasher.HashPassword(user, "Admin*123");
+            IdentityUser user = new IdentityUser()
+            {
+                Id = "b74ddd14-6340-4840-95c2-db12554843e5",
+                UserName = "Admin",
+                Email = "admin@gmail.com"
+            };
+            PasswordHasher<IdentityUser> passwordHasher = new PasswordHasher<IdentityUser>();
+            passwordHasher.HashPassword(user, "Admin*123");
 
-                modelBuilder.Entity<IdentityUser>().HasData(user);
+            modelBuilder.Entity<IdentityUser>().HasData(user);
 
-                //modelBuilder.Entity<IdentityUserRole<string>>().HasData(
-                //new IdentityUserRole<string> { UserId = "b74ddd14-6340-4840-95c2-db12554843e5", RoleId = "12804f00-c9f8-4d2d-9e5f-eb8aa485368f" }
-                //);
+            //modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+            //new IdentityUserRole<string> { UserId = "b74ddd14-6340-4840-95c2-db12554843e5", RoleId = "12804f00-c9f8-4d2d-9e5f-eb8aa485368f" }
+            //);
         }
     }
 }

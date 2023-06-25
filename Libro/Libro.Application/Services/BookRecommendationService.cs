@@ -19,9 +19,9 @@ namespace Libro.Application.Services
             _transactionService = transactionService;
         }
 
-        public async Task<IEnumerable<Book>> GetRecommendedBooks(int patronId)
+        public async Task<IEnumerable<Book>> GetRecommendedBooks(string patronId)
         {
-            Patron patron = await _patronService.GetPatronProfileAsync(patronId);
+            Patron patron = await _patronService.GetPatronAsync(patronId);
 
             if (patron != null)
             {

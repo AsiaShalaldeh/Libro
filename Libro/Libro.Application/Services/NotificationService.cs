@@ -11,7 +11,7 @@ namespace Libro.Application.Services
         private readonly IBookService _bookService;
         private readonly IPatronService _patronService;
         private readonly ITransactionService _transactionService;
-        Dictionary<string, Queue<int>> booksQueues;
+        Dictionary<string, Queue<string>> booksQueues;
 
         public EmailNotificationService(IEmailSender emailSender, IBookService bookService,
             IPatronService patronService, ITransactionService transactionService)
@@ -20,7 +20,7 @@ namespace Libro.Application.Services
             _bookService = bookService;
             _patronService = patronService;
             _transactionService = transactionService;
-            booksQueues = new Dictionary<string, Queue<int>>();
+            booksQueues = new Dictionary<string, Queue<string>>();
         }
         public async Task<bool> SendOverdueNotification()
         {
@@ -50,11 +50,11 @@ namespace Libro.Application.Services
             }
 
         }
-        public async Task SendReservationNotification(string recipientEmail, string bookTitle, int recipientId)
+        public async Task SendReservationNotification(string recipientEmail, string bookTitle, string recipientId)
         {
             // check for patron with that Email
             // check for transaion done with this info
-            Patron patron = await _patronService.GetPatronProfileAsync(recipientId);
+            Patron patron = await _patronService.GetPatronAsync(recipientId);
             var subject = "Book Reservation Notification";
             var content = $"Dear {patron.Name},\n\nYou have successfully reserved the book with " +
                 $"title \"{bookTitle}\". Please pick up the book from the library within " +
@@ -65,11 +65,11 @@ namespace Libro.Application.Services
             await _emailSender.SendEmailAsync(message);
         }
 
-        public async Task AddPatronToNotificationQueue(int patronId, string bookId)
+        public async Task AddPatronToNotificationQueue(string patronId, string bookId)
         {
             if (!booksQueues.ContainsKey(bookId))
             {
-                booksQueues[bookId] = new Queue<int>();
+                booksQueues[bookId] = new Queue<string>();
             }
 
             booksQueues[bookId].Enqueue(patronId);
@@ -83,11 +83,11 @@ namespace Libro.Application.Services
                 if (queue.Count > 0)
                 {
                     var patronId = queue.Peek();
-                    var patron = await _patronService.GetPatronProfileAsync(patronId);
+                    var patron = await _patronService.GetPatronAsync(patronId);
 
                     if (patron != null)
                     {
-                        var book = await _bookService.GetBookByIdAsync(bookId);
+                        var book = await _bookService.GetBookByISBNAsync(bookId);
 
                         if (book != null)
                         {
@@ -116,7 +116,7 @@ namespace Libro.Application.Services
             }
         }
 
-        public async Task<Dictionary<string, Queue<int>>> GetNotificationQueue()
+        public async Task<Dictionary<string, Queue<string>>> GetNotificationQueue()
         {
             return booksQueues;
         }

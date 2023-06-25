@@ -36,8 +36,8 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                Book book = await _bookService.GetBookByIdAsync(bookReservation.ISBN); // GetBookByISBN
-                Patron patron = await _patronService.GetPatronProfileAsync(bookReservation.PatronID); // GetPatronById
+                Book book = await _bookService.GetBookByISBNAsync(bookReservation.ISBN); // GetBookByISBN
+                Patron patron = await _patronService.GetPatronAsync(bookReservation.PatronID); // GetPatronById
 
                 // check book and patron
                 if (book.IsAvailable)
@@ -73,8 +73,8 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                var book = await _bookService.GetBookByIdAsync(bookCheckout.ISBN);
-                var patron = await _patronService.GetPatronProfileAsync(bookCheckout.PatronID);
+                var book = await _bookService.GetBookByISBNAsync(bookCheckout.ISBN);
+                var patron = await _patronService.GetPatronAsync(bookCheckout.PatronID);
                 if (book == null)
                 {
                     throw new ResourceNotFoundException("Book", "ISBN", bookCheckout.ISBN);
@@ -84,7 +84,7 @@ namespace Libro.WebAPI.Controllers
                 {
                     return BadRequest("The book is currently not available for checkout");
                 }
-                Dictionary<string, Queue<int>> queues = await _notificationService.GetNotificationQueue();
+                Dictionary<string, Queue<string>> queues = await _notificationService.GetNotificationQueue();
                 if (queues.Count > 0 && queues.ContainsKey(book.ISBN))
                 {
                     var queue = queues[book.ISBN];
@@ -116,8 +116,8 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                var book = await _bookService.GetBookByIdAsync(bookReturn.ISBN);
-                var patron = await _patronService.GetPatronProfileAsync(bookReturn.PatronID);
+                var book = await _bookService.GetBookByISBNAsync(bookReturn.ISBN);
+                var patron = await _patronService.GetPatronAsync(bookReturn.PatronID);
                 if (book == null)
                 {
                     throw new ResourceNotFoundException("Book", "ISBN", bookReturn.ISBN);

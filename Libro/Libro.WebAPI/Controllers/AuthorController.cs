@@ -1,4 +1,7 @@
-﻿using Libro.Domain.Dtos;
+﻿using AutoMapper;
+using FluentValidation;
+using Libro.Application.Validators;
+using Libro.Domain.Dtos;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
@@ -9,23 +12,27 @@ namespace Libro.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/authors")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class AuthorController : Controller
     {
         private readonly IAuthorService _authorService;
+        private readonly IMapper _mapper;
 
-        public AuthorController(IAuthorService authorService)
+        public AuthorController(IAuthorService authorService, IMapper mapper)
         {
             _authorService = authorService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Authorize(Roles = "Librarian, Administrator")]
-        public async Task<IActionResult> GetAllAuthors()
+        public async Task<IActionResult> GetAllAuthors([FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
         {
             try
             {
-                var authors = await _authorService.GetAllAuthorsAsync();
-                return Ok(authors);
+                var response = await _authorService.GetAllAuthorsAsync(pageNumber, pageSize);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -42,8 +49,8 @@ namespace Libro.WebAPI.Controllers
                 var author = await _authorService.GetAuthorByIdAsync(authorId);
                 if (author == null)
                     throw new ResourceNotFoundException("Author", "ID", authorId.ToString());
-
-                return Ok(author);
+                var authorDto = _mapper.Map<AuthorDto>(author);
+                return Ok(authorDto);
             }
             catch (ResourceNotFoundException ex)
             {
@@ -57,19 +64,23 @@ namespace Libro.WebAPI.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Librarian, Administrator")]
-        public async Task<IActionResult> AddAuthor(AuthorDto authorDto)
+        public async Task<IActionResult> AddAuthor([FromBody] AuthorDto authorDto)
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+                AuthorDtoValidator validator = new AuthorDtoValidator();
+                validator.ValidateAndThrow(authorDto);
 
-                var authorId = await _authorService.AddAuthorAsync(authorDto);
-                return CreatedAtAction(nameof(GetAuthorById), new { authorId }, authorDto);
+                var author = await _authorService.AddAuthorAsync(authorDto);
+                return CreatedAtAction(nameof(GetAuthorById), new { author.AuthorId }, author);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -79,17 +90,14 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                if (authorId != authorDto.AuthorId)
-                    return BadRequest("Author ID mismatch.");
-
-                var updated = await _authorService.UpdateAuthorAsync(authorDto);
-                if (!updated)
-                    throw new ResourceNotFoundException("Author", "ID", authorId.ToString());
-
+                AuthorDtoValidator validator = new AuthorDtoValidator();
+                validator.ValidateAndThrow(authorDto);
+                await _authorService.UpdateAuthorAsync(authorId, authorDto);
                 return NoContent();
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (ResourceNotFoundException ex)
             {
@@ -97,7 +105,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message.ToString());
             }
         }
 
@@ -107,10 +115,7 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                var deleted = await _authorService.DeleteAuthorAsync(authorId);
-                if (!deleted)
-                    throw new ResourceNotFoundException("Author", "ID", authorId.ToString());
-
+                await _authorService.DeleteAuthorAsync(authorId);
                 return NoContent();
             }
             catch (ResourceNotFoundException ex)

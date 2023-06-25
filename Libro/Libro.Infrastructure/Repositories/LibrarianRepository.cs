@@ -11,8 +11,8 @@ namespace Libro.Infrastructure.Repositories
         {
             _librarians = new List<Librarian>
             {
-                new Librarian { LibrarianId = 1, Name = "John Doe" },
-                new Librarian { LibrarianId = 2, Name = "Jane Smith" }
+                new Librarian { LibrarianId = "1", Name = "John Doe" },
+                new Librarian { LibrarianId = "2", Name = "Jane Smith" }
             };
         }
 
@@ -21,7 +21,7 @@ namespace Libro.Infrastructure.Repositories
             return _librarians;
         }
 
-        public Librarian GetLibrarianByIdAsync(int id)
+        public Librarian GetLibrarianByIdAsync(string id)
         {
             var librarian = _librarians.Where(l => l.LibrarianId == id).FirstOrDefault();
             return librarian;

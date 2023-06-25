@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Libro.Domain.Entities
@@ -6,7 +7,8 @@ namespace Libro.Domain.Entities
     public class Librarian
     {
         [Key]
-        public int LibrarianId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string LibrarianId { get; set; }
         public string Name { get; set; }
     }
 }

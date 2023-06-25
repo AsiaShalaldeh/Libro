@@ -34,7 +34,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetLibrarianById(int id)
+        public IActionResult GetLibrarianById(string id)
         {
             try
             {
@@ -67,11 +67,11 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateLibrarian(int id, [FromBody] Librarian librarian)
+        public IActionResult UpdateLibrarian(string id, [FromBody] Librarian librarian)
         {
             try
             {
-                if (id != librarian.LibrarianId)
+                if (!id.Equals(librarian.LibrarianId))
                 {
                     return BadRequest("Librarian ID Mismatch");
                 }
@@ -89,7 +89,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteLibrarian(int id)
+        public IActionResult DeleteLibrarian(string id)
         {
             try
             {

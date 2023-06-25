@@ -11,51 +11,58 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Libro.Domain.Exceptions;
+using Libro.Domain.Models;
 
 namespace Libro.Application.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly IUserRepository _userRepository;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
 
-        public AuthenticationService(IUserRepository userRepository, 
-            IConfiguration configuration, UserManager<IdentityUser> userManager,
+        public AuthenticationService(IConfiguration configuration, UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager)
         {
-            _userRepository = userRepository;
             _configuration = configuration;
             _userManager = userManager;
             _roleManager = roleManager;
         }
 
-        public async Task<bool> Register(string username, string email, string password)
+        public async Task<Response> Register(string username, string email, string password)
         {
-            //var userExists = await _userManager.FindByNameAsync(username);
-            //if (userExists != null)
-            //    throw new Exception(); // new Response { Status = "Error", Message = "User already exists!" }
+            var userExists = await _userManager.FindByNameAsync(username);
+            if (userExists != null)
+                return new Response { Status = "Error", Message = "User already exists! " +
+                    "The UserName Should Be Unique" };
 
             IdentityUser user = new()
             {
                 Email = email,
-                SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = username
             };
 
-            // Assign the default role Patron to the user
             if (!await _roleManager.RoleExistsAsync(UserRole.Patron.ToString()))
             {
                 await _roleManager.CreateAsync(new IdentityRole(UserRole.Patron.ToString()));
             }
-            await _userManager.AddToRoleAsync(user, UserRole.Patron.ToString());
 
             var result = await _userManager.CreateAsync(user, password);
-            if (!result.Succeeded)
-                return false;
+            var role = await _roleManager.FindByNameAsync("Patron");
 
-            return true; 
+            if (role != null && result.Succeeded)
+            {
+                // Assign the default role Patron to the user
+                //await _userManager.AddToRoleAsync(user, role.Name);
+                return new Response { Status = "Success", Message = "User created successfully!" };
+            }
+
+            return new Response
+            {
+                Status = "Error",
+                Message = "User creation failed! Please check user " +
+                    "details and try again."
+            };
         }
 
         public async Task<string> Login(string username, string password)
@@ -63,7 +70,14 @@ namespace Libro.Application.Services
             var user = await _userManager.FindByNameAsync(username);
             if (user != null && await _userManager.CheckPasswordAsync(user, password))
             {
+                await _userManager.RemoveAuthenticationTokenAsync(user, "Libro", "RefreshToken");
                 var token = await GenerateAuthToken(user);
+
+                //var newRefreshToken = await _userManager.GenerateUserTokenAsync(user, "Libro", "RefreshToken");
+
+                // Store the token in the UserTokens table
+                await _userManager.SetAuthenticationTokenAsync(user, "Libro", "RefreshToken", token);
+
                 return token;
             }
 
@@ -78,20 +92,28 @@ namespace Libro.Application.Services
             var issuer = _configuration["Jwt:Issuer"];
             var audience = _configuration["Jwt:Audience"];
 
-            var userRole = await _userManager.GetRolesAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
 
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Role, userRole.FirstOrDefault()),
+                new Claim(ClaimTypes.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+            foreach (var claim in claims)
+            {
+                var result = await _userManager.AddClaimAsync(user, claim);
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddDays(5),
                 Issuer = issuer,
                 Audience = audience,
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
@@ -99,10 +121,12 @@ namespace Libro.Application.Services
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            return tokenString;
         }
 
-        public async Task<bool> AssignRole(string userId, string role)
+        public async Task<Response> AssignRole(string userId, string role)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
@@ -119,10 +143,10 @@ namespace Libro.Application.Services
             var result = await _userManager.AddToRoleAsync(user, role);
             if (!result.Succeeded)
             {
-                return false;
+                return new Response { Status = "Error", Message = "Role assignment " + result.ToString() };
             }
 
-            return true;
+            return new Response { Status = "Success", Message = "Role assigned successfully" };
         }
     }
 }

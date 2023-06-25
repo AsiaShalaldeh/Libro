@@ -19,7 +19,7 @@ namespace Libro.Application.Services
             return _librarianRepository.GetAllLibrariansAsync();
         }
 
-        public async Task<Librarian> GetLibrarianByIdAsync(int librarianId)
+        public async Task<Librarian> GetLibrarianByIdAsync(string librarianId)
         {
             var librarian = _librarianRepository.GetLibrarianByIdAsync(librarianId);
             if (librarian == null)
@@ -45,7 +45,7 @@ namespace Libro.Application.Services
             _librarianRepository.UpdateLibrarianAsync(librarian);
         }
 
-        public void DeleteLibrarianAsync(int librarianId)
+        public void DeleteLibrarianAsync(string librarianId)
         {
             var existingLibrarian = _librarianRepository.GetLibrarianByIdAsync(librarianId);
             if (existingLibrarian == null)

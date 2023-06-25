@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using Libro.Application.Validators;
 using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
@@ -11,6 +13,7 @@ namespace Libro.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/patrons")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class PatronController : Controller
     {
         private readonly IPatronService _patronService;
@@ -23,11 +26,15 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpGet("{patronId}")]
-        public async Task<IActionResult> GetPatronProfile(int patronId)
+        public async Task<IActionResult> GetPatronProfile(string patronId)
         {
             try
             {
-                var patronProfile = await _patronService.GetPatronProfileAsync(patronId);
+                var patronProfile = await _patronService.GetPatronAsync(patronId);
+                if (patronProfile == null)
+                {
+                    throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
+                }
                 return Ok(patronProfile);
             }
             catch (ResourceNotFoundException ex)
@@ -36,23 +43,24 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
         [HttpPut("{patronId}")]
-        [Authorize(Roles = "Librarian,Administrator")]
-        public async Task<IActionResult> UpdatePatronProfile(int patronId, [FromBody] PatronDto patronDto)
+        [Authorize(Roles = "Librarian, Administrator")]
+        public async Task<IActionResult> UpdatePatronProfile(string patronId, [FromBody] PatronDto patronDto)
         {
             try
             {
-                if (patronId != patronDto.PatronId)
-                {
-                    return BadRequest("Patron ID mismatch.");
-                }
-                Patron patron = _mapper.Map<Patron>(patronDto);
-                var updatedPatron = await _patronService.UpdatePatronProfileAsync(patron);
+                PatronDtoValidator validator = new PatronDtoValidator();
+                validator.ValidateAndThrow(patronDto);
+                var updatedPatron = await _patronService.UpdatePatronAsync(patronId, patronDto);
                 return Ok(updatedPatron);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (ResourceNotFoundException ex)
             {
@@ -60,12 +68,12 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
         [HttpGet("{patronId}/borrowing-history")]
-        public async Task<IActionResult> GetBorrowingHistory(int patronId)
+        public async Task<IActionResult> GetBorrowingHistory(string patronId)
         {
             try
             {
@@ -78,7 +86,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 

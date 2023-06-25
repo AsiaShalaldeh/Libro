@@ -1,7 +1,7 @@
-﻿using Libro.Domain.Dtos;
+﻿using Libro.Domain.Models;
+using Libro.Domain.Dtos;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
-using Libro.WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -9,7 +9,7 @@ using System.Net;
 namespace Libro.WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/users/auth")]
+    [Route("api/users")]
     public class UserController : Controller
     {
         private readonly IAuthenticationService _authenticationService;
@@ -24,18 +24,16 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                bool isRegistered = await _authenticationService.Register(registerModel.Username,
+                Response response = await _authenticationService.Register(registerModel.Username,
                     registerModel.Email, registerModel.Password);
 
-                if (isRegistered)
+                if (response.Status.Equals("Success"))
                 {
-                    return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+                    return Ok(response);
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, new Response 
-                    { Status = "Error", Message = "User creation failed! Please check user " +
-                    "details and try again." });
+                    return BadRequest(response);
                 }
             }
             catch (Exception ex)
@@ -64,17 +62,17 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpPost("assign-role")]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Administrator")]
         public async Task<IActionResult> AssignRoleToUser(UserRoleDto request)
         {
             try
             {
-                var result = await _authenticationService.AssignRole(request.UserId, request.Role);
-                if (!result)
+                var response = await _authenticationService.AssignRole(request.UserId, request.Role);
+                if (response.Status.Equals("Error"))
                 {
-                    throw new Exception("Role assignment failed");
+                    return BadRequest(response);
                 }
-                return Ok("Role assigned successfully");
+                return Ok(response);
             }
             catch (ResourceNotFoundException ex)
             {

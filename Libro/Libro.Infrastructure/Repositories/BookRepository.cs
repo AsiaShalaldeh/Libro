@@ -2,78 +2,28 @@
 using Libro.Domain.Entities;
 using Libro.Domain.Enums;
 using Libro.Domain.Interfaces.IRepositories;
+using Libro.Infrastructure.Data;
 
 namespace Libro.Infrastructure.Repositories
 {
     public class BookRepository : IBookRepository
     {
-        private readonly List<Book> _books;
-        private readonly List<Checkout> _transactions;
-        private readonly List<Patron> _patrons;
-        private readonly List<Librarian> _librarians;
-
-
-        public BookRepository()
+        private readonly LibroDbContext _context;
+        public BookRepository(LibroDbContext context)
         {
-            _books = new List<Book>
-        {
-            new Book
-            {
-                ISBN = "1234567890",
-                Title = "Book1",
-                PublicationDate = new DateTime(2022, 1, 1),
-                Genre = Genre.ScienceFiction,
-                IsAvailable = true,
-                Author = new Author {AuthorId = 1 ,Name = "John Doe" }
-            },
-            new Book
-            {
-                ISBN = "0987654321",
-                Title = "Book2",
-                PublicationDate = new DateTime(2021, 5, 15),
-                Genre = Genre.Mystery,
-                IsAvailable = true,
-                Author = new Author {AuthorId = 2 ,Name = "Tom Cruise" }
-            },
-        };
-            _transactions = new List<Checkout>();
-            _patrons = new List<Patron>
-            {
-                new Patron
-                {
-                    PatronId = 1,
-                    Name = "John Doe"
-                },
-                new Patron
-                {
-                    PatronId = 2,
-                    Name = "Jane Smith"
-                },
-            };
-            _librarians = new List<Librarian>
-            {
-                new Librarian
-                {
-                    LibrarianId = 1,
-                    Name = "Emily Johnson"
-                },
-                new Librarian
-                {
-                    LibrarianId = 2,
-                    Name = "Michael Anderson"
-                },
-            };
+            _context = context;
         }
 
-        public async Task<Book> GetByIdAsync(string ISBN)
+        public async Task<Book> GetBookByISBNAsync(string ISBN)
         {
-            return await Task.FromResult(_books.FirstOrDefault(b => b.ISBN.Equals(ISBN)));
+            var book = await _context.Books.FindAsync(ISBN);
+            return book;
         }
 
-        public async Task<PaginatedResult<Book>> SearchAsync(string title, string author,
+        public async Task<PaginatedResult<Book>> SearchBooksAsync(string title, string author,
             string genre, int pageNumber, int pageSize)
         {
-            var query = _books.AsQueryable();
+            var query = _context.Books.AsQueryable();
 
             if (!string.IsNullOrEmpty(title))
             {
@@ -87,43 +37,41 @@ namespace Libro.Infrastructure.Repositories
 
             if (!string.IsNullOrEmpty(genre))
             {
-                query = query.Where(b => b.Genre.ToString().Contains(genre));
+                var genreValue = Enum.Parse<Genre>(genre, ignoreCase: true);
+                query = query.Where(b => b.Genre == genreValue);
             }
             return await PaginatedResult<Book>.CreateAsync(query, pageNumber, pageSize);
         }
 
-        public async Task<PaginatedResult<Book>> GetAllAsync(int pageNumber, int pageSize)
+        public async Task<PaginatedResult<Book>> GetAllBooksAsync(int pageNumber, int pageSize)
         {
-            var query = _books.AsQueryable();
+            var query = _context.Books.AsQueryable();
 
             return await PaginatedResult<Book>.CreateAsync(query, pageNumber, pageSize);
         }
-        public async Task AddAsync(Book book)
+        public async Task AddBookAsync(Book book, Author author)
         {
-            _books.Add(book);
-            //await _dbContext.SaveChangesAsync();
+            _context.Attach(author);
+            author.Books.Add(book);
+            book.Author = author;
+            _context.Books.AddAsync(book);
+            await _context.SaveChangesAsync();
         }
-        public async Task UpdateAsync(Book book)
+        public async Task UpdateBookAsync(Book book)
         {
-            Book existingBook = await GetByIdAsync(book.ISBN);
-            existingBook = book;
-            //_books.Update(book);
-            //await _dbContext.SaveChangesAsync();
+            _context.Attach(book);
+            _context.Books.Update(book);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(string bookId)
+        public async Task DeleteBookAsync(Book book)
         {
-            var book = await GetByIdAsync(bookId);
-            if (book != null)
-            {
-                _books.Remove(book);
-                //_dbContext.Books.Remove(book);
-                //await _dbContext.SaveChangesAsync();
-            }
+            _context.Books.Remove(book);
+            await _context.SaveChangesAsync();
         }
         public async Task<IEnumerable<Book>> GetBooksByGenres(IEnumerable<Genre> genres)
         {
-            return _books.Where(book => genres.Contains(book.Genre)).ToList();
+            return _context.Books.Where(book => genres.Contains(book.Genre)).ToList();
         }
     }
 

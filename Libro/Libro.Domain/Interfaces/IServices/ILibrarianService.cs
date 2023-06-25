@@ -5,10 +5,10 @@ namespace Libro.Domain.Interfaces.IServices
     public interface ILibrarianService
     {
         Task<IEnumerable<Librarian>> GetAllLibrariansAsync();
-        Task<Librarian> GetLibrarianByIdAsync(int librarianId);
+        Task<Librarian> GetLibrarianByIdAsync(string librarianId);
         Task<Librarian> AddLibrarianAsync(Librarian librarian);
         void UpdateLibrarianAsync(Librarian librarian);
-        void DeleteLibrarianAsync(int librarianId);
+        void DeleteLibrarianAsync(string librarianId);
     }
 
 }
