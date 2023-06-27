@@ -19,14 +19,18 @@ namespace Libro.Application.Services
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IPatronService _patronService;
+        private readonly ILibrarianService _librarianService;
         private readonly IConfiguration _configuration;
 
         public AuthenticationService(IConfiguration configuration, UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager, IPatronService patronService, ILibrarianService librarianService)
         {
             _configuration = configuration;
             _userManager = userManager;
             _roleManager = roleManager;
+            _patronService = patronService;
+            _librarianService = librarianService;
         }
 
         public async Task<Response> Register(string username, string email, string password)
@@ -41,19 +45,10 @@ namespace Libro.Application.Services
                 Email = email,
                 UserName = username
             };
-
-            if (!await _roleManager.RoleExistsAsync(UserRole.Patron.ToString()))
-            {
-                await _roleManager.CreateAsync(new IdentityRole(UserRole.Patron.ToString()));
-            }
-
             var result = await _userManager.CreateAsync(user, password);
-            var role = await _roleManager.FindByNameAsync("Patron");
 
-            if (role != null && result.Succeeded)
+            if (result.Succeeded)
             {
-                // Assign the default role Patron to the user
-                //await _userManager.AddToRoleAsync(user, role.Name);
                 return new Response { Status = "Success", Message = "User created successfully!" };
             }
 
@@ -96,9 +91,9 @@ namespace Libro.Application.Services
 
             var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Email, user.Email)
             };
             foreach (var role in userRoles)
             {
@@ -145,7 +140,14 @@ namespace Libro.Application.Services
             {
                 return new Response { Status = "Error", Message = "Role assignment " + result.ToString() };
             }
-
+            if (role.Equals("Patron"))
+            {
+                await _patronService.AddPatronAsync(userId, user.UserName, user.Email);
+            }
+            if (role.Equals("Librarian"))
+            {
+                await _librarianService.AddLibrarianAsync(userId, user.UserName);
+            }
             return new Response { Status = "Success", Message = "Role assigned successfully" };
         }
     }

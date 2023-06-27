@@ -19,13 +19,14 @@ namespace Libro.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<PaginatedResult<AuthorDto>> GetAllAuthorsAsync(int pageNumber, int pageSize)
+        // AuthorResponseDto without books
+        public async Task<PaginatedResult<Author>> GetAllAuthorsAsync(int pageNumber, int pageSize)
         {
             var paginatedResult = await _authorRepository.GetAllAuthorsAsync(pageNumber, pageSize);
+            
+            var authorDtos = _mapper.Map<IEnumerable<Author>>(paginatedResult.Items); 
 
-            var authorDtos = _mapper.Map<IEnumerable<AuthorDto>>(paginatedResult.Items);
-
-            return new PaginatedResult<AuthorDto>(authorDtos, paginatedResult.TotalCount, pageNumber, pageSize);
+            return new PaginatedResult<Author>(authorDtos, paginatedResult.TotalCount, pageNumber, pageSize);
         }
 
         public async Task<Author> GetAuthorByIdAsync(int authorId)
@@ -54,7 +55,7 @@ namespace Libro.Application.Services
 
         public async Task DeleteAuthorAsync(int authorId)
         {
-            Author author= await _authorRepository.GetAuthorByIdAsync(authorId);
+            Author author = await _authorRepository.GetAuthorByIdAsync(authorId);
             if (author == null)
             {
                 throw new ResourceNotFoundException("Author", "ID", authorId.ToString());

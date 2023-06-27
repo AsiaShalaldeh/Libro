@@ -1,49 +1,65 @@
 ﻿using Libro.Domain.Entities;
 using Libro.Domain.Enums;
 using Libro.Domain.Interfaces.IRepositories;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace Libro.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly List<User> _users; // will be replaced by _context
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserRepository()
+        public UserRepository(UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor)
         {
-            _users = new List<User>()
-            {
-                new User(){ UserId = 1, UserName = "Asia", Password = "123456", Role = UserRole.Librarian},
-                new User(){UserId = 2, UserName = "Master", Password = "136" , Role = UserRole.Administrator}
-            };
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public User GetById(int userId)
-        {
-            return _users.FirstOrDefault(user => user.UserId == userId);
-        }
+        //public async Task<IdentityUser> GetUserByIdAsync(string userId)
+        //{
+        //    return await _userManager.FindByIdAsync(userId);
+        //}
 
-        public User GetByUsername(string username)
-        {
-            var user = _users.FirstOrDefault(user => user.UserName.Equals(username));
-            return user;
-        }
+        //public async Task<IdentityUser> GetUserByNameAsync(string username)
+        //{
+        //    return await _userManager.FindByNameAsync(username);
+        //}
 
-        public void Add(User user)
+        public async Task UpdateUserAsync(string userId, string name, string email)
         {
-            _users.Add(user);
-        }
-
-        public void Update(User user)
-        {
-            var existingUser = GetById(user.UserId);
+            IdentityUser existingUser = await _userManager.FindByIdAsync(userId);
 
             if (existingUser != null)
             {
-                existingUser.UserName = user.UserName;
-                existingUser.Password = user.Password;
-                existingUser.Role = user.Role;
+                if (!email.Equals(""))
+                    existingUser.Email = email;
+                if (!name.Equals(""))
+                    existingUser.UserName = name;
+                await _userManager.UpdateAsync(existingUser);
             }
         }
 
+        public async Task DeleteUserAsync(string userId)
+        {
+            IdentityUser existingUser = await _userManager.FindByIdAsync(userId);
+            if (existingUser != null)
+            {
+                await _userManager.DeleteAsync(existingUser);
+            }
+        }
+        public async Task<string> GetCurrentUserIdAsync()
+        {
+            var userId = _httpContextAccessor.HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+            return userId;
+        }
+
     }
+
 }

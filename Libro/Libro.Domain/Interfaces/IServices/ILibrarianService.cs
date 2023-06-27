@@ -1,14 +1,16 @@
-﻿using Libro.Domain.Entities;
+﻿using Libro.Domain.Common;
+using Libro.Domain.Dtos;
+using Libro.Domain.Entities;
 
 namespace Libro.Domain.Interfaces.IServices
 {
     public interface ILibrarianService
     {
-        Task<IEnumerable<Librarian>> GetAllLibrariansAsync();
+        Task<PaginatedResult<Librarian>> GetAllLibrariansAsync(int pageNumber, int pageSize);
         Task<Librarian> GetLibrarianByIdAsync(string librarianId);
-        Task<Librarian> AddLibrarianAsync(Librarian librarian);
-        void UpdateLibrarianAsync(Librarian librarian);
-        void DeleteLibrarianAsync(string librarianId);
+        Task<Librarian> AddLibrarianAsync(string librarianId, string name);
+        Task<Librarian> UpdateLibrarianAsync(string librarianId, LibrarianDto librarian);
+        Task DeleteLibrarianAsync(string librarianId);
     }
 
 }

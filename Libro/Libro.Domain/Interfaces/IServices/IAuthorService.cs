@@ -6,7 +6,7 @@ namespace Libro.Domain.Interfaces.IServices
 {
     public interface IAuthorService
     {
-        Task<PaginatedResult<AuthorDto>> GetAllAuthorsAsync(int pageNumber, int pageSize);
+        Task<PaginatedResult<Author>> GetAllAuthorsAsync(int pageNumber, int pageSize);
         Task<Author> GetAuthorByIdAsync(int authorId);
         Task<Author> AddAuthorAsync(AuthorDto authorDto);
         Task UpdateAuthorAsync(int authorId, AuthorDto authorDto);

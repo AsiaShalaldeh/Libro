@@ -10,6 +10,7 @@ namespace Libro.Application.Profiles
         {
             CreateMap<Author, AuthorDto>();
             CreateMap<AuthorDto, Author>();
+            CreateMap<Author, AuthorResponseDto>();
         }
     }
 }

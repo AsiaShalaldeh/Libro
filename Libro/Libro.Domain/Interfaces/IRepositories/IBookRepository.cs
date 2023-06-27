@@ -14,5 +14,6 @@ namespace Libro.Domain.Interfaces.IRepositories
         Task UpdateBookAsync(Book book);
         Task DeleteBookAsync(Book book);
         Task<IEnumerable<Book>> GetBooksByGenres(IEnumerable<Genre> genres);
+        Task UpdateBookStatus(string ISBN, bool availability);
     }
 }

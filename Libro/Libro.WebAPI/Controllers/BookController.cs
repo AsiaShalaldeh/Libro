@@ -47,7 +47,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
         [HttpGet("search")]
@@ -91,7 +91,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -121,7 +121,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -150,7 +150,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -169,7 +169,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 

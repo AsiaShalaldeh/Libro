@@ -1,6 +1,6 @@
 ﻿namespace Libro.Domain.Models
 {
-    public class ReturnResponseModel
+    public class TransactionResponseModel
     {
         public string BookId { get; set; }
         public string PatronId { get; set; }

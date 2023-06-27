@@ -36,7 +36,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -49,7 +49,7 @@ namespace Libro.WebAPI.Controllers
                 var author = await _authorService.GetAuthorByIdAsync(authorId);
                 if (author == null)
                     throw new ResourceNotFoundException("Author", "ID", authorId.ToString());
-                var authorDto = _mapper.Map<AuthorDto>(author);
+                var authorDto = _mapper.Map<AuthorResponseDto>(author);
                 return Ok(authorDto);
             }
             catch (ResourceNotFoundException ex)
@@ -58,7 +58,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -105,7 +105,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -124,7 +124,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
     }

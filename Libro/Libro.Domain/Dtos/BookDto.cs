@@ -1,4 +1,5 @@
-﻿using Libro.Domain.Enums;
+﻿using Libro.Domain.Entities;
+using Libro.Domain.Enums;
 
 namespace Libro.Domain.Dtos
 {
@@ -10,6 +11,7 @@ namespace Libro.Domain.Dtos
         public string Genre { get; set; }
         public bool IsAvailable { get; set; }
         public int AuthorId { get; set; }
-        public string AuthorName { get; set; } 
+        public string AuthorName { get; set; }
+        public ICollection<ReviewDto> Reviews { get; set; }
     }
 }

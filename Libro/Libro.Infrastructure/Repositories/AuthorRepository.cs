@@ -24,7 +24,8 @@ namespace Libro.Infrastructure.Repositories
 
         public async Task<Author> GetAuthorByIdAsync(int authorId)
         {
-            return await _context.Authors.FindAsync(authorId);
+            return await _context.Authors.Include(b => b.Books).
+                FirstOrDefaultAsync(a => a.AuthorId == authorId);
         }
 
         public async Task<Author> AddAuthorAsync(Author author)

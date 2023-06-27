@@ -1,6 +1,7 @@
 ﻿using EmailService.Interface;
 using EmailService.Model;
 using Libro.Domain.Entities;
+using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 
 namespace Libro.Application.Services
@@ -24,15 +25,13 @@ namespace Libro.Application.Services
         }
         public async Task<bool> SendOverdueNotification()
         {
-            IEnumerable<Checkout> overdueTransactions = _transactionService.GetOverdueTransactionsAsync();
+            var overdueTransactions = await _transactionService.GetOverdueTransactionsAsync();
 
             if (overdueTransactions.Any())
             {
                 var subject = "Overdue Book Notification";
                 foreach (var overdueTransaction in overdueTransactions)
                 {
-                    //foreach (var transaction in overdueBook.Transactions)
-                    //{
                         var patron = overdueTransaction.Patron;
                         var content = $"Dear {patron.Name},\n\nThis is a friendly reminder that " +
                             $"the book \"{overdueTransaction.Book.Title}\" is due on " +
@@ -40,7 +39,6 @@ namespace Libro.Application.Services
                             $"library on time.\n\nBest regards,\nThe Libro";
                         var message = new Message(new List<string> { patron.Email }, subject, content);
                         await _emailSender.SendEmailAsync(message);
-                    //}
                 }
                 return true;
             }
@@ -50,11 +48,23 @@ namespace Libro.Application.Services
             }
 
         }
-        public async Task SendReservationNotification(string recipientEmail, string bookTitle, string recipientId)
+        public async Task<bool> SendReservationNotification(string recipientEmail, string bookTitle, string recipientId)
         {
             // check for patron with that Email
-            // check for transaion done with this info
             Patron patron = await _patronService.GetPatronAsync(recipientId);
+            if (patron == null)
+            {
+                throw new ResourceNotFoundException("Patron", "ID", recipientId);
+            }
+            if (!patron.Email.Equals(recipientEmail))
+            {
+                throw new ResourceNotFoundException("Patron", "Email", recipientEmail);
+            }
+            // check for transaction done with this info
+            if (!patron.ReservedBooks.Where(p => p.Book.Title.Equals(bookTitle)).Any())
+            {
+                return false;
+            }
             var subject = "Book Reservation Notification";
             var content = $"Dear {patron.Name},\n\nYou have successfully reserved the book with " +
                 $"title \"{bookTitle}\". Please pick up the book from the library within " +
@@ -63,6 +73,7 @@ namespace Libro.Application.Services
             var message = new Message(new List<string> { recipientEmail }, subject, content);
 
             await _emailSender.SendEmailAsync(message);
+            return true;
         }
 
         public async Task AddPatronToNotificationQueue(string patronId, string bookId)

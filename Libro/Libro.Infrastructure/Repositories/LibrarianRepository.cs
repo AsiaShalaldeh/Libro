@@ -1,47 +1,52 @@
-﻿using Libro.Domain.Entities;
+﻿using Libro.Domain.Common;
+using Libro.Domain.Entities;
 using Libro.Domain.Interfaces.IRepositories;
+using Libro.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Libro.Infrastructure.Repositories
 {
     public class LibrarianRepository : ILibrarianRepository
     {
-        private readonly List<Librarian> _librarians;
+        private readonly LibroDbContext _context;
 
-        public LibrarianRepository()
+        public LibrarianRepository(LibroDbContext context)
         {
-            _librarians = new List<Librarian>
-            {
-                new Librarian { LibrarianId = "1", Name = "John Doe" },
-                new Librarian { LibrarianId = "2", Name = "Jane Smith" }
-            };
+            _context = context;
         }
 
-        public IEnumerable<Librarian> GetAllLibrariansAsync()
+        public async Task<PaginatedResult<Librarian>> GetAllLibrariansAsync(int pageNumber, int pageSize)
         {
-            return _librarians;
+            var query = _context.Librarians.AsQueryable();
+
+            return await PaginatedResult<Librarian>.CreateAsync(query, pageNumber, pageSize);
         }
 
-        public Librarian GetLibrarianByIdAsync(string id)
+        public async Task<Librarian> GetLibrarianByIdAsync(string librarianId)
         {
-            var librarian = _librarians.Where(l => l.LibrarianId == id).FirstOrDefault();
+            return await _context.Librarians
+                .FirstOrDefaultAsync(lib => lib.LibrarianId.Equals(librarianId));
+        }
+
+
+        public async Task<Librarian> AddLibrarianAsync(Librarian librarian)
+        {
+            _context.Librarians.Add(librarian);
+            await _context.SaveChangesAsync();
             return librarian;
         }
 
-        public Librarian AddLibrarianAsync(Librarian librarian)
+        public async Task<Librarian> UpdateLibrarianAsync(Librarian librarian)
         {
-            _librarians.Add(librarian);
+            _context.Librarians.Update(librarian);
+            await _context.SaveChangesAsync();
             return librarian;
-        }
-
-        public async Task UpdateLibrarianAsync(Librarian librarian)
-        {
-            var existingLibrarian = GetLibrarianByIdAsync(librarian.LibrarianId);
-            existingLibrarian.Name = librarian.Name;
         }
 
         public async Task DeleteLibrarianAsync(Librarian librarian)
         {
-            _librarians.Remove(librarian);
+            _context.Librarians.Remove(librarian);
+            await _context.SaveChangesAsync();
         }
     }
 

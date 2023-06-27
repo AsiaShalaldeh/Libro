@@ -10,7 +10,9 @@ using Libro.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,6 +69,7 @@ builder.Services.AddAuthentication(options => {
     };
 });
 
+builder.Services.AddHttpContextAccessor();
 // For Entity Framework
 builder.Services.AddDbContext<LibroDbContext>();
 
@@ -82,11 +85,14 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(config =>
 .AddEntityFrameworkStores<LibroDbContext>()
 .AddDefaultTokenProviders();
 
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddControllers().AddJsonOptions(x =>
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.Configure<IdentityOptions>(options =>
+    options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
 
 var app = builder.Build();
 

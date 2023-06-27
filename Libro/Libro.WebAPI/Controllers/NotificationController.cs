@@ -1,4 +1,5 @@
 ﻿using Libro.Domain.Dtos;
+using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ namespace Libro.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/notifications")]
-    //[Authorize(Roles = "Librarian")]
+    //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Librarian")]
     public class NotificationController : ControllerBase
     {
         private readonly INotificationService _notificationService;
@@ -31,7 +32,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -40,13 +41,24 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                await _notificationService.SendReservationNotification(request.RecipientEmail
+                var response = await _notificationService.SendReservationNotification(request.RecipientEmail
                     , request.BookTitle, request.RecipientId);
-                return Ok("Reservation notification sent successfully");
+                if (response)
+                {
+                    return Ok("Reservation notification sent successfully");
+                }
+                else
+                {
+                    return NotFound($"No Reservation done by Patron ID = {request.RecipientId} Recently !!");
+                }
+            }
+            catch(ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
     }

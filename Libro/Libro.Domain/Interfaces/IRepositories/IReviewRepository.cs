@@ -4,13 +4,12 @@ namespace Libro.Domain.Interfaces.IRepositories
 {
     public interface IReviewRepository
     {
-        Review GetReviewByIdAsync(string ISBN, int reviewId);
+        Task<Review> GetBookReviewByIdAsync(string ISBN, int reviewId);
         Task<Review> UpdateReviewAsync(Review review);
-        Task<bool> DeleteReviewAsync(string ISBN, int reviewId);
+        Task DeleteReviewAsync(Review review);
         Task<Review> AddReviewAsync(Review review);
-        Task<IEnumerable<Review>> GetReviewsByBookIdAsync(string bookId);
-        //Task<IEnumerable<Review>> GetReviewsByPatronIdAsync(int patronId);
-        Task<double> GetAverageRatingByBookIdAsync(string bookId);
+        Task<IEnumerable<Review>> GetBookReviewsByISBNAsync(string ISBN);
+        Task<double> GetAverageRatingByBookISBNAsync(string ISBN);
     }
 
 }

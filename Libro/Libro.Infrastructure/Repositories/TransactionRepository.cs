@@ -3,94 +3,80 @@ using Libro.Domain.Entities;
 using Libro.Domain.Enums;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
+using Libro.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Libro.Infrastructure.Repositories
 {
     public class TransactionRepository : ITransactionRepository
     {
-        private readonly List<Checkout> _transactions;
-        private readonly List<Reservation> _reservations;
-        private readonly IBookRepository _bookRepository;
-        private readonly IPatronRepository _patronRepository;
-        private readonly ILibrarianRepository _librarianRepository;
+        private readonly LibroDbContext _context;
 
-        public TransactionRepository(IBookRepository bookRepository, IPatronRepository patronRepository)
+        public TransactionRepository(IBookRepository bookRepository, 
+            IPatronRepository patronRepository, LibroDbContext context)
         {
-            _transactions = new List<Checkout>();
-            _bookRepository = bookRepository;
-            _patronRepository = patronRepository;
+            _context = context;
         }
-        public Checkout GetActiveTransaction(string ISBN, string patronId)
+        public async Task<Reservation> AddReservationAsync(Reservation reservation)
         {
-            return _transactions.
-                FirstOrDefault(t => t.BookId == ISBN && t.PatronId == patronId && !t.IsReturned);
+            _context.Reservations.Add(reservation);
+            await _context.SaveChangesAsync();
+            return reservation;
         }
-        public void AddTransaction(Checkout transaction)
+        public async Task<Checkout> AddCheckoutAsync(Checkout checkout)
         {
-            _transactions.Add(transaction);
+            _context.Checkouts.Add(checkout);
+            await _context.SaveChangesAsync();
+            return checkout;
         }
-        public async Task<IEnumerable<Checkout>> GetTransactionsByPatron(string patronId)
+        public async Task UpdateCheckoutAsync(Checkout checkout)
         {
-            return _transactions.Where(t => t.PatronId == patronId).ToList();
+            _context.Checkouts.Update(checkout);
+            await _context.SaveChangesAsync();
         }
-
-        public void UpdateTransaction(Checkout transaction)
+        public async Task<IEnumerable<Checkout>> GetCheckoutTransactionsByPatronAsync(string patronId)
         {
-            var existingTransaction = _transactions.FirstOrDefault(
-                    t => t.CheckoutId == transaction.CheckoutId);        
-            if (existingTransaction != null)
-            {
-                existingTransaction.BookId = transaction.BookId;
-                existingTransaction.PatronId = transaction.PatronId;
-                existingTransaction.CheckoutDate = transaction.CheckoutDate;
-                if (existingTransaction is Checkout)
-                {
-                    //Checkout checkout = (Checkout)existingTransaction;
-                    //checkout.DueDate = (Checkout)transaction.DueDate;
-                    //checkout.IsReturned = transaction.IsReturned;
-                    //checkout.ReturnDate = transaction.ReturnDate;
-                }     
-            }
-            else
-            {
-                throw new InvalidOperationException("Transaction Not Found");
-            }
+            var checkouts = await _context.Checkouts
+                .Where(c => c.PatronId.Equals(patronId))
+                .Include(t => t.Book)
+                .ToListAsync();
+            return checkouts;
         }
-        public IEnumerable<string> GetOverdueBooksAsync()
+        public async Task<IEnumerable<string>> GetOverdueBookIdsAsync()
         {
             var currentDate = DateTime.Now.Date;
-            var overdueBookIds = _transactions
-                .OfType<Checkout>()
+            var overdueBookIds = await _context.Checkouts
                 .Where(t => t.DueDate < currentDate && !t.IsReturned)
                 .Select(t => t.BookId)
-                .ToList();
+                .ToListAsync();
 
             return overdueBookIds;
         }
-        public IEnumerable<Checkout> GetOverdueTransactionsAsync()
+        public async Task<IEnumerable<Checkout>> GetOverdueTransactionsAsync()
         {
             var currentDate = DateTime.Now.Date;
-            var overdueTransactions = _transactions
+            var overdueTransactions = await _context.Checkouts
                 .Where(t => t.DueDate < currentDate && !t.IsReturned)
-                .ToList();
+                .Include(t => t.Book)
+                .ToListAsync();
 
             return overdueTransactions;
         }
-        public IEnumerable<string> GetBorrowedBooksAsync()
+        public async Task<IEnumerable<string>> GetBorrowedBookIdsAsync()
         {
-            var borrowedBookIds = _transactions
+            var borrowedBookIds = await _context.Checkouts
                 .Where(t => t.IsReturned == false)
                 .Select(t => t.BookId)
-                .ToList();
+                .ToListAsync();
 
             return borrowedBookIds;
         }
-        public string GetBorrowedBookByIdAsync(string ISBN)
+        public async Task<string> GetBorrowedBookByIdAsync(string ISBN)
         {
-            var borrowedBookId = _transactions
+            var borrowedBookId = await _context.Checkouts
                 .Where(t => !t.IsReturned && t.BookId.Equals(ISBN))
                 .Select(t => t.BookId)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             return borrowedBookId;
         }

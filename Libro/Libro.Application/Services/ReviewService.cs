@@ -12,15 +12,17 @@ namespace Libro.Application.Services
         private readonly IReviewRepository _reviewRepository;
         private readonly IBookRepository _bookRepository;
         private readonly IPatronRepository _patronRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
         public ReviewService(IReviewRepository reviewRepository, IBookRepository bookRepository,
-            IPatronRepository patronRepository,IMapper mapper)
+            IPatronRepository patronRepository,IMapper mapper, IUserRepository userRepository)
         {
             _reviewRepository = reviewRepository;
             _bookRepository = bookRepository;
             _patronRepository = patronRepository;
             _mapper = mapper;
+            _userRepository = userRepository;
         }
         public async Task<Review> GetReviewByIdAsync(string ISBN, int reviewId)
         {
@@ -29,78 +31,83 @@ namespace Libro.Application.Services
             {
                 throw new ResourceNotFoundException("Book", "ISBN", ISBN);
             }
-            return _reviewRepository.GetReviewByIdAsync(ISBN, reviewId);
+            var review = await _reviewRepository.GetBookReviewByIdAsync(ISBN, reviewId);
+            return review;
         }
         public async Task<Review> UpdateReviewAsync(string ISBN, int reviewId, ReviewDto reviewDto)
         {
-            var patron = _patronRepository.GetPatronByIdAsync(reviewDto.PatronId);
-            if (patron == null)
+            var existingReview = await GetReviewByIdAsync(ISBN, reviewId);
+            if (existingReview == null)
             {
-                throw new ResourceNotFoundException("Patron", "ID", reviewDto.PatronId.ToString());
+                throw new ResourceNotFoundException("Review", "ID", reviewId.ToString());
             }
-            Review existingReview = await GetReviewByIdAsync(ISBN, reviewId);
-            if (existingReview != null)
-            {
-                if (existingReview.Rating > 0)
-                    existingReview.Rating = reviewDto.Rating;
-                if (!string.IsNullOrEmpty(existingReview.Comment))
-                    existingReview.Comment = reviewDto.Comment;
-
-                return await _reviewRepository.UpdateReviewAsync(existingReview);
-            }
-            return null;
+            if (reviewDto.Rating != 0)
+                existingReview.Rating = reviewDto.Rating;
+            if (!string.IsNullOrEmpty(reviewDto.Comment))
+                existingReview.Comment = reviewDto.Comment;
+            return await _reviewRepository.UpdateReviewAsync(existingReview);  
         }
 
-        public async Task<bool> DeleteReviewAsync(string ISBN, int reviewId)
+        public async Task DeleteReviewAsync(string ISBN, int reviewId)
         {
             Book book = await _bookRepository.GetBookByISBNAsync(ISBN);
             if (book == null)
             {
                 throw new ResourceNotFoundException("Book", "ISBN", ISBN);
             }
-            return await _reviewRepository.DeleteReviewAsync(ISBN, reviewId);
+            Review review = await _reviewRepository.GetBookReviewByIdAsync(ISBN, reviewId);
+            if (review == null)
+            {
+                throw new ResourceNotFoundException("Review", "ID", reviewId.ToString());
+            }
+            await _reviewRepository.DeleteReviewAsync(review);
         }
-        public async Task<Review> AddReviewAsync(ReviewDto reviewDto)
+        public async Task<ReviewDto> AddReviewAsync(string ISBN, ReviewDto reviewDto)
         {
-            var book = await _bookRepository.GetBookByISBNAsync(reviewDto.BookId);
+            var book = await _bookRepository.GetBookByISBNAsync(ISBN);
             if (book == null)
             {
-                throw new ResourceNotFoundException("Book", "ID", reviewDto.BookId);
+                throw new ResourceNotFoundException("Book", "ISBN", ISBN);
             }
-            var patron = _patronRepository.GetPatronByIdAsync(reviewDto.PatronId);
-            if (patron == null)
+            string patronId = await _userRepository.GetCurrentUserIdAsync();
+            if (patronId.Equals(""))
             {
-                throw new ResourceNotFoundException("Patron", "ID", reviewDto.PatronId.ToString());
+                throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
             }
-
-            var review = _mapper.Map<Review>(reviewDto);
-            var addedReview = await _reviewRepository.AddReviewAsync(review);
-
-            return addedReview;
+            Patron patron = await _patronRepository.GetPatronByIdAsync(patronId);
+            var review = new Review()
+            {
+                Book = book,
+                Patron = patron,
+                Rating = reviewDto.Rating,
+                Comment = reviewDto.Comment
+            };
+            Review addedReview = await _reviewRepository.AddReviewAsync(review);
+            return _mapper.Map<ReviewDto>(addedReview);
         }
 
-        public async Task<IEnumerable<Review>> GetReviewsByBookIdAsync(string bookId)
+        public async Task<IEnumerable<Review>> GetReviewsByBookIdAsync(string ISBN)
         {
-            var book = await _bookRepository.GetBookByISBNAsync(bookId);
+            var book = await _bookRepository.GetBookByISBNAsync(ISBN);
             if (book == null)
             {
-                throw new ResourceNotFoundException("Book", "ID", bookId);
+                throw new ResourceNotFoundException("Book", "ISBN", ISBN);
             }
 
-            var reviews = await _reviewRepository.GetReviewsByBookIdAsync(bookId);
+            var reviews = await _reviewRepository.GetBookReviewsByISBNAsync(ISBN);
 
             return reviews;
         }
-        public async Task<double> GetAverageRatingByBookIdAsync(string bookId)
+        public async Task<double> GetAverageRatingByBookIdAsync(string ISBN)
         {
-            var book = await _bookRepository.GetBookByISBNAsync(bookId);
+            var book = await _bookRepository.GetBookByISBNAsync(ISBN);
             if (book == null)
             {
-                throw new ResourceNotFoundException("Book", "ID", bookId);
+                throw new ResourceNotFoundException("Book", "ISBN", ISBN);
             }
 
             // Get the average rating for the book
-            var averageRating = await _reviewRepository.GetAverageRatingByBookIdAsync(bookId);
+            var averageRating = await _reviewRepository.GetAverageRatingByBookISBNAsync(ISBN);
 
             return averageRating;
         }

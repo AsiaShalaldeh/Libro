@@ -41,8 +41,8 @@ namespace Libro.Application.Validators
             .Must(genreValue => Enum.TryParse(typeof(Genre), genreValue, out _))
             .WithMessage("Invalid genre value");
 
-            RuleFor(request => request.IsAvailable)
-                .NotNull().NotEmpty().WithMessage("Availability is required!");
+            //RuleFor(request => request.IsAvailable)
+            //    .NotNull().NotEmpty().WithMessage("Availability is required!");
         }
     }
 

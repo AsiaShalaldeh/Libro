@@ -1,4 +1,6 @@
-﻿using Libro.Domain.Entities;
+﻿using Libro.Domain.Common;
+using Libro.Domain.Dtos;
+using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
@@ -8,52 +10,60 @@ namespace Libro.Application.Services
     public class LibrarianService : ILibrarianService
     {
         private readonly ILibrarianRepository _librarianRepository;
+        private readonly IUserRepository _userRepository;
 
-        public LibrarianService(ILibrarianRepository librarianRepository)
+        public LibrarianService(ILibrarianRepository librarianRepository, IUserRepository userRepository)
         {
             _librarianRepository = librarianRepository;
+            _userRepository = userRepository;
         }
 
-        public async Task<IEnumerable<Librarian>> GetAllLibrariansAsync()
+        public async Task<PaginatedResult<Librarian>> GetAllLibrariansAsync(int pageNumber, int pageSize)
         {
-            return _librarianRepository.GetAllLibrariansAsync();
+            var paginatedResult = await _librarianRepository.GetAllLibrariansAsync(pageNumber, pageSize);
+
+            var librarians = paginatedResult.Items;
+            return new PaginatedResult<Librarian>(librarians, paginatedResult.TotalCount, pageNumber, pageSize);
         }
 
         public async Task<Librarian> GetLibrarianByIdAsync(string librarianId)
         {
-            var librarian = _librarianRepository.GetLibrarianByIdAsync(librarianId);
-            if (librarian == null)
-            {
-                throw new ResourceNotFoundException("Librarian", "ID", librarianId.ToString());
-            }
+            Librarian librarian = await _librarianRepository.GetLibrarianByIdAsync(librarianId);
             return librarian;
         }
 
-        public async Task<Librarian> AddLibrarianAsync(Librarian librarian)
+        public async Task<Librarian> AddLibrarianAsync(string librarianId, string name)
         {
-            return _librarianRepository.AddLibrarianAsync(librarian);
+            Librarian librarian = new Librarian()
+            {
+                LibrarianId = librarianId,
+                Name = name
+            };
+            return await _librarianRepository.AddLibrarianAsync(librarian);
         }
 
-        public void UpdateLibrarianAsync(Librarian librarian)
+        public async Task<Librarian> UpdateLibrarianAsync(string librarianId, LibrarianDto librarian)
         {
-            var existingLibrarian = _librarianRepository.GetLibrarianByIdAsync(librarian.LibrarianId);
+            Librarian existingLibrarian = await _librarianRepository.GetLibrarianByIdAsync(librarianId);
             if (existingLibrarian == null)
             {
-                throw new ResourceNotFoundException("Librarian", "ID", librarian.LibrarianId.ToString());
+                throw new ResourceNotFoundException("Librarian", "ID", librarianId.ToString());
             }
-
-            _librarianRepository.UpdateLibrarianAsync(librarian);
+            existingLibrarian.Name = librarian.Name;
+            await _userRepository.UpdateUserAsync(librarianId, librarian.Name, "");
+            return await _librarianRepository.UpdateLibrarianAsync(existingLibrarian);
         }
 
-        public void DeleteLibrarianAsync(string librarianId)
+        public async Task DeleteLibrarianAsync(string librarianId)
         {
-            var existingLibrarian = _librarianRepository.GetLibrarianByIdAsync(librarianId);
+            Librarian existingLibrarian = await _librarianRepository.GetLibrarianByIdAsync(librarianId);
             if (existingLibrarian == null)
             {
                 throw new ResourceNotFoundException("Librarian", "ID", librarianId.ToString());
             }
 
-            _librarianRepository.DeleteLibrarianAsync(existingLibrarian);
+            await _librarianRepository.DeleteLibrarianAsync(existingLibrarian);
+            await _userRepository.DeleteUserAsync(librarianId);
         }
     }
 

@@ -1,4 +1,7 @@
-﻿using Libro.Domain.Entities;
+﻿using FluentValidation;
+using Libro.Application.Validators;
+using Libro.Domain.Dtos;
+using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +12,7 @@ namespace Libro.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/librarians")]
-    //[Authorize(Roles = "Administrator")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Administrator")]
     public class LibrarianController : ControllerBase
     {
         private readonly ILibrarianService _librarianService;
@@ -20,26 +23,30 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllLibrarians()
+        public async Task<IActionResult> GetAllLibrarians([FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
         {
             try
             {
-                var librarians = _librarianService.GetAllLibrariansAsync();
-                return Ok(librarians);
+                var response = await _librarianService.GetAllLibrariansAsync(pageNumber, pageSize);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetLibrarianById(string id)
+        [HttpGet("{librarianId}")]
+        public async Task<IActionResult> GetLibrarianById(string librarianId)
         {
             try
             {
-                var librarian = _librarianService.GetLibrarianByIdAsync(id);
-
+                Librarian librarian = await _librarianService.GetLibrarianByIdAsync(librarianId);
+                if (librarian == null)
+                {
+                    throw new ResourceNotFoundException("Librarian", "ID", librarianId.ToString());
+                }
                 return Ok(librarian);
             }
             catch (ResourceNotFoundException ex)
@@ -48,34 +55,40 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
-        [HttpPost]
-        public IActionResult CreateLibrarian([FromBody] Librarian librarian)
+        [HttpPut("{librarianId}")]
+        public async Task<IActionResult> UpdateLibrarian(string librarianId, [FromBody] LibrarianDto librarianDto)
         {
             try
             {
-                _librarianService.AddLibrarianAsync(librarian);
-                return CreatedAtAction(nameof(GetLibrarianById), new { id = librarian.LibrarianId }, librarian);
+                LibrarianDtoValidator validator = new LibrarianDtoValidator();
+                validator.ValidateAndThrow(librarianDto);
+                var librarian = await _librarianService.UpdateLibrarianAsync(librarianId, librarianDto);
+                return Ok(librarian);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateLibrarian(string id, [FromBody] Librarian librarian)
+        [HttpDelete("{librarianId}")]
+        public async Task<IActionResult> DeleteLibrarian(string librarianId)
         {
             try
             {
-                if (!id.Equals(librarian.LibrarianId))
-                {
-                    return BadRequest("Librarian ID Mismatch");
-                }
-                _librarianService.UpdateLibrarianAsync(librarian);
+                await _librarianService.DeleteLibrarianAsync(librarianId);
                 return NoContent();
             }
             catch (ResourceNotFoundException ex)
@@ -84,25 +97,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult DeleteLibrarian(string id)
-        {
-            try
-            {
-                _librarianService.DeleteLibrarianAsync(id);
-                return NoContent();
-            }
-            catch (ResourceNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
     }

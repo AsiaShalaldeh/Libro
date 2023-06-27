@@ -224,7 +224,7 @@ namespace Libro.Infrastructure.Extensions
             {
                 Id = "b74ddd14-6340-4840-95c2-db12554843e5",
                 UserName = "Admin",
-                Email = "admin@gmail.com"
+                Email = "admin@gmail.com",
             };
             PasswordHasher<IdentityUser> passwordHasher = new PasswordHasher<IdentityUser>();
             passwordHasher.HashPassword(user, "Admin*123");

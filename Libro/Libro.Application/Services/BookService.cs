@@ -56,10 +56,6 @@ namespace Libro.Application.Services
                 throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());
             }
             var book = _mapper.Map<Book>(bookDto);
-            if (author.Books == null)
-            {
-                author.Books = new List<Book>();
-            }
             await _bookRepository.AddBookAsync(book, author);
             return _mapper.Map<BookDto>(book);
         }
@@ -80,6 +76,9 @@ namespace Libro.Application.Services
                 }
                 existingBook.Author = author;
             }
+            existingBook.Title = bookDto.Title;
+            existingBook.IsAvailable = bookDto.IsAvailable;
+            existingBook.Genre = Enum.Parse<Genre>(bookDto.Genre, ignoreCase: true);
             await _bookRepository.UpdateBookAsync(existingBook);
         }
 

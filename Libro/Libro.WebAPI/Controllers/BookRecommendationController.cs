@@ -8,8 +8,8 @@ using System.Net;
 namespace Libro.WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/recommendations")]
-    //[Authorize(Roles = "Patron")]
+    [Route("api/patrons/{patronId}/recommendations")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Patron")]
     public class BookRecommendationController : Controller
     {
         private readonly IBookRecommendationService _recommendationService;
@@ -19,12 +19,12 @@ namespace Libro.WebAPI.Controllers
             _recommendationService = recommendationService;
         }
 
-        [HttpGet("{patronId}")]
-        public IActionResult GetRecommendedBooks(string patronId)
+        [HttpGet]
+        public async Task<IActionResult> GetRecommendedBooks(string patronId)
         {
             try
             {
-                var recommendedBooks = _recommendationService.GetRecommendedBooks(patronId);
+                var recommendedBooks = await _recommendationService.GetRecommendedBooks(patronId);
 
                 return Ok(recommendedBooks);
             }

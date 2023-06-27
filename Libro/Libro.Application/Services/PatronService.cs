@@ -10,11 +10,14 @@ namespace Libro.Application.Services
     public class PatronService : IPatronService
     {
         private readonly IPatronRepository _patronRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public PatronService(IPatronRepository patronRepository, IMapper mapper)
+        public PatronService(IPatronRepository patronRepository, IMapper mapper,
+            IUserRepository userRepository)
         {
             _patronRepository = patronRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
 
@@ -36,14 +39,18 @@ namespace Libro.Application.Services
         public async Task<Patron> UpdatePatronAsync(string patronId, PatronDto patronDto)
         {
             Patron existingPatron = await _patronRepository.GetPatronByIdAsync(patronId);
+
             if (existingPatron == null)
             {
                 throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
             }
-            existingPatron.Name = patronDto.Name;
-            existingPatron.Email = patronDto.Email;
+            if (!patronDto.Email.Equals(""))
+                existingPatron.Email = patronDto.Email;
+            if (!patronDto.Name.Equals(""))
+                existingPatron.Name = patronDto.Name;
 
             Patron patron = await _patronRepository.UpdatePatronAsync(existingPatron);
+            await _userRepository.UpdateUserAsync(patronId, patronDto.Name, patronDto.Email);
             return patron;
         }
         public async Task<IEnumerable<Checkout>> GetBorrowingHistoryAsync(string patronId)

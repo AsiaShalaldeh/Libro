@@ -1,4 +1,6 @@
-﻿using Libro.Domain.Common;
+﻿using AutoMapper;
+using Libro.Domain.Common;
+using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
@@ -10,29 +12,28 @@ namespace Libro.Application.Services
     public class TransactionService : ITransactionService
     {
         private readonly IBookService _bookService;
+        private readonly IBookRepository _bookRepository;
         private readonly ITransactionRepository _transactionRepository;
         private readonly ILoanPolicyService _loanPolicyService;
+        private readonly IMapper _mapper;
 
         public TransactionService(IBookService bookService, ITransactionRepository transactionRepository,
-            ILoanPolicyService loanPolicyService)
+            ILoanPolicyService loanPolicyService, IBookRepository bookRepository, IMapper mapper)
         {
             _bookService = bookService;
+            _bookRepository = bookRepository;
             _transactionRepository = transactionRepository;
             _loanPolicyService = loanPolicyService;
+            _mapper = mapper;   
         }
-        public async Task<IEnumerable<Checkout>> GetTransactionsByPatron(string patronId)
+        public async Task<IEnumerable<Checkout>> GetCheckoutTransactionsByPatron(string patronId)
         {
-            var transactions = await _transactionRepository.GetTransactionsByPatron(patronId);
+            var transactions = await _transactionRepository.GetCheckoutTransactionsByPatronAsync(patronId);
             return transactions;
-        }
-
-        public Checkout GetActiveTransaction(string ISBN, string patronId)
-        {
-            return _transactionRepository.GetActiveTransaction(ISBN, patronId);
         }
         public async Task<IEnumerable<Book>> GetOverdueBooksAsync()
         {
-            var overdueBookIds = _transactionRepository.GetOverdueBooksAsync();
+            var overdueBookIds = await _transactionRepository.GetOverdueBookIdsAsync();
             var overdueBooks = new List<Book>();
 
             if (overdueBookIds.Any())
@@ -48,14 +49,14 @@ namespace Libro.Application.Services
             }
             return overdueBooks;
         }
-        public IEnumerable<Checkout> GetOverdueTransactionsAsync()
+        public async Task<IEnumerable<Checkout>> GetOverdueTransactionsAsync()
         {
-            return _transactionRepository.GetOverdueTransactionsAsync();
+            var transactons = await _transactionRepository.GetOverdueTransactionsAsync();
+            return transactons;
         }
-
         public async Task<IEnumerable<Book>> GetBorrowedBooksAsync()
         {
-            var borrowedBookIds = _transactionRepository.GetBorrowedBooksAsync();
+            var borrowedBookIds = await _transactionRepository.GetBorrowedBookIdsAsync();
             var borrowedBooks = new List<Book>();
 
             if (borrowedBookIds.Any())
@@ -74,60 +75,54 @@ namespace Libro.Application.Services
         public async Task<Book> GetBorrowedBookByIdAsync(string ISBN)
         {
             if (string.IsNullOrEmpty(ISBN))
-                throw new ArgumentException("ISBN is required.", nameof(ISBN));
-            var borrowedBookId = _transactionRepository.GetBorrowedBookByIdAsync(ISBN);
+                throw new ArgumentException("ISBN is required", nameof(ISBN));
+            var borrowedBookId = await _transactionRepository.GetBorrowedBookByIdAsync(ISBN);
             if (string.IsNullOrEmpty(borrowedBookId))
                 return null;
             var borrowedBook = await _bookService.GetBookByISBNAsync(borrowedBookId);
             return borrowedBook;
         }
-        public async Task<Reservation> ReserveBookAsync(Book book, Patron patron)
+        public async Task<ReservationDto> ReserveBookAsync(Book book, Patron patron)
         {
-            // Create a reservation record and add it to the user's reserved books
             var reservation = new Reservation
             {
-                PatronId = patron.PatronId,
-                BookId = book.ISBN,
+                ReservationId = Guid.NewGuid().ToString(),
+                Book = book,
+                Patron = patron,
                 ReservationDate = DateTime.UtcNow
             };
-            book.Reservations.Add(reservation);
-            patron.ReservedBooks.Add(reservation);
-            //_transactionRepository.AddTransaction(reservation);
-            return reservation;
+            var reserve = await _transactionRepository.AddReservationAsync(reservation);
+            return _mapper.Map<ReservationDto>(reserve);
         }
 
-        public async Task<Checkout> CheckoutBookAsync(Book book, Patron patron)
+        // return CheckoutDto
+        public async Task<TransactionResponseModel> CheckoutBookAsync(Book book, Patron patron)
         {
-            // Create a checkout record and associate it with the user and the book
             var checkout = new Checkout
             {
-                BookId = book.ISBN, // book = book 
+                CheckoutId = Guid.NewGuid().ToString(),
+                Book = book,
+                Patron = patron,
                 CheckoutDate = DateTime.UtcNow,
-                DueDate = DateTime.UtcNow.AddDays(_loanPolicyService.GetLoanDuration()) 
+                DueDate = DateTime.UtcNow.AddDays(_loanPolicyService.GetLoanDuration())
             };
+            var addedChekout = await _transactionRepository.AddCheckoutAsync(checkout);
 
-            //book.Transactions.Add(checkout);
-            patron.CheckedoutBooks.Add(checkout);
-            
-            // remove the Reservation from the Transaction List
+            // remove the Reservation from the Reservation List
             var reservation = patron.ReservedBooks.Where(t => t.BookId.Equals(book.ISBN)).FirstOrDefault();
             patron.ReservedBooks.Remove(reservation);
 
-            //_transactionRepository.AddTransaction(checkout);
-
-            // Update the book status to CheckedOut
-            book.IsAvailable = false;
-            //await _bookService.UpdateBookAsync(book);
-            return checkout;
+            // Update the book status 
+            await _bookRepository.UpdateBookStatus(book.ISBN, false);
+            return _mapper.Map<TransactionResponseModel>(addedChekout);
         }
 
-        public async Task<ReturnResponseModel> ReturnBookAsync(Book book, Patron patron)
+        public async Task<TransactionResponseModel> ReturnBookAsync(Book book, Patron patron)
         {
-            // remove the Checkout from the Transaction List
             Checkout checkout = patron.CheckedoutBooks.Where(t => t.BookId.Equals(book.ISBN)).FirstOrDefault();
             if (checkout == null)
             {
-                throw new ResourceNotFoundException("Checkout Book", "Value", null);
+                throw new ResourceNotFoundException("Checkouted Book", "ISBN", book.ISBN);
             }
             //patron.CheckedoutBooks.Remove(checkout);
             DateTime returnDate = DateTime.UtcNow;
@@ -137,9 +132,10 @@ namespace Libro.Application.Services
             decimal totalFees = CalculateTotalFees(days);
             checkout.TotalFee = totalFees;
 
-            // _transactionRepository.update(checkout);
+            await _transactionRepository.UpdateCheckoutAsync(checkout);
+            await _bookRepository.UpdateBookStatus(book.ISBN, true);
 
-            ReturnResponseModel response = new()
+            TransactionResponseModel response = new()
             {
                 BookId = book.ISBN,
                 PatronId = patron.PatronId,

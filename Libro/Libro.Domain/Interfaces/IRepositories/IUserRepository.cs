@@ -1,12 +1,14 @@
 ﻿using Libro.Domain.Entities;
+using System.Security.Claims;
 
 namespace Libro.Domain.Interfaces.IRepositories
 {
     public interface IUserRepository
     {
-        User GetById(int userId);
-        User GetByUsername(string username);
-        void Add(User user);
-        void Update(User user);
+        //Task<User> GetUserByIdAsync(string userId);
+        //Task<User> GetUserByNameAsync(string username);
+        Task UpdateUserAsync(string userId, string name, string email);
+        Task DeleteUserAsync(string userId);
+        Task<string> GetCurrentUserIdAsync();
     }
 }

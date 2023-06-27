@@ -4,13 +4,14 @@ namespace Libro.Domain.Interfaces.IRepositories
 {
     public interface ITransactionRepository
     {
-        Checkout GetActiveTransaction(string ISBN, string patronId);
-        //void UpdateTransaction(Transaction transaction);
-        //void AddTransaction(Transaction transaction);
-        IEnumerable<string> GetOverdueBooksAsync(); // Will be replaced with Task<>
-        IEnumerable<string> GetBorrowedBooksAsync();
-        string GetBorrowedBookByIdAsync(string ISBN);
-        Task<IEnumerable<Checkout>> GetTransactionsByPatron(string patronId);
-        public IEnumerable<Checkout> GetOverdueTransactionsAsync();
+        Task<Reservation> AddReservationAsync(Reservation reservation);
+        Task<Checkout> AddCheckoutAsync(Checkout checkout);
+        Task UpdateCheckoutAsync(Checkout checkout);
+        //Task<Checkout> GetActiveTransaction(string ISBN, string patronId);
+        Task<IEnumerable<string>> GetOverdueBookIdsAsync(); 
+        Task<IEnumerable<string>> GetBorrowedBookIdsAsync();
+        Task<string> GetBorrowedBookByIdAsync(string ISBN);
+        Task<IEnumerable<Checkout>> GetCheckoutTransactionsByPatronAsync(string patronId);
+        Task<IEnumerable<Checkout>> GetOverdueTransactionsAsync();
     }
 }

@@ -2,6 +2,7 @@
 using EmailService.Interface;
 using EmailService.Model;
 using Libro.Domain.Dtos;
+using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,7 @@ namespace Libro.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/books/{ISBN}/reviews")]
-    //[Authorize(Roles = "Patron")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Patron")]
     public class ReviewController : Controller
     {
         private readonly IReviewService _reviewService;
@@ -32,13 +33,13 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                var review = await _reviewService.GetReviewByIdAsync(ISBN, reviewId);
+                Review review = await _reviewService.GetReviewByIdAsync(ISBN, reviewId);
                 if (review == null)
                 {
                     throw new ResourceNotFoundException("Review", "ID", reviewId.ToString());
                 }
-
-                return Ok(review);
+                ReviewDto reviewDto = _mapper.Map<ReviewDto>(review);
+                return Ok(reviewDto);
             }
             catch (ResourceNotFoundException ex)
             {
@@ -46,7 +47,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -55,17 +56,9 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                if (!ISBN.Equals(reviewDto.BookId))
-                {
-                    return BadRequest("Book ISBNs Mismatch");
-                }
                 var updatedReview = await _reviewService.UpdateReviewAsync(ISBN, reviewId, reviewDto);
-                if (updatedReview == null)
-                {
-                    throw new ResourceNotFoundException("Review", "ID", reviewId.ToString());
-                }
-
-                return Ok(updatedReview);
+                var review = _mapper.Map<ReviewDto>(updatedReview);
+                return Ok(review);
             }
             catch (ResourceNotFoundException ex)
             {
@@ -73,7 +66,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -82,11 +75,7 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                var result = await _reviewService.DeleteReviewAsync(ISBN, reviewId);
-                if (!result)
-                {
-                    throw new ResourceNotFoundException("Review", "ID", reviewId.ToString());
-                }
+                await _reviewService.DeleteReviewAsync(ISBN, reviewId);
 
                 return NoContent();
             }
@@ -96,35 +85,45 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddReview([FromBody] ReviewDto reviewDto)
+        public async Task<IActionResult> AddReview(string ISBN, [FromBody] ReviewDto reviewDto)
         {
             try
             {
-                var addedReview = await _reviewService.AddReviewAsync(reviewDto);
+                var addedReview = await _reviewService.AddReviewAsync(ISBN, reviewDto);
                 return Ok(addedReview);
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetReviewsByBookId(string ISBN)
+        public async Task<IActionResult> GetReviewsByBookISBN(string ISBN)
         {
             try
             {
-                var reviews = await _reviewService.GetReviewsByBookIdAsync(ISBN);
-                return Ok(reviews);
+                IEnumerable<Review> reviews = await _reviewService.GetReviewsByBookIdAsync(ISBN);
+                // if null
+                var reviewsDto = _mapper.Map<IEnumerable<ReviewDto>>(reviews);
+                return Ok(reviewsDto);
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -134,11 +133,15 @@ namespace Libro.WebAPI.Controllers
             try
             {
                 var averageRating = await _reviewService.GetAverageRatingByBookIdAsync(ISBN);
-                return Ok(averageRating);
+                return Ok("Average = " + averageRating);
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
     }
