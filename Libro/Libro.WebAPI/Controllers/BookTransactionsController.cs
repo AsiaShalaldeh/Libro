@@ -160,6 +160,10 @@ namespace Libro.WebAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
+            catch (ResourceNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);

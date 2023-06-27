@@ -2,6 +2,7 @@
 using EmailService.Model;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
+using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
 
 namespace Libro.Application.Services
@@ -12,16 +13,17 @@ namespace Libro.Application.Services
         private readonly IBookService _bookService;
         private readonly IPatronService _patronService;
         private readonly ITransactionService _transactionService;
-        Dictionary<string, Queue<string>> booksQueues;
+        private readonly IBookQueueRepository _bookQueueRepository;
 
         public EmailNotificationService(IEmailSender emailSender, IBookService bookService,
-            IPatronService patronService, ITransactionService transactionService)
+            IPatronService patronService, ITransactionService transactionService,
+            IBookQueueRepository bookQueueRepository)
         {
             _emailSender = emailSender;
             _bookService = bookService;
             _patronService = patronService;
             _transactionService = transactionService;
-            booksQueues = new Dictionary<string, Queue<string>>();
+            _bookQueueRepository = bookQueueRepository;
         }
         public async Task<bool> SendOverdueNotification()
         {
@@ -67,8 +69,8 @@ namespace Libro.Application.Services
             }
             var subject = "Book Reservation Notification";
             var content = $"Dear {patron.Name},\n\nYou have successfully reserved the book with " +
-                $"title \"{bookTitle}\". Please pick up the book from the library within " +
-                $"the next 3 days.\n\nBest regards,\nThe Libro";
+                $"title \"{bookTitle}\". When the book be available we will notify you. " +
+                $"\n\nBest regards,\nThe Libro";
 
             var message = new Message(new List<string> { recipientEmail }, subject, content);
 
@@ -78,58 +80,53 @@ namespace Libro.Application.Services
 
         public async Task AddPatronToNotificationQueue(string patronId, string bookId)
         {
-            if (!booksQueues.ContainsKey(bookId))
-            {
-                booksQueues[bookId] = new Queue<string>();
-            }
-
-            booksQueues[bookId].Enqueue(patronId);
+            await _bookQueueRepository.EnqueuePatronAsync(bookId, patronId);
         }
         public async Task ProcessNotificationQueue(string bookId)
         {
-            if (booksQueues.ContainsKey(bookId))
+            var firstInQueue = await _bookQueueRepository.PeekPatronAsync(bookId);
+
+            if (firstInQueue != null)
             {
-                var queue = booksQueues[bookId];
+                var patron = await _patronService.GetPatronAsync(firstInQueue.PatronId);
+                var book = await _bookService.GetBookByISBNAsync(bookId);
 
-                if (queue.Count > 0)
+                if (patron != null && book != null)
                 {
-                    var patronId = queue.Peek();
-                    var patron = await _patronService.GetPatronAsync(patronId);
+                    string subject = "Book Available Notification";
+                    string content = $"The book '{book.Title}' is now available for borrowing." +
+                        $"\n\nBest regards,\nThe Libro";
 
-                    if (patron != null)
-                    {
-                        var book = await _bookService.GetBookByISBNAsync(bookId);
+                    var message = new Message(new List<string> { patron.Email }, subject, content);
+                    await _emailSender.SendEmailAsync(message);
 
-                        if (book != null)
-                        {
-                            string subject = "Book Available Notification";
-                            string content = $"The book '{book.Title}' is now available for borrowing.";
-
-                            // Use the email service to send the notification
-                            var message = new Message(new List<string> { patron.Email }, subject, content);
-
-                            await _emailSender.SendEmailAsync(message);
-
-                            queue.Dequeue();
-                        }
-                        else
-                        {
-                            // Log or handle the case when the book is not found
-                            queue.Dequeue();
-                        }
-                    }
-                    else
-                    {
-                        // Log or handle the case when the patron profile is not found
-                        queue.Dequeue();
-                    }
+                    await _bookQueueRepository.DequeuePatronAsync(bookId);
+                }
+                else
+                {
+                    // Log or handle the case when patron or book is not found
+                    await _bookQueueRepository.DequeuePatronAsync(bookId);
                 }
             }
         }
 
         public async Task<Dictionary<string, Queue<string>>> GetNotificationQueue()
         {
-            return booksQueues;
+            var bookQueues = new Dictionary<string, Queue<string>>();
+
+            var allBookQueues = await _bookQueueRepository.GetAllBookQueuesAsync();
+
+            foreach (var bookQueue in allBookQueues)
+            {
+                if (!bookQueues.ContainsKey(bookQueue.BookId))
+                {
+                    bookQueues[bookQueue.BookId] = new Queue<string>();
+                }
+
+                bookQueues[bookQueue.BookId].Enqueue(bookQueue.PatronId);
+            }
+
+            return bookQueues;
         }
     }
 }

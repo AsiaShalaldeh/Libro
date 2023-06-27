@@ -25,6 +25,9 @@ namespace Libro.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<BookQueue>()
+            .HasKey(q => new { q.BookId, q.PatronId });
+
             modelBuilder.Entity<BookList>()
             .HasKey(bl => new { bl.ReadingListId, bl.BookId });
 
@@ -55,6 +58,7 @@ namespace Libro.Infrastructure.Data
         public DbSet<Checkout> Checkouts { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<ReadingList> ReadingLists { get; set; }
+        public DbSet<BookQueue> BookQueues { get; set; }
 
     }
 }

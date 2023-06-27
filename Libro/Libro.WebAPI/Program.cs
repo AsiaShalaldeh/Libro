@@ -42,6 +42,7 @@ builder.Services.AddScoped<IBookRecommendationService, BookRecommendationService
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<ILoanPolicyService, LoanPolicyService>();
+builder.Services.AddScoped<IBookQueueRepository, BookQueueRepository>();
 
 
 var emailConfig = builder.Configuration
