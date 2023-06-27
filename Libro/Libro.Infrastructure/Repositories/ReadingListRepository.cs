@@ -2,151 +2,76 @@
 using Libro.Domain.Enums;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
+using Libro.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Libro.Infrastructure.Repositories
 {
     public class ReadingListRepository : IReadingListRepository
     {
-        private readonly List<ReadingList> _readingLists;
-        private readonly List<Book> _books;
+        private readonly LibroDbContext _context;
         private readonly IPatronRepository _patronRepository;
 
-        public ReadingListRepository(IPatronRepository patronRepository)
+        public ReadingListRepository(IPatronRepository patronRepository, LibroDbContext context)
         {
-            _readingLists = new List<ReadingList>
-        {
-            new ReadingList
-            {
-                ReadingListId = 1,
-                Name = "My First Reading List",
-                PatronId = "1",
-                BookLists = new List<BookList>
-                {
-                    new BookList { ReadingListId = 1, BookId = "ISBN1" },
-                    new BookList { ReadingListId = 1, BookId = "ISBN2" }
-                }
-            },
-            new ReadingList
-            {
-                ReadingListId = 2,
-                Name = "My Second Reading List",
-                PatronId = "1",
-                BookLists = new List<BookList>
-                {
-                    new BookList { ReadingListId = 2, BookId = "ISBN3" },
-                    new BookList { ReadingListId = 2, BookId = "ISBN4" }
-                }
-            }
-        };
-            _books = new List<Book>
-        {
-            new Book
-            {
-                ISBN = "ISBN1",
-                Title = "Harry Potter and the Sorcerer's Stone",
-                PublicationDate = new DateTime(1997, 6, 26),
-                Genre = Genre.Fantasy,
-                IsAvailable = true,
-                AuthorId = 1
-            },
-            new Book
-            {
-                ISBN = "ISBN2",
-                Title = "Harry Potter and the Chamber of Secrets",
-                PublicationDate = new DateTime(1998, 7, 2),
-                Genre = Genre.Fantasy,
-                IsAvailable = true,
-                AuthorId = 1
-            },
-            new Book
-            {
-                ISBN = "ISBN3",
-                Title = "Harry Potter and the Prisoner of Azkaban",
-                PublicationDate = new DateTime(1999, 7, 8),
-                Genre = Genre.Fantasy,
-                IsAvailable = true,
-                AuthorId = 1
-            },
-        };
+            _context = context;
             _patronRepository = patronRepository;
         }
-        public ReadingList GetReadingListByIdAsync(int listId, string patronId)
+
+        public async Task<ReadingList> GetReadingListByIdAsync(int listId, string patronId)
         {
-            var patron = _patronRepository.GetPatronByIdAsync(patronId);
-            if (patron == null)
-            {
-                throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
-            }
-            var list = _readingLists.FirstOrDefault(r => r.ReadingListId == listId && r.PatronId == patronId);
-            if (list == null)
-            {
-                throw new ResourceNotFoundException("Reading List", "ID", listId.ToString());
-            }
+            var list = await _context.ReadingLists.Include(r => r.BookLists)
+                .FirstOrDefaultAsync(r => r.ReadingListId == listId && r.PatronId.Equals(patronId));
             return list;
         }
 
         public async Task<IEnumerable<ReadingList>> GetReadingListsByPatronIdAsync(string patronId)
         {
-            var patron = _patronRepository.GetPatronByIdAsync(patronId);
-            if (patron == null)
-            {
-                throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
-            }
-            return await Task.FromResult(_readingLists.Where(r => r.PatronId == patronId));
+            return await _context.ReadingLists
+                .Where(r => r.PatronId.Equals(patronId))
+                .ToListAsync();
         }
 
         public async Task<ReadingList> CreateReadingListAsync(ReadingList readingList)
         {
-            _readingLists.Add(readingList);
-            return await Task.FromResult(readingList);
+            _context.ReadingLists.Add(readingList);
+            await _context.SaveChangesAsync();
+            return readingList;
         }
 
-        public async Task<bool> RemoveReadingListAsync(int listId, string patronId)
+        public async Task RemoveReadingListAsync(ReadingList readingList)
         {
-            var readingList = _readingLists.FirstOrDefault(r => r.ReadingListId == listId 
-                                && r.PatronId == patronId);
-            if (readingList == null)
-                return await Task.FromResult(false);
-
-            _readingLists.Remove(readingList);
-            return await Task.FromResult(true);
-        }
-        public async Task<IEnumerable<Book>> GetBooksByReadingListAsync(int listId, string patronId)
-        {
-            var readingList = GetReadingListByIdAsync(listId, patronId);
-            var bookIds = readingList.BookLists.Select(bl => bl.BookId);
-            var books = _books.Where(b => bookIds.Contains(b.ISBN)).ToList();
-            return books;
+            _context.ReadingLists.Remove(readingList);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> AddBookToReadingListAsync(int listId, string patronId, string bookId)
+        public async Task<IEnumerable<Book>> GetBooksByReadingListAsync(ReadingList readingList, string patronId)
         {
-            var readingList = GetReadingListByIdAsync(listId, patronId);
-            if (readingList != null)
+            if (readingList.BookLists.Any())
             {
-                readingList.BookLists.Add(new BookList { ReadingListId = listId, BookId = bookId });
-                return true;
+                var bookIds = readingList.BookLists.Select(bl => bl.BookId);
+                var books = await _context.Books.Where(b => bookIds.Contains(b.ISBN)).ToListAsync();
+                return books;
             }
-            else
-                return false;
+            return null;
+        }
+        public async Task AddBookToReadingListAsync(ReadingList readingList, BookList bookList)
+        {
+            readingList.BookLists.Add(bookList);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> RemoveBookFromReadingListAsync(int listId, string patronId, string bookId)
-        {
-            var readingList = _readingLists.FirstOrDefault(r => r.ReadingListId == listId && r.PatronId == patronId);
-            if (readingList == null)
-                return false;
-
-            var bookList = readingList.BookLists.FirstOrDefault(bl => bl.BookId == bookId);
+        public async Task RemoveBookFromReadingListAsync(ReadingList readingList, string bookId)
+        { 
+            var bookList = readingList.BookLists.FirstOrDefault(bl => bl.BookId.Equals(bookId));
             if (bookList != null)
             {
                 readingList.BookLists.Remove(bookList);
-                return true;
+                await _context.SaveChangesAsync();
             }
-
-            return false;
         }
-
     }
-
 }

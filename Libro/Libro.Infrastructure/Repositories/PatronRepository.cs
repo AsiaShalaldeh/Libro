@@ -19,6 +19,7 @@ namespace Libro.Infrastructure.Repositories
             return _context.Patrons.Include(p => p.Reviews)
                 .Include(p => p.ReservedBooks)
                 .Include(p => p.CheckedoutBooks)
+                .Include(p => p.ReadingLists)
                 .FirstOrDefault(p => p.PatronId.Equals(patronId));
         }
         public async Task AddPatronAsync(Patron patron)

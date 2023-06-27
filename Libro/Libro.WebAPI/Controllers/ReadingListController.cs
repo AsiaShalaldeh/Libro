@@ -10,7 +10,7 @@ namespace Libro.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/patrons")]
-    //[Authorize(Roles = "Patron")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Patron")]
     public class ReadingListController : ControllerBase
     {
         private readonly IReadingListService _readingListService;
@@ -27,12 +27,12 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                if (patronId != readingListDto.PatronId)
+                if (!patronId.Equals(readingListDto.PatronId))
                 {
-                    return BadRequest("Patron IDs Mismatch");
+                    return BadRequest("Patron ID Mismatch");
                 }
                 var createdListDto = await _readingListService.CreateReadingListAsync(readingListDto, patronId);
-                return CreatedAtRoute("GetReadingList", new { patronId = patronId, listId = createdListDto.ListId }, createdListDto);
+                return CreatedAtRoute("GetReadingList", new { patronId = patronId, listId = createdListDto.ReadingListId }, createdListDto);
             }
             catch (ResourceNotFoundException ex)
             {
@@ -40,7 +40,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -53,9 +53,13 @@ namespace Libro.WebAPI.Controllers
                 var readingListDtos = _mapper.Map<IEnumerable<ReadingListDto>>(readingLists);
                 return Ok(readingListDtos);
             }
+            catch (ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -74,7 +78,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -83,11 +87,12 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                var result = await _readingListService.AddBookToReadingListAsync(listId, patronId, ISBN);
-                if (result)
-                    return NoContent();
-                else
-                    return NotFound("Reading List not found.");
+                var response = await _readingListService.AddBookToReadingListAsync(listId, patronId, ISBN);
+                if (!response)
+                {
+                    return BadRequest("The Book Already Added To That List !!");
+                }
+                return NoContent();
             }
             catch (ResourceNotFoundException ex)
             {
@@ -95,7 +100,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -107,9 +112,13 @@ namespace Libro.WebAPI.Controllers
                 var books = await _readingListService.GetBooksByReadingListAsync(listId, patronId);
                 return Ok(books);
             }
+            catch (ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -118,15 +127,16 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                var result = await _readingListService.RemoveBookFromReadingListAsync(listId, patronId, ISBN);
-                if (result)
-                    return NoContent();
-                else
-                    return NotFound("Reading List or Book not found.");
+                await _readingListService.RemoveBookFromReadingListAsync(listId, patronId, ISBN);
+                return NoContent();
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -135,15 +145,16 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                var result = await _readingListService.RemoveReadingListAsync(listId, patronId);
-                if (result)
-                    return NoContent();
-                else
-                    return NotFound("Reading List not found.");
+                await _readingListService.RemoveReadingListAsync(listId, patronId);
+                return NoContent();
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
     }
