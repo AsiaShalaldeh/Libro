@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using FluentValidation;
-using Libro.Application.Validators;
 using Libro.Domain.Common;
 using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
@@ -8,6 +6,7 @@ using Libro.Domain.Enums;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
+using Microsoft.Extensions.Logging;
 
 namespace Libro.Application.Services
 {
@@ -16,87 +15,146 @@ namespace Libro.Application.Services
         private readonly IAuthorRepository _authorRepository;
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<BookService> _logger;
 
-
-        public BookService(IBookRepository bookRepository, IMapper mapper, 
-            IAuthorRepository authorRepository)
+        public BookService(IBookRepository bookRepository, IMapper mapper,
+            IAuthorRepository authorRepository, ILogger<BookService> logger)
         {
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<Book> GetBookByISBNAsync(string ISBN)
         {
-            Book book = await _bookRepository.GetBookByISBNAsync(ISBN);
-            return book;
+            try
+            {
+                Book book = await _bookRepository.GetBookByISBNAsync(ISBN);
+                return book;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in BookService while retrieving the book with ISBN: {ISBN}");
+                throw;
+            }
         }
+
         public async Task<PaginatedResult<BookDto>> GetAllBooksAsync(int pageNumber, int pageSize)
         {
-            var paginatedResult = await _bookRepository.GetAllBooksAsync(pageNumber, pageSize);
+            try
+            {
+                var paginatedResult = await _bookRepository.GetAllBooksAsync(pageNumber, pageSize);
 
-            var bookDtos = _mapper.Map<IEnumerable<BookDto>>(paginatedResult.Items);
+                var bookDtos = _mapper.Map<IEnumerable<BookDto>>(paginatedResult.Items);
 
-            return new PaginatedResult<BookDto>(bookDtos, paginatedResult.TotalCount, pageNumber, pageSize);
+                return new PaginatedResult<BookDto>(bookDtos, paginatedResult.TotalCount, pageNumber, pageSize);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in BookService while retrieving all books.");
+                throw;
+            }
         }
+
         public async Task<PaginatedResult<BookDto>> SearchBooksAsync(string title, string author,
             string genre, int pageNumber, int pageSize)
         {
-            var paginatedResult = await _bookRepository.SearchBooksAsync(title, author, genre, pageNumber, pageSize);
+            try
+            {
+                var paginatedResult = await _bookRepository.SearchBooksAsync(title, author, genre, pageNumber, pageSize);
 
-            var bookDtos = _mapper.Map<IEnumerable<BookDto>>(paginatedResult.Items);
+                var bookDtos = _mapper.Map<IEnumerable<BookDto>>(paginatedResult.Items);
 
-            return new PaginatedResult<BookDto>(bookDtos, paginatedResult.TotalCount, pageNumber, pageSize);
+                return new PaginatedResult<BookDto>(bookDtos, paginatedResult.TotalCount, pageNumber, pageSize);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in BookService while searching for books.");
+                throw;
+            }
         }
+
         public async Task<BookDto> AddBookAsync(BookRequest bookDto)
         {
-            Author author = await _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId);
-            if (author == null)
-            {
-                throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());
-            }
-            var book = _mapper.Map<Book>(bookDto);
-            await _bookRepository.AddBookAsync(book, author);
-            return _mapper.Map<BookDto>(book);
-        }
-
-        public async Task UpdateBookAsync(string ISBN, BookRequest bookDto)
-        {
-            var existingBook = await _bookRepository.GetBookByISBNAsync(ISBN);
-            if (existingBook == null)
-            {
-                throw new ResourceNotFoundException("Book", "ID", ISBN);
-            }
-            if (bookDto.AuthorId != null)
+            try
             {
                 Author author = await _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId);
                 if (author == null)
                 {
                     throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());
                 }
-                existingBook.Author = author;
+                var book = _mapper.Map<Book>(bookDto);
+                await _bookRepository.AddBookAsync(book, author);
+                return _mapper.Map<BookDto>(book);
             }
-            existingBook.Title = bookDto.Title;
-            existingBook.IsAvailable = bookDto.IsAvailable;
-            existingBook.Genre = Enum.Parse<Genre>(bookDto.Genre, ignoreCase: true);
-            await _bookRepository.UpdateBookAsync(existingBook);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in BookService while adding a book.");
+                throw;
+            }
+        }
+
+        public async Task UpdateBookAsync(string ISBN, BookRequest bookDto)
+        {
+            try
+            {
+                var existingBook = await _bookRepository.GetBookByISBNAsync(ISBN);
+                if (existingBook == null)
+                {
+                    throw new ResourceNotFoundException("Book", "ID", ISBN);
+                }
+                if (bookDto.AuthorId != null)
+                {
+                    Author author = await _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId);
+                    if (author == null)
+                    {
+                        throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());
+                    }
+                    existingBook.Author = author;
+                }
+                existingBook.Title = bookDto.Title;
+                existingBook.IsAvailable = bookDto.IsAvailable;
+                existingBook.Genre = Enum.Parse<Genre>(bookDto.Genre, ignoreCase: true);
+                await _bookRepository.UpdateBookAsync(existingBook);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in BookService while updating the book with ISBN: {ISBN}");
+                throw;
+            }
         }
 
         public async Task RemoveBookAsync(string ISBN)
         {
-            var existingBook = await _bookRepository.GetBookByISBNAsync(ISBN);
-            if (existingBook == null)
+            try
             {
-                throw new ResourceNotFoundException("Book", "ISBN", ISBN);
-            }
+                var existingBook = await _bookRepository.GetBookByISBNAsync(ISBN);
+                if (existingBook == null)
+                {
+                    throw new ResourceNotFoundException("Book", "ISBN", ISBN);
+                }
 
-            await _bookRepository.DeleteBookAsync(existingBook);
+                await _bookRepository.DeleteBookAsync(existingBook);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in BookService while removing the book with ISBN: {ISBN}");
+                throw;
+            }
         }
 
         public async Task<IEnumerable<Book>> GetBooksByGenres(IEnumerable<Genre> genres)
         {
-            return await _bookRepository.GetBooksByGenres(genres);
+            try
+            {
+                return await _bookRepository.GetBooksByGenres(genres);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in BookService while retrieving books by genres.");
+                throw;
+            }
         }
     }
-
 }

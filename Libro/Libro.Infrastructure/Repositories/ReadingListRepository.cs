@@ -1,76 +1,129 @@
 ﻿using Libro.Domain.Entities;
-using Libro.Domain.Enums;
-using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Libro.Infrastructure.Repositories
 {
     public class ReadingListRepository : IReadingListRepository
     {
         private readonly LibroDbContext _context;
-        private readonly IPatronRepository _patronRepository;
+        private readonly ILogger<ReadingListRepository> _logger;
 
-        public ReadingListRepository(IPatronRepository patronRepository, LibroDbContext context)
+        public ReadingListRepository(LibroDbContext context, ILogger<ReadingListRepository> logger)
         {
             _context = context;
-            _patronRepository = patronRepository;
+            _logger = logger;
         }
 
         public async Task<ReadingList> GetReadingListByIdAsync(int listId, string patronId)
         {
-            var list = await _context.ReadingLists.Include(r => r.BookLists)
-                .FirstOrDefaultAsync(r => r.ReadingListId == listId && r.PatronId.Equals(patronId));
-            return list;
+            try
+            {
+                var list = await _context.ReadingLists.Include(r => r.BookLists)
+                    .FirstOrDefaultAsync(r => r.ReadingListId == listId && r.PatronId.Equals(patronId));
+                return list;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in ReadingListRepository while getting the reading list with ID: {listId} for patron with ID: {patronId}.");
+                throw;
+            }
         }
 
         public async Task<IEnumerable<ReadingList>> GetReadingListsByPatronIdAsync(string patronId)
         {
-            return await _context.ReadingLists
-                .Where(r => r.PatronId.Equals(patronId))
-                .ToListAsync();
+            try
+            {
+                return await _context.ReadingLists
+                    .Where(r => r.PatronId.Equals(patronId))
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in ReadingListRepository while getting reading lists for patron with ID: {patronId}.");
+                throw;
+            }
         }
 
         public async Task<ReadingList> CreateReadingListAsync(ReadingList readingList)
         {
-            _context.ReadingLists.Add(readingList);
-            await _context.SaveChangesAsync();
-            return readingList;
+            try
+            {
+                _context.ReadingLists.Add(readingList);
+                await _context.SaveChangesAsync();
+                return readingList;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in ReadingListRepository while creating a reading list.");
+                throw;
+            }
         }
 
         public async Task RemoveReadingListAsync(ReadingList readingList)
         {
-            _context.ReadingLists.Remove(readingList);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.ReadingLists.Remove(readingList);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in ReadingListRepository while removing the reading list with ID: {readingList.ReadingListId}.");
+                throw;
+            }
         }
 
         public async Task<IEnumerable<Book>> GetBooksByReadingListAsync(ReadingList readingList, string patronId)
         {
-            if (readingList.BookLists.Any())
+            try
             {
-                var bookIds = readingList.BookLists.Select(bl => bl.BookId);
-                var books = await _context.Books.Where(b => bookIds.Contains(b.ISBN)).ToListAsync();
-                return books;
+                if (readingList.BookLists.Any())
+                {
+                    var bookIds = readingList.BookLists.Select(bl => bl.BookId);
+                    var books = await _context.Books.Where(b => bookIds.Contains(b.ISBN)).ToListAsync();
+                    return books;
+                }
+                return null;
             }
-            return null;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in ReadingListRepository while getting books for the reading list with ID: {readingList.ReadingListId} for patron with ID: {patronId}.");
+                throw;
+            }
         }
+
         public async Task AddBookToReadingListAsync(ReadingList readingList, BookList bookList)
         {
-            readingList.BookLists.Add(bookList);
-            await _context.SaveChangesAsync();
+            try
+            {
+                readingList.BookLists.Add(bookList);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in ReadingListRepository while adding a book to the reading list with ID: {readingList.ReadingListId}.");
+                throw;
+            }
         }
 
         public async Task RemoveBookFromReadingListAsync(ReadingList readingList, string bookId)
-        { 
-            var bookList = readingList.BookLists.FirstOrDefault(bl => bl.BookId.Equals(bookId));
-            if (bookList != null)
+        {
+            try
             {
-                readingList.BookLists.Remove(bookList);
-                await _context.SaveChangesAsync();
+                var bookList = readingList.BookLists.FirstOrDefault(bl => bl.BookId.Equals(bookId));
+                if (bookList != null)
+                {
+                    readingList.BookLists.Remove(bookList);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in ReadingListRepository while removing a book from the reading list with ID: {readingList.ReadingListId}.");
+                throw;
             }
         }
     }

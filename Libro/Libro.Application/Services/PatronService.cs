@@ -1,9 +1,9 @@
-﻿using AutoMapper;
-using Libro.Domain.Dtos;
+﻿using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
+using Microsoft.Extensions.Logging;
 
 namespace Libro.Application.Services
 {
@@ -11,56 +11,96 @@ namespace Libro.Application.Services
     {
         private readonly IPatronRepository _patronRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
+        private readonly ILogger<PatronService> _logger;
 
-        public PatronService(IPatronRepository patronRepository, IMapper mapper,
-            IUserRepository userRepository)
+        public PatronService(IPatronRepository patronRepository, IUserRepository userRepository, ILogger<PatronService> logger)
         {
             _patronRepository = patronRepository;
             _userRepository = userRepository;
-            _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<Patron> GetPatronAsync(string patronId)
         {
-            Patron patron = await _patronRepository.GetPatronByIdAsync(patronId);
-            return patron;
+            try
+            {
+                Patron patron = await _patronRepository.GetPatronByIdAsync(patronId);
+                return patron;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in PatronService while retrieving the patron with ID: {patronId}.");
+                throw;
+            }
         }
+
         public async Task AddPatronAsync(string patronId, string name, string email)
         {
-            Patron patron = new Patron()
+            try
             {
-                PatronId = patronId,
-                Name = name,
-                Email = email,
-            };
-            await _patronRepository.AddPatronAsync(patron);
+                Patron patron = new Patron()
+                {
+                    PatronId = patronId,
+                    Name = name,
+                    Email = email,
+                };
+                await _patronRepository.AddPatronAsync(patron);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in PatronService while adding a new patron.");
+                throw;
+            }
         }
+
         public async Task<Patron> UpdatePatronAsync(string patronId, PatronDto patronDto)
         {
-            Patron existingPatron = await _patronRepository.GetPatronByIdAsync(patronId);
-
-            if (existingPatron == null)
+            try
             {
-                throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
-            }
-            if (!patronDto.Email.Equals(""))
-                existingPatron.Email = patronDto.Email;
-            if (!patronDto.Name.Equals(""))
-                existingPatron.Name = patronDto.Name;
+                Patron existingPatron = await _patronRepository.GetPatronByIdAsync(patronId);
 
-            Patron patron = await _patronRepository.UpdatePatronAsync(existingPatron);
-            await _userRepository.UpdateUserAsync(patronId, patronDto.Name, patronDto.Email);
-            return patron;
+                if (existingPatron == null)
+                {
+                    throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
+                }
+
+                if (!string.IsNullOrEmpty(patronDto.Email))
+                {
+                    existingPatron.Email = patronDto.Email;
+                }
+
+                if (!string.IsNullOrEmpty(patronDto.Name))
+                {
+                    existingPatron.Name = patronDto.Name;
+                }
+
+                Patron patron = await _patronRepository.UpdatePatronAsync(existingPatron);
+                await _userRepository.UpdateUserAsync(patronId, patronDto.Name, patronDto.Email);
+                return patron;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in PatronService while updating the patron with ID: {patronId}.");
+                throw;
+            }
         }
+
         public async Task<IEnumerable<Checkout>> GetBorrowingHistoryAsync(string patronId)
         {
-            Patron patron = await _patronRepository.GetPatronByIdAsync(patronId);
-            if (patron == null)
+            try
             {
-                throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
+                Patron patron = await _patronRepository.GetPatronByIdAsync(patronId);
+                if (patron == null)
+                {
+                    throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
+                }
+                return patron.CheckedoutBooks;
             }
-            return patron.CheckedoutBooks;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in PatronService while retrieving the borrowing history for patron with ID: {patronId}.");
+                throw;
+            }
         }
     }
 }

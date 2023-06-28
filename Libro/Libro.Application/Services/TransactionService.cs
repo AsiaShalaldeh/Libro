@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using Libro.Domain.Common;
 using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
 using Libro.Domain.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Libro.Application.Services
 {
@@ -16,140 +16,227 @@ namespace Libro.Application.Services
         private readonly ITransactionRepository _transactionRepository;
         private readonly ILoanPolicyService _loanPolicyService;
         private readonly IMapper _mapper;
+        private readonly ILogger<TransactionService> _logger;
 
-        public TransactionService(IBookService bookService, ITransactionRepository transactionRepository,
-            ILoanPolicyService loanPolicyService, IBookRepository bookRepository, IMapper mapper)
+        public TransactionService(
+            IBookService bookService,
+            ITransactionRepository transactionRepository,
+            ILoanPolicyService loanPolicyService,
+            IBookRepository bookRepository,
+            IMapper mapper,
+            ILogger<TransactionService> logger)
         {
             _bookService = bookService;
             _bookRepository = bookRepository;
             _transactionRepository = transactionRepository;
             _loanPolicyService = loanPolicyService;
-            _mapper = mapper;   
+            _mapper = mapper;
+            _logger = logger;
         }
+
         public async Task<IEnumerable<Checkout>> GetCheckoutTransactionsByPatron(string patronId)
         {
-            var transactions = await _transactionRepository.GetCheckoutTransactionsByPatronAsync(patronId);
-            return transactions;
+            try
+            {
+                var transactions = await _transactionRepository.GetCheckoutTransactionsByPatronAsync(patronId);
+                return transactions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in TransactionService while retrieving checkout transactions for patron with ID: {patronId}.");
+                throw;
+            }
         }
+
         public async Task<IEnumerable<Book>> GetOverdueBooksAsync()
         {
-            var overdueBookIds = await _transactionRepository.GetOverdueBookIdsAsync();
-            var overdueBooks = new List<Book>();
-
-            if (overdueBookIds.Any())
+            try
             {
-                foreach (var bookId in overdueBookIds)
+                var overdueBookIds = await _transactionRepository.GetOverdueBookIdsAsync();
+                var overdueBooks = new List<Book>();
+
+                if (overdueBookIds.Any())
                 {
-                    var book = await _bookService.GetBookByISBNAsync(bookId);
-                    if (book != null)
+                    foreach (var bookId in overdueBookIds)
                     {
-                        overdueBooks.Add(book);
+                        var book = await _bookService.GetBookByISBNAsync(bookId);
+                        if (book != null)
+                        {
+                            overdueBooks.Add(book);
+                        }
                     }
                 }
+
+                return overdueBooks;
             }
-            return overdueBooks;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in TransactionService while retrieving overdue books.");
+                throw;
+            }
         }
+
         public async Task<IEnumerable<Checkout>> GetOverdueTransactionsAsync()
         {
-            var transactons = await _transactionRepository.GetOverdueTransactionsAsync();
-            return transactons;
+            try
+            {
+                var transactions = await _transactionRepository.GetOverdueTransactionsAsync();
+                return transactions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in TransactionService while retrieving overdue transactions.");
+                throw;
+            }
         }
+
         public async Task<IEnumerable<Book>> GetBorrowedBooksAsync()
         {
-            var borrowedBookIds = await _transactionRepository.GetBorrowedBookIdsAsync();
-            var borrowedBooks = new List<Book>();
-
-            if (borrowedBookIds.Any())
+            try
             {
-                foreach (var bookId in borrowedBookIds)
+                var borrowedBookIds = await _transactionRepository.GetBorrowedBookIdsAsync();
+                var borrowedBooks = new List<Book>();
+
+                if (borrowedBookIds.Any())
                 {
-                    var book = await _bookService.GetBookByISBNAsync(bookId);
-                    if (book != null)
+                    foreach (var bookId in borrowedBookIds)
                     {
-                        borrowedBooks.Add(book);
+                        var book = await _bookService.GetBookByISBNAsync(bookId);
+                        if (book != null)
+                        {
+                            borrowedBooks.Add(book);
+                        }
                     }
                 }
+
+                return borrowedBooks;
             }
-            return borrowedBooks;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in TransactionService while retrieving borrowed books.");
+                throw;
+            }
         }
+
         public async Task<Book> GetBorrowedBookByIdAsync(string ISBN)
         {
-            if (string.IsNullOrEmpty(ISBN))
-                throw new ArgumentException("ISBN is required", nameof(ISBN));
-            var borrowedBookId = await _transactionRepository.GetBorrowedBookByIdAsync(ISBN);
-            if (string.IsNullOrEmpty(borrowedBookId))
-                return null;
-            var borrowedBook = await _bookService.GetBookByISBNAsync(borrowedBookId);
-            return borrowedBook;
+            try
+            {
+                if (string.IsNullOrEmpty(ISBN))
+                    throw new ArgumentException("ISBN is required", nameof(ISBN));
+
+                var borrowedBookId = await _transactionRepository.GetBorrowedBookByIdAsync(ISBN);
+
+                if (string.IsNullOrEmpty(borrowedBookId))
+                    return null;
+
+                var borrowedBook = await _bookService.GetBookByISBNAsync(borrowedBookId);
+                return borrowedBook;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in TransactionService while retrieving borrowed book with ISBN: {ISBN}.");
+                throw;
+            }
         }
+
         public async Task<ReservationDto> ReserveBookAsync(Book book, Patron patron)
         {
-            var reservation = new Reservation
+            try
             {
-                ReservationId = Guid.NewGuid().ToString(),
-                Book = book,
-                Patron = patron,
-                ReservationDate = DateTime.UtcNow
-            };
-            var reserve = await _transactionRepository.AddReservationAsync(reservation);
-            return _mapper.Map<ReservationDto>(reserve);
+                var reservation = new Reservation
+                {
+                    ReservationId = Guid.NewGuid().ToString(),
+                    Book = book,
+                    Patron = patron,
+                    ReservationDate = DateTime.UtcNow
+                };
+
+                var reserve = await _transactionRepository.AddReservationAsync(reservation);
+                return _mapper.Map<ReservationDto>(reserve);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in TransactionService while reserving a book.");
+                throw;
+            }
         }
 
-        // return CheckoutDto
         public async Task<TransactionResponseModel> CheckoutBookAsync(Book book, Patron patron)
         {
-            var checkout = new Checkout
+            try
             {
-                CheckoutId = Guid.NewGuid().ToString(),
-                Book = book,
-                Patron = patron,
-                CheckoutDate = DateTime.UtcNow,
-                DueDate = DateTime.UtcNow.AddDays(_loanPolicyService.GetLoanDuration())
-            };
-            var addedChekout = await _transactionRepository.AddCheckoutAsync(checkout);
+                var checkout = new Checkout
+                {
+                    CheckoutId = Guid.NewGuid().ToString(),
+                    Book = book,
+                    Patron = patron,
+                    CheckoutDate = DateTime.UtcNow,
+                    DueDate = DateTime.UtcNow.AddDays(_loanPolicyService.GetLoanDuration())
+                };
 
-            // remove the Reservation from the Reservation List
-            var reservation = patron.ReservedBooks.Where(t => t.BookId.Equals(book.ISBN)).FirstOrDefault();
-            patron.ReservedBooks.Remove(reservation);
+                var addedCheckout = await _transactionRepository.AddCheckoutAsync(checkout);
 
-            // Update the book status 
-            await _bookRepository.UpdateBookStatus(book.ISBN, false);
-            return _mapper.Map<TransactionResponseModel>(addedChekout);
+                // Remove the Reservation from the Reservation List
+                var reservation = patron.ReservedBooks.Where(t => t.BookId.Equals(book.ISBN)).FirstOrDefault();
+                patron.ReservedBooks.Remove(reservation);
+
+                // Update the book status 
+                await _bookRepository.UpdateBookStatus(book.ISBN, false);
+
+                return _mapper.Map<TransactionResponseModel>(addedCheckout);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in TransactionService while checking out a book.");
+                throw;
+            }
         }
 
         public async Task<TransactionResponseModel> ReturnBookAsync(Book book, Patron patron)
         {
-            Checkout checkout = patron.CheckedoutBooks.Where(t => t.BookId.Equals(book.ISBN)).FirstOrDefault();
-            if (checkout == null)
+            try
             {
-                throw new ResourceNotFoundException("Checkouted Book", "ISBN", book.ISBN);
+                var checkout = patron.CheckedoutBooks.Where(t => t.BookId.Equals(book.ISBN)).FirstOrDefault();
+                if (checkout == null)
+                {
+                    throw new ResourceNotFoundException("Checked Out Book", "ISBN", book.ISBN);
+                }
+
+                var returnDate = DateTime.UtcNow;
+                checkout.ReturnDate = returnDate;
+                checkout.IsReturned = true;
+
+                var days = (DateTime.Now - checkout.DueDate).Days;
+                var totalFees = CalculateTotalFees(days);
+                checkout.TotalFee = totalFees;
+
+                await _transactionRepository.UpdateCheckoutAsync(checkout);
+                await _bookRepository.UpdateBookStatus(book.ISBN, true);
+
+                var response = new TransactionResponseModel
+                {
+                    BookId = book.ISBN,
+                    PatronId = patron.PatronId,
+                    CheckoutDate = checkout.CheckoutDate,
+                    DueDate = checkout.DueDate,
+                    ReturnDate = returnDate,
+                    TotalFee = totalFees
+                };
+
+                return response;
             }
-            //patron.CheckedoutBooks.Remove(checkout);
-            DateTime returnDate = DateTime.UtcNow;
-            checkout.ReturnDate = returnDate;
-            checkout.IsReturned = true;
-            int days = (DateTime.Now - checkout.DueDate).Days;
-            decimal totalFees = CalculateTotalFees(days);
-            checkout.TotalFee = totalFees;
-
-            await _transactionRepository.UpdateCheckoutAsync(checkout);
-            await _bookRepository.UpdateBookStatus(book.ISBN, true);
-
-            TransactionResponseModel response = new()
+            catch (Exception ex)
             {
-                BookId = book.ISBN,
-                PatronId = patron.PatronId,
-                CheckoutDate = checkout.CheckoutDate,
-                DueDate = checkout.DueDate,
-                ReturnDate = returnDate,
-                TotalFee = totalFees
-            };
-
-            return response;
+                _logger.LogError(ex, "An error occurred in TransactionService while returning a book.");
+                throw;
+            }
         }
+
         private decimal CalculateTotalFees(int days)
         {
             decimal total = Math.Round(_loanPolicyService.GetLoanDuration() * _loanPolicyService.GetBorrowingFeePerDay(), 2);
+
             if (days == 0)
             {
                 return total;
@@ -163,6 +250,7 @@ namespace Libro.Application.Services
             {
                 return Math.Round(days * _loanPolicyService.GetBorrowingFeePerDay(), 2);
             }
+
             return 0;
         }
     }

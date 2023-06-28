@@ -70,6 +70,8 @@ builder.Services.AddAuthentication(options => {
     };
 });
 
+
+
 builder.Services.AddHttpContextAccessor();
 // For Entity Framework
 builder.Services.AddDbContext<LibroDbContext>();
@@ -95,6 +97,13 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.Configure<IdentityOptions>(options =>
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
 
+builder.WebHost.UseSentry(options =>
+{
+    string dsnString = builder.Configuration.GetSection("Logging:Sentry:Dsn").Value;
+    options.Dsn = dsnString;
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -105,6 +114,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSession();
+app.UseSentryTracing();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

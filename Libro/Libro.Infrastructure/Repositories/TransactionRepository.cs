@@ -1,84 +1,155 @@
-﻿using Libro.Domain.Common;
-using Libro.Domain.Entities;
-using Libro.Domain.Enums;
-using Libro.Domain.Exceptions;
+﻿using Libro.Domain.Entities;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Libro.Infrastructure.Repositories
 {
     public class TransactionRepository : ITransactionRepository
     {
         private readonly LibroDbContext _context;
+        private readonly ILogger<TransactionRepository> _logger;
 
-        public TransactionRepository(IBookRepository bookRepository, 
-            IPatronRepository patronRepository, LibroDbContext context)
+        public TransactionRepository(LibroDbContext context, ILogger<TransactionRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
+
         public async Task<Reservation> AddReservationAsync(Reservation reservation)
         {
-            _context.Reservations.Add(reservation);
-            await _context.SaveChangesAsync();
-            return reservation;
+            try
+            {
+                _context.Reservations.Add(reservation);
+                await _context.SaveChangesAsync();
+                return reservation;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while adding a reservation.");
+                throw;
+            }
         }
+
         public async Task<Checkout> AddCheckoutAsync(Checkout checkout)
         {
-            _context.Checkouts.Add(checkout);
-            await _context.SaveChangesAsync();
-            return checkout;
+            try
+            {
+                _context.Checkouts.Add(checkout);
+                await _context.SaveChangesAsync();
+                return checkout;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while adding a checkout transaction.");
+                throw;
+            }
         }
+
         public async Task UpdateCheckoutAsync(Checkout checkout)
         {
-            _context.Checkouts.Update(checkout);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Checkouts.Update(checkout);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while updating the checkout transaction with ID: {checkout.CheckoutId}.");
+                throw;
+            }
         }
+
         public async Task<IEnumerable<Checkout>> GetCheckoutTransactionsByPatronAsync(string patronId)
         {
-            var checkouts = await _context.Checkouts
-                .Where(c => c.PatronId.Equals(patronId))
-                .Include(t => t.Book)
-                .ToListAsync();
-            return checkouts;
+            try
+            {
+                var checkouts = await _context.Checkouts
+                    .Where(c => c.PatronId.Equals(patronId))
+                    .Include(t => t.Book)
+                    .ToListAsync();
+                return checkouts;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while getting checkout transactions for patron with ID: {patronId}.");
+                throw;
+            }
         }
+
         public async Task<IEnumerable<string>> GetOverdueBookIdsAsync()
         {
-            var currentDate = DateTime.Now.Date;
-            var overdueBookIds = await _context.Checkouts
-                .Where(t => t.DueDate < currentDate && !t.IsReturned)
-                .Select(t => t.BookId)
-                .ToListAsync();
+            try
+            {
+                var currentDate = DateTime.Now.Date;
+                var overdueBookIds = await _context.Checkouts
+                    .Where(t => t.DueDate < currentDate && !t.IsReturned)
+                    .Select(t => t.BookId)
+                    .ToListAsync();
 
-            return overdueBookIds;
+                return overdueBookIds;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting overdue book IDs.");
+                throw;
+            }
         }
+
         public async Task<IEnumerable<Checkout>> GetOverdueTransactionsAsync()
         {
-            var currentDate = DateTime.Now.Date;
-            var overdueTransactions = await _context.Checkouts
-                .Where(t => t.DueDate < currentDate && !t.IsReturned)
-                .Include(t => t.Book)
-                .ToListAsync();
+            try
+            {
+                var currentDate = DateTime.Now.Date;
+                var overdueTransactions = await _context.Checkouts
+                    .Where(t => t.DueDate < currentDate && !t.IsReturned)
+                    .Include(t => t.Book)
+                    .ToListAsync();
 
-            return overdueTransactions;
+                return overdueTransactions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting overdue transactions.");
+                throw;
+            }
         }
+
         public async Task<IEnumerable<string>> GetBorrowedBookIdsAsync()
         {
-            var borrowedBookIds = await _context.Checkouts
-                .Where(t => t.IsReturned == false)
-                .Select(t => t.BookId)
-                .ToListAsync();
+            try
+            {
+                var borrowedBookIds = await _context.Checkouts
+                    .Where(t => t.IsReturned == false)
+                    .Select(t => t.BookId)
+                    .ToListAsync();
 
-            return borrowedBookIds;
+                return borrowedBookIds;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting borrowed book IDs.");
+                throw;
+            }
         }
+
         public async Task<string> GetBorrowedBookByIdAsync(string ISBN)
         {
-            var borrowedBookId = await _context.Checkouts
-                .Where(t => !t.IsReturned && t.BookId.Equals(ISBN))
-                .Select(t => t.BookId)
-                .FirstOrDefaultAsync();
+            try
+            {
+                var borrowedBookId = await _context.Checkouts
+                    .Where(t => !t.IsReturned && t.BookId.Equals(ISBN))
+                    .Select(t => t.BookId)
+                    .FirstOrDefaultAsync();
 
-            return borrowedBookId;
+                return borrowedBookId;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while getting the borrowed book ID for ISBN: {ISBN}.");
+                throw;
+            }
         }
     }
 }

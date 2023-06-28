@@ -6,7 +6,11 @@ using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Libro.WebAPI.Controllers
 {
@@ -15,23 +19,24 @@ namespace Libro.WebAPI.Controllers
     [Authorize(AuthenticationSchemes = "Bearer")]
     public class BookTransactionsController : ControllerBase
     {
-        private readonly ITransactionService _trsansactionService;
+        private readonly ITransactionService _transactionService;
         private readonly INotificationService _notificationService;
         private readonly IPatronService _patronService;
         private readonly IBookService _bookService;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<BookTransactionsController> _logger;
 
-        public BookTransactionsController(ITransactionService transactionService,
-            IMapper mapper, IPatronService patronService, IBookService bookService,
-            INotificationService notificationService, IUserRepository userRepository)
+        public BookTransactionsController(ITransactionService transactionService, IMapper mapper, IPatronService patronService,
+            IBookService bookService, INotificationService notificationService, IUserRepository userRepository, ILogger<BookTransactionsController> logger)
         {
-            _trsansactionService = transactionService;
+            _transactionService = transactionService;
             _mapper = mapper;
             _patronService = patronService;
             _bookService = bookService;
             _notificationService = notificationService;
             _userRepository = userRepository;
+            _logger = logger;
         }
 
         [HttpPost("{ISBN}/reserve")]
@@ -56,27 +61,32 @@ namespace Libro.WebAPI.Controllers
                 {
                     return BadRequest("You have already reserved this book!!");
                 }
-                var transaction = await _trsansactionService.ReserveBookAsync(book, patron);
+                var transaction = await _transactionService.ReserveBookAsync(book, patron);
                 await _notificationService.AddPatronToNotificationQueue(patron.PatronId, book.ISBN);
                 await _notificationService.SendReservationNotification(patron.Email, book.Title, patron.PatronId);
+
+                _logger.LogInformation("Book reserved successfully. Book ISBN: {ISBN}, Patron ID: {PatronID}", ISBN, patron.PatronId);
+
                 return Ok(transaction);
             }
-            catch(ResourceNotFoundException ex)
+            catch (ResourceNotFoundException ex)
             {
+                _logger.LogWarning(ex, "ReserveBook failed. {Message}", ex.Message);
                 return NotFound(ex.Message);
             }
             catch (ArgumentException ex)
             {
+                _logger.LogWarning(ex, "ReserveBook failed. {Message}", ex.Message);
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while reserving the book. {Message}", ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
         [HttpPost("{ISBN}/checkout")]
-        //[Authorize(Roles = "Librarian")]
         public async Task<IActionResult> CheckoutBook(string ISBN, [FromBody] BookTransactionDto bookCheckout)
         {
             try
@@ -108,25 +118,30 @@ namespace Libro.WebAPI.Controllers
                         return BadRequest($"Sorry, It is not {patron.Name} turn to borrow the book !!");
                     }
                 }
-                var transaction = await _trsansactionService.CheckoutBookAsync(book, patron);
+                var transaction = await _transactionService.CheckoutBookAsync(book, patron);
+
+                _logger.LogInformation("Book checked out successfully. Book ISBN: {ISBN}, Patron ID: {PatronID}", ISBN, patron.PatronId);
+
                 return Ok(transaction);
             }
             catch (ResourceNotFoundException ex)
             {
+                _logger.LogWarning(ex, "CheckoutBook failed. {Message}", ex.Message);
                 return NotFound(ex.Message);
             }
             catch (ArgumentException ex)
             {
+                _logger.LogWarning(ex, "CheckoutBook failed. {Message}", ex.Message);
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while checking out the book. {Message}", ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
         [HttpPost("{ISBN}/return")]
-        //[Authorize(Roles = "Librarian")]
         public async Task<IActionResult> ReturnBook(string ISBN, [FromBody] BookTransactionDto bookReturn)
         {
             try
@@ -149,38 +164,44 @@ namespace Libro.WebAPI.Controllers
                 {
                     return BadRequest($"The {book.Title} book is not borrowed by {patron.Name} Patron to be returned!!");
                 }
-                var transaction = await _trsansactionService.ReturnBookAsync(book, patron);
+                var transaction = await _transactionService.ReturnBookAsync(book, patron);
 
                 // Notify the first patron in the queue if there is any
                 await _notificationService.ProcessNotificationQueue(book.ISBN);
+
+                _logger.LogInformation("Book returned successfully. Book ISBN: {ISBN}, Patron ID: {PatronID}", ISBN, patron.PatronId);
 
                 return Ok(transaction);
             }
             catch (ArgumentException ex)
             {
+                _logger.LogWarning(ex, "ReturnBook failed. {Message}", ex.Message);
                 return BadRequest(ex.Message);
             }
             catch (ResourceNotFoundException ex)
             {
+                _logger.LogWarning(ex, "ReturnBook failed. {Message}", ex.Message);
                 return BadRequest(ex.Message);
             }
             catch (InvalidOperationException ex)
             {
+                _logger.LogWarning(ex, "ReturnBook failed. {Message}", ex.Message);
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while returning the book. {Message}", ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+
         [HttpGet("borrowed-books/overdue")]
         [Authorize(Roles = "Librarian")]
         public async Task<IActionResult> GetOverdueBooks()
         {
             try
             {
-                // should be updated to return OverdueBookDto that contains patron name/email
-                var overdueBooks = await _trsansactionService.GetOverdueBooksAsync();
+                var overdueBooks = await _transactionService.GetOverdueBooksAsync();
 
                 if (overdueBooks == null || !overdueBooks.Any())
                 {
@@ -188,20 +209,23 @@ namespace Libro.WebAPI.Controllers
                 }
 
                 var bookDtos = _mapper.Map<IEnumerable<BookDto>>(overdueBooks);
+                _logger.LogInformation("Retrieved {Count} overdue books.", bookDtos.Count());
                 return Ok(bookDtos);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while retrieving overdue books. {Message}", ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+
         [HttpGet("borrowed-books")]
         [Authorize(Roles = "Librarian")]
         public async Task<IActionResult> GetBorrowedBooks()
         {
             try
             {
-                var borrowedBooks = await _trsansactionService.GetBorrowedBooksAsync();
+                var borrowedBooks = await _transactionService.GetBorrowedBooksAsync();
 
                 if (borrowedBooks == null || !borrowedBooks.Any())
                 {
@@ -209,20 +233,23 @@ namespace Libro.WebAPI.Controllers
                 }
 
                 var bookDtos = _mapper.Map<IEnumerable<BookDto>>(borrowedBooks);
+                _logger.LogInformation("Retrieved {Count} borrowed books.", bookDtos.Count());
                 return Ok(bookDtos);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while retrieving borrowed books. {Message}", ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+
         [HttpGet("borrowed-books/{ISBN}")]
         [Authorize(Roles = "Librarian")]
         public async Task<IActionResult> GetBorrowedBookById(string ISBN)
         {
             try
             {
-                var borrowedBook = await _trsansactionService.GetBorrowedBookByIdAsync(ISBN);
+                var borrowedBook = await _transactionService.GetBorrowedBookByIdAsync(ISBN);
 
                 if (borrowedBook == null)
                 {
@@ -230,10 +257,12 @@ namespace Libro.WebAPI.Controllers
                 }
 
                 var bookDto = _mapper.Map<BookDto>(borrowedBook);
+                _logger.LogInformation("Retrieved borrowed book. ISBN: {ISBN}", ISBN);
                 return Ok(bookDto);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while retrieving the borrowed book. {Message}", ex.Message);
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }

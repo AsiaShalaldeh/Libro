@@ -13,10 +13,13 @@ namespace Libro.WebAPI.Controllers
     public class BookRecommendationController : Controller
     {
         private readonly IBookRecommendationService _recommendationService;
+        private readonly ILogger<BookRecommendationController> _logger;
 
-        public BookRecommendationController(IBookRecommendationService recommendationService)
+        public BookRecommendationController(IBookRecommendationService recommendationService,
+            ILogger<BookRecommendationController> logger)
         {
             _recommendationService = recommendationService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -24,19 +27,27 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
+                _logger.LogInformation("Getting recommended books for patron: {PatronId}", patronId);
+
                 var recommendedBooks = await _recommendationService.GetRecommendedBooks(patronId);
+
+                _logger.LogInformation("Retrieved {Count} recommended books for patron: {PatronId}",
+                    recommendedBooks.Count(), patronId);
 
                 return Ok(recommendedBooks);
             }
-            catch(ResourceNotFoundException ex)
+            catch (ResourceNotFoundException ex)
             {
-                return BadRequest(ex.Message);  
+                _logger.LogWarning(ex, "Resource not found: {Message}", ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.InnerException.ToString());
+                _logger.LogError(ex, "An error occurred while getting recommended books: {Message}", ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+
     }
 
 }

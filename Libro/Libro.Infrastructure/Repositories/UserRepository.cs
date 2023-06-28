@@ -1,8 +1,7 @@
-﻿using Libro.Domain.Entities;
-using Libro.Domain.Enums;
-using Libro.Domain.Interfaces.IRepositories;
+﻿using Libro.Domain.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 
 namespace Libro.Infrastructure.Repositories
@@ -10,56 +9,77 @@ namespace Libro.Infrastructure.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<UserRepository> _logger;
 
         public UserRepository(UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor)
+            RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor,
+            ILogger<UserRepository> logger)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
             _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
-
-        //public async Task<IdentityUser> GetUserByIdAsync(string userId)
-        //{
-        //    return await _userManager.FindByIdAsync(userId);
-        //}
-
-        //public async Task<IdentityUser> GetUserByNameAsync(string username)
-        //{
-        //    return await _userManager.FindByNameAsync(username);
-        //}
 
         public async Task UpdateUserAsync(string userId, string name, string email)
         {
-            IdentityUser existingUser = await _userManager.FindByIdAsync(userId);
-
-            if (existingUser != null)
+            try
             {
-                if (!email.Equals(""))
-                    existingUser.Email = email;
-                if (!name.Equals(""))
-                    existingUser.UserName = name;
-                await _userManager.UpdateAsync(existingUser);
+                IdentityUser existingUser = await _userManager.FindByIdAsync(userId);
+
+                if (existingUser != null)
+                {
+                    if (!email.Equals(""))
+                        existingUser.Email = email;
+                    if (!name.Equals(""))
+                        existingUser.UserName = name;
+                    await _userManager.UpdateAsync(existingUser);
+                }
+
+                _logger.LogInformation("User updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating the user.");
+                throw; 
             }
         }
 
         public async Task DeleteUserAsync(string userId)
         {
-            IdentityUser existingUser = await _userManager.FindByIdAsync(userId);
-            if (existingUser != null)
+            try
             {
-                await _userManager.DeleteAsync(existingUser);
+                IdentityUser existingUser = await _userManager.FindByIdAsync(userId);
+                if (existingUser != null)
+                {
+                    await _userManager.DeleteAsync(existingUser);
+                }
+
+                _logger.LogInformation("User deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while deleting the user.");
+                throw; 
             }
         }
+
         public async Task<string> GetCurrentUserIdAsync()
         {
-            var userId = _httpContextAccessor.HttpContext.User
-                .FindFirstValue(ClaimTypes.NameIdentifier);
-            return userId;
+            try
+            {
+                var userId = _httpContextAccessor.HttpContext.User
+                    .FindFirstValue(ClaimTypes.NameIdentifier);
+
+                _logger.LogInformation("Retrieved current user ID successfully.");
+
+                return userId;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the current user ID.");
+                throw; 
+            }
         }
-
     }
-
 }
