@@ -36,13 +36,7 @@ namespace Libro.Application.Services
         public async Task<Review> GetReviewByIdAsync(string ISBN, int reviewId)
         {
             try
-            {
-                Book book = await _bookRepository.GetBookByISBNAsync(ISBN);
-                if (book == null)
-                {
-                    throw new ResourceNotFoundException("Book", "ISBN", ISBN);
-                }
-
+            { 
                 var review = await _reviewRepository.GetBookReviewByIdAsync(ISBN, reviewId);
                 return review;
             }
@@ -57,12 +51,16 @@ namespace Libro.Application.Services
         {
             try
             {
+                Book book = await _bookRepository.GetBookByISBNAsync(ISBN);
+                if (book == null)
+                {
+                    throw new ResourceNotFoundException("Book", "ISBN", ISBN);
+                }
                 var existingReview = await GetReviewByIdAsync(ISBN, reviewId);
                 if (existingReview == null)
                 {
                     throw new ResourceNotFoundException("Review", "ID", reviewId.ToString());
                 }
-
                 if (reviewDto.Rating != 0)
                     existingReview.Rating = reviewDto.Rating;
 

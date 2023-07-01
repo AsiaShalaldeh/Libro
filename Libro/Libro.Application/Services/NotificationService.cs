@@ -1,5 +1,5 @@
-﻿using EmailService.Interface;
-using EmailService.Model;
+﻿using Infrastructure.EmailService.Interface;
+using Infrastructure.EmailService.Model;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
@@ -76,8 +76,10 @@ namespace Libro.Application.Services
                 {
                     throw new ResourceNotFoundException("Patron", "Email", recipientEmail);
                 }
-                // check for transaction done with this info
-                if (!patron.ReservedBooks.Where(p => p.Book.Title.Equals(bookTitle)).Any())
+                // Check if any reservation matches the book title
+                bool hasReservation = patron.ReservedBooks != null &&
+                                      patron.ReservedBooks.Any(p => p.Book != null && p.Book.Title.Equals(bookTitle));
+                if (!hasReservation)
                 {
                     return false;
                 }

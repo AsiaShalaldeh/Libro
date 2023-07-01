@@ -6,11 +6,7 @@ using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Libro.WebAPI.Controllers
 {
@@ -24,11 +20,13 @@ namespace Libro.WebAPI.Controllers
         private readonly IPatronService _patronService;
         private readonly IBookService _bookService;
         private readonly IUserRepository _userRepository;
+        private readonly ILoanPolicyService _loanPolicyService;
         private readonly IMapper _mapper;
         private readonly ILogger<BookTransactionsController> _logger;
 
         public BookTransactionsController(ITransactionService transactionService, IMapper mapper, IPatronService patronService,
-            IBookService bookService, INotificationService notificationService, IUserRepository userRepository, ILogger<BookTransactionsController> logger)
+            IBookService bookService, INotificationService notificationService, IUserRepository userRepository,
+            ILogger<BookTransactionsController> logger, ILoanPolicyService loanPolicyService)
         {
             _transactionService = transactionService;
             _mapper = mapper;
@@ -36,6 +34,7 @@ namespace Libro.WebAPI.Controllers
             _bookService = bookService;
             _notificationService = notificationService;
             _userRepository = userRepository;
+            _loanPolicyService = loanPolicyService;
             _logger = logger;
         }
 
@@ -61,6 +60,7 @@ namespace Libro.WebAPI.Controllers
                 {
                     return BadRequest("You have already reserved this book!!");
                 }
+
                 var transaction = await _transactionService.ReserveBookAsync(book, patron);
                 await _notificationService.AddPatronToNotificationQueue(patron.PatronId, book.ISBN);
                 await _notificationService.SendReservationNotification(patron.Email, book.Title, patron.PatronId);
@@ -117,6 +117,11 @@ namespace Libro.WebAPI.Controllers
                     {
                         return BadRequest($"Sorry, It is not {patron.Name} turn to borrow the book !!");
                     }
+                }
+                if (!_loanPolicyService.CanPatronCheckoutBook(patron))
+                {
+                    return BadRequest($"Patron with ID: {patron.PatronId} Can not Checkout The Book Since he/she " +
+                        $"is not allowed to checkout more thn five books at a time");
                 }
                 var transaction = await _transactionService.CheckoutBookAsync(book, patron);
 

@@ -134,6 +134,7 @@ namespace Libro.Infrastructure.Repositories
             }
         }
 
+        // This methos can be canceled since it exists in Service: returns Borrowed Book with that ISBN
         public async Task<string> GetBorrowedBookByIdAsync(string ISBN)
         {
             try

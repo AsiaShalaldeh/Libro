@@ -60,8 +60,8 @@ namespace Libro.WebAPI.Controllers
                 }
                 else
                 {
-                    _logger.LogInformation($"No Reservation done by Patron ID = {request.RecipientId} Recently !!");
-                    return NotFound($"No Reservation done by Patron ID = {request.RecipientId} Recently !!");
+                    _logger.LogInformation($"No Reservation done by Patron ID = {request.RecipientId} Recently for {request.BookTitle} Book !!");
+                    return NotFound($"No Reservation done by Patron ID = {request.RecipientId} Recently for {request.BookTitle} Book !!");
                 }
             }
             catch (ResourceNotFoundException ex)

@@ -51,6 +51,7 @@ namespace Libro.Infrastructure.Repositories
         {
             try
             {
+                // PatronID and Name are Required 
                 _context.ReadingLists.Add(readingList);
                 await _context.SaveChangesAsync();
                 return readingList;
@@ -76,7 +77,7 @@ namespace Libro.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<Book>> GetBooksByReadingListAsync(ReadingList readingList, string patronId)
+        public async Task<IEnumerable<Book>> GetBooksByReadingListAsync(ReadingList readingList)
         {
             try
             {
@@ -90,7 +91,7 @@ namespace Libro.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"An error occurred in ReadingListRepository while getting books for the reading list with ID: {readingList.ReadingListId} for patron with ID: {patronId}.");
+                _logger.LogError(ex, $"An error occurred in ReadingListRepository while getting books for the reading list with ID: {readingList.ReadingListId}");
                 throw;
             }
         }

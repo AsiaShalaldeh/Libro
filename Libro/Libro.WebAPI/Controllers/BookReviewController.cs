@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using EmailService.Interface;
-using EmailService.Model;
+using Infrastructure.EmailService.Interface;
+using Infrastructure.EmailService.Model;
 using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;

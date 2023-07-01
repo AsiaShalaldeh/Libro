@@ -12,8 +12,7 @@ namespace Libro.Infrastructure.Repositories
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<UserRepository> _logger;
 
-        public UserRepository(UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor,
+        public UserRepository(UserManager<IdentityUser> userManager, IHttpContextAccessor httpContextAccessor,
             ILogger<UserRepository> logger)
         {
             _userManager = userManager;

@@ -15,6 +15,7 @@ namespace Libro.Application.Services
         private readonly IBookRepository _bookRepository;
         private readonly ITransactionRepository _transactionRepository;
         private readonly ILoanPolicyService _loanPolicyService;
+        private readonly IPatronService _patronService;
         private readonly IMapper _mapper;
         private readonly ILogger<TransactionService> _logger;
 
@@ -24,12 +25,14 @@ namespace Libro.Application.Services
             ILoanPolicyService loanPolicyService,
             IBookRepository bookRepository,
             IMapper mapper,
-            ILogger<TransactionService> logger)
+            ILogger<TransactionService> logger,
+            IPatronService patronService)
         {
             _bookService = bookService;
             _bookRepository = bookRepository;
             _transactionRepository = transactionRepository;
             _loanPolicyService = loanPolicyService;
+            _patronService = patronService;
             _mapper = mapper;
             _logger = logger;
         }
@@ -38,6 +41,12 @@ namespace Libro.Application.Services
         {
             try
             {
+                // NEW
+                var patron = _patronService.GetPatronAsync(patronId);
+                if (patron == null)
+                {
+                    throw new ResourceNotFoundException("Patron", "ID", patronId);
+                }
                 var transactions = await _transactionRepository.GetCheckoutTransactionsByPatronAsync(patronId);
                 return transactions;
             }
@@ -128,7 +137,7 @@ namespace Libro.Application.Services
                 var borrowedBookId = await _transactionRepository.GetBorrowedBookByIdAsync(ISBN);
 
                 if (string.IsNullOrEmpty(borrowedBookId))
-                    return null;
+                    throw new ArgumentNullException(); // Write a message and catch it in the top level
 
                 var borrowedBook = await _bookService.GetBookByISBNAsync(borrowedBookId);
                 return borrowedBook;
@@ -166,6 +175,8 @@ namespace Libro.Application.Services
         {
             try
             {
+                if (patron.CheckedoutBooks == null)
+                    patron.CheckedoutBooks = new List<Checkout>();
                 var checkout = new Checkout
                 {
                     CheckoutId = Guid.NewGuid().ToString(),
@@ -178,9 +189,14 @@ namespace Libro.Application.Services
                 var addedCheckout = await _transactionRepository.AddCheckoutAsync(checkout);
 
                 // Remove the Reservation from the Reservation List
-                var reservation = patron.ReservedBooks.Where(t => t.BookId.Equals(book.ISBN)).FirstOrDefault();
-                patron.ReservedBooks.Remove(reservation);
-
+                if (patron.ReservedBooks != null && patron.ReservedBooks.Any())
+                {
+                    var reservation = patron.ReservedBooks.Where(t => t.BookId.Equals(book.ISBN)).FirstOrDefault();
+                    if (reservation != null)
+                    {
+                        patron.ReservedBooks.Remove(reservation);
+                    }
+                }
                 // Update the book status 
                 await _bookRepository.UpdateBookStatus(book.ISBN, false);
 
@@ -197,12 +213,15 @@ namespace Libro.Application.Services
         {
             try
             {
-                var checkout = patron.CheckedoutBooks.Where(t => t.BookId.Equals(book.ISBN)).FirstOrDefault();
-                if (checkout == null)
+                Checkout checkout = new Checkout();
+                if (patron.CheckedoutBooks != null && patron.CheckedoutBooks.Any())
                 {
-                    throw new ResourceNotFoundException("Checked Out Book", "ISBN", book.ISBN);
+                    checkout = patron.CheckedoutBooks.Where(t => t.BookId.Equals(book.ISBN)).FirstOrDefault();
+                    if (checkout == null)
+                    {
+                        throw new ResourceNotFoundException("Checked Out Book", "ISBN", book.ISBN);
+                    }
                 }
-
                 var returnDate = DateTime.UtcNow;
                 checkout.ReturnDate = returnDate;
                 checkout.IsReturned = true;

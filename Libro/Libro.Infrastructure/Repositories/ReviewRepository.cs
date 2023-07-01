@@ -21,6 +21,7 @@ namespace Libro.Infrastructure.Repositories
         {
             try
             {
+                // PatronId and BookId should be provided and not given null
                 return await _context.Reviews.FirstOrDefaultAsync(r => r.BookId.Equals(ISBN)
                                             && r.ReviewId == reviewId);
             }

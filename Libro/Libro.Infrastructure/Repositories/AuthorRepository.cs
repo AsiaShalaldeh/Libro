@@ -17,7 +17,6 @@ namespace Libro.Infrastructure.Repositories
             _context = context;
             _logger = logger;
         }
-
         public async Task<PaginatedResult<Author>> GetAllAuthorsAsync(int pageNumber, int pageSize)
         {
             try
@@ -32,7 +31,6 @@ namespace Libro.Infrastructure.Repositories
                 throw;
             }
         }
-
         public async Task<Author> GetAuthorByIdAsync(int authorId)
         {
             try

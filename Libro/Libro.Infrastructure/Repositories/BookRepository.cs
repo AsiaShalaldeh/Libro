@@ -107,7 +107,7 @@ namespace Libro.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"An error occurred in BookRepository while updating the book with ID: {book.BookId}.");
+                _logger.LogError(ex, $"An error occurred in BookRepository while updating the book with ID: {book.ISBN}.");
                 throw;
             }
         }
@@ -121,7 +121,7 @@ namespace Libro.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"An error occurred in BookRepository while deleting the book with ID: {book.BookId}.");
+                _logger.LogError(ex, $"An error occurred in BookRepository while deleting the book with ID: {book.ISBN}.");
                 throw;
             }
         }

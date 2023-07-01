@@ -19,6 +19,5 @@ namespace Libro.Domain.Entities
         public ICollection<Checkout> Checkouts { get; set; }
         public ICollection<Reservation> Reservations { get; set; }
         public ICollection<BookList> BookLists { get; set; }
-
     }
 }

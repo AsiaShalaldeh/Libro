@@ -578,21 +578,21 @@ namespace Libro.Infrastructure.Migrations
                         new
                         {
                             Id = "12804f00-c9f8-4d2d-9e5f-eb8aa485368f",
-                            ConcurrencyStamp = "e4baa6db-343d-40af-9116-f6a4e00626bb",
+                            ConcurrencyStamp = "0836c658-57c9-4ff7-8101-b681b82f7098",
                             Name = "Patron",
                             NormalizedName = "PATRON"
                         },
                         new
                         {
                             Id = "e1b13948-d0d2-4e4c-b706-8b70a99c8e6c",
-                            ConcurrencyStamp = "4e259e65-71df-4aef-9cf8-a667f3e0cd8a",
+                            ConcurrencyStamp = "62f791b7-2e7d-47f7-8780-6f30bfb8bf62",
                             Name = "Librarian",
                             NormalizedName = "LIBRARIAN"
                         },
                         new
                         {
                             Id = "e6f004ec-feb9-40bf-9e52-09a563fb2fb9",
-                            ConcurrencyStamp = "4d0a6b16-3555-447f-acfd-e29939dc2717",
+                            ConcurrencyStamp = "fd1f4c48-daa1-43d5-8114-93a258651394",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -692,12 +692,12 @@ namespace Libro.Infrastructure.Migrations
                         {
                             Id = "b74ddd14-6340-4840-95c2-db12554843e5",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8d81c218-1cb8-449e-9ba3-6b98179b9873",
+                            ConcurrencyStamp = "eb8cf27c-d9a9-4ee4-9693-34aeb679d996",
                             Email = "admin@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "bbb3fc0f-6256-4ddb-8491-d9a4d250a046",
+                            SecurityStamp = "b0b41d90-2d57-43f3-8e31-6cf7bd885933",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });

@@ -93,6 +93,11 @@ namespace Libro.Application.Services
                 //HttpContextAccessor.HttpContext.Session.SetString("AuthToken", token);
                 return "";
             }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, "An error occurred while logging in.");
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while logging in.");
@@ -104,6 +109,10 @@ namespace Libro.Application.Services
         {
             try
             {
+                if (user == null)
+                {
+                    throw new ArgumentNullException(nameof(user), "User cannot be null.");
+                }
                 var secretKey = _configuration["Jwt:Key"];
                 var issuer = _configuration["Jwt:Issuer"];
                 var audience = _configuration["Jwt:Audience"];

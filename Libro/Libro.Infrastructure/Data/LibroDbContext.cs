@@ -5,21 +5,32 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Libro.Infrastructure.Data
 {
     public class LibroDbContext : IdentityDbContext<IdentityUser>
     {
         private readonly IConfiguration _configuration;
-        public LibroDbContext(IConfiguration configuration)
+
+        public LibroDbContext(DbContextOptions<LibroDbContext> options, IConfiguration configuration)
+        : base(options)
         {
             _configuration = configuration;
         }
 
+        public LibroDbContext(DbContextOptions<LibroDbContext> options)
+            : base(options)
+        {
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connectionString = _configuration.GetConnectionString("Libro");
-            optionsBuilder.UseSqlServer(connectionString);
+            if (!optionsBuilder.IsConfigured)
+            {
+                string connectionString = _configuration.GetConnectionString("Libro");
+                optionsBuilder.UseSqlServer(connectionString);
+            }
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -59,6 +70,9 @@ namespace Libro.Infrastructure.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<ReadingList> ReadingLists { get; set; }
         public DbSet<BookQueue> BookQueues { get; set; }
+
+        [NotMapped]
+        public DbSet<BookList> BookLists { get; set; }
 
     }
 }

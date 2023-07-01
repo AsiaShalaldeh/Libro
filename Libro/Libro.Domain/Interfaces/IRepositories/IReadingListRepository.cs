@@ -9,7 +9,7 @@ namespace Libro.Domain.Interfaces.IRepositories
         Task<IEnumerable<ReadingList>> GetReadingListsByPatronIdAsync(string patronId);
         Task<ReadingList> CreateReadingListAsync(ReadingList readingList);
         Task RemoveReadingListAsync(ReadingList readingList);
-        Task<IEnumerable<Book>> GetBooksByReadingListAsync(ReadingList list, string patronId);
+        Task<IEnumerable<Book>> GetBooksByReadingListAsync(ReadingList list);
         Task AddBookToReadingListAsync(ReadingList readingList, BookList bookList);
         Task RemoveBookFromReadingListAsync(ReadingList readingList, string bookId);
     }

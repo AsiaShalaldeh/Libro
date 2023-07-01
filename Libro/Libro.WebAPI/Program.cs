@@ -1,5 +1,5 @@
-using EmailService.Interface;
-using EmailService.Model;
+using Infrastructure.EmailService.Interface;
+using Infrastructure.EmailService.Model;
 using EmailService.Service;
 using Libro.Application.Services;
 using Libro.Domain.Interfaces.IRepositories;
@@ -13,6 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,7 +76,9 @@ builder.Services.AddAuthentication(options => {
 
 builder.Services.AddHttpContextAccessor();
 // For Entity Framework
-builder.Services.AddDbContext<LibroDbContext>();
+builder.Services.AddDbContext<LibroDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("Libro"))
+); 
 
 // For Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(config =>

@@ -1,4 +1,5 @@
-﻿using Libro.Domain.Interfaces.IServices;
+﻿using Libro.Domain.Entities;
+using Libro.Domain.Interfaces.IServices;
 using Libro.Domain.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -75,5 +76,36 @@ namespace Libro.Application.Services
                 throw;
             }
         }
+        public decimal GetMaxBooksPerPatron()
+        {
+            try
+            {
+                var loanPolicy = new LoanPolicy();
+                _configuration.GetSection("LoanPolicy").Bind(loanPolicy);
+                return loanPolicy.MaxBooksPerPatron;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the max books per patron.");
+                throw;
+            }
+        }
+        public bool CanPatronCheckoutBook(Patron patron)
+        {
+            // Check if the patron has reached the maximum number of books allowed to be checked out
+            var checkoutBooks = patron.CheckedoutBooks.Where(ch => ch.IsReturned == false).ToList();
+            if (checkoutBooks.Count > GetMaxBooksPerPatron())
+            {
+                return false;
+            }
+
+            // Check if the patron has any outstanding fees
+            //if (patron.OutstandingFees > 0)
+            //{
+            //    return false;
+            //}
+            return true;
+        }
+
     }
 }

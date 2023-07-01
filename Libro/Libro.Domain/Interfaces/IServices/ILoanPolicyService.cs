@@ -1,4 +1,5 @@
-﻿using Libro.Domain.Models;
+﻿using Libro.Domain.Entities;
+using Libro.Domain.Models;
 
 namespace Libro.Domain.Interfaces.IServices
 {
@@ -8,5 +9,6 @@ namespace Libro.Domain.Interfaces.IServices
         public int GetLoanDuration();
         decimal GetBorrowingFeePerDay();
         decimal GetLateFeePerDay();
+        bool CanPatronCheckoutBook(Patron patron);
     }
 }
