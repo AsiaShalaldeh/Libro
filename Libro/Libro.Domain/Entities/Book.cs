@@ -13,7 +13,7 @@ namespace Libro.Domain.Entities
         public DateTime PublicationDate { get; set; }
         public Genre Genre { get; set; }
         public bool IsAvailable { get; set; }
-        public int AuthorId { get; set; }
+        public int? AuthorId { get; set; }
         public Author Author { get; set; }
         public ICollection<Review> Reviews { get; set; }
         public ICollection<Checkout> Checkouts { get; set; }

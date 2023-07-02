@@ -44,10 +44,12 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
+                // What should ResourceNotFoundException returns bad request or not found status code
+                // it depends, if i am trying to return a resource => Not Found
+                // if i am trying to reserve a book but it is not found so => Bad Request
                 Book book = await _bookService.GetBookByISBNAsync(ISBN);
                 var currentPatron = await _userRepository.GetCurrentUserIdAsync();
                 Patron patron = await _patronService.GetPatronAsync(currentPatron);
-
                 if (book == null)
                 {
                     throw new ResourceNotFoundException("Book", "ISBN", ISBN);
@@ -60,7 +62,6 @@ namespace Libro.WebAPI.Controllers
                 {
                     return BadRequest("You have already reserved this book!!");
                 }
-
                 var transaction = await _transactionService.ReserveBookAsync(book, patron);
                 await _notificationService.AddPatronToNotificationQueue(patron.PatronId, book.ISBN);
                 await _notificationService.SendReservationNotification(patron.Email, book.Title, patron.PatronId);
@@ -72,7 +73,7 @@ namespace Libro.WebAPI.Controllers
             catch (ResourceNotFoundException ex)
             {
                 _logger.LogWarning(ex, "ReserveBook failed. {Message}", ex.Message);
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (ArgumentException ex)
             {
@@ -125,6 +126,8 @@ namespace Libro.WebAPI.Controllers
                 }
                 var transaction = await _transactionService.CheckoutBookAsync(book, patron);
 
+                // remove the patron from the queue
+                await _notificationService.RemovePatronFromNotificationQueue(ISBN);
                 _logger.LogInformation("Book checked out successfully. Book ISBN: {ISBN}, Patron ID: {PatronID}", ISBN, patron.PatronId);
 
                 return Ok(transaction);
@@ -132,7 +135,7 @@ namespace Libro.WebAPI.Controllers
             catch (ResourceNotFoundException ex)
             {
                 _logger.LogWarning(ex, "CheckoutBook failed. {Message}", ex.Message);
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (ArgumentException ex)
             {

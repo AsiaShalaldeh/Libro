@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Infrastructure.EmailService.Interface;
-using Infrastructure.EmailService.Model;
 using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
@@ -101,6 +99,7 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
+                // Book ISBN, Rating (1-5), and Comment are Required 
                 var addedReview = await _reviewService.AddReviewAsync(ISBN, reviewDto);
                 _logger.LogInformation("Added new review for book with ISBN {ISBN}.", ISBN);
                 return Ok(addedReview);

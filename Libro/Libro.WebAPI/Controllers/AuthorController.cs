@@ -6,10 +6,7 @@ using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Libro.WebAPI.Controllers
 {

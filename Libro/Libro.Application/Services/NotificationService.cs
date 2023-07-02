@@ -112,6 +112,18 @@ namespace Libro.Application.Services
                 throw;
             }
         }
+        public async Task RemovePatronFromNotificationQueue(string bookId)
+        {
+            try
+            {
+                await _bookQueueRepository.DequeuePatronAsync(bookId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while removing a patron from the notification queue.");
+                throw;
+            }
+        }
 
         public async Task ProcessNotificationQueue(string bookId)
         {
@@ -133,12 +145,11 @@ namespace Libro.Application.Services
                         var message = new Message(new List<string> { patron.Email }, subject, content);
                         await _emailSender.SendEmailAsync(message);
 
-                        await _bookQueueRepository.DequeuePatronAsync(bookId);
+                        //await _bookQueueRepository.DequeuePatronAsync(bookId);
                     }
                     else
                     {
-                        // Log or handle the case when patron or book is not found
-                        await _bookQueueRepository.DequeuePatronAsync(bookId);
+                        //await _bookQueueRepository.DequeuePatronAsync(bookId);
                     }
                 }
             }

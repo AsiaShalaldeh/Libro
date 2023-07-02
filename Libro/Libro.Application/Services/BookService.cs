@@ -79,7 +79,7 @@ namespace Libro.Application.Services
         {
             try
             {
-                Author author = await _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId);
+                Author author = await _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId ?? 0);
                 if (author == null)
                 {
                     throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());
@@ -106,7 +106,7 @@ namespace Libro.Application.Services
                 }
                 if (bookDto.AuthorId != null)
                 {
-                    Author author = await _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId);
+                    Author author = await _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId ?? 0);
                     if (author == null)
                     {
                         throw new ResourceNotFoundException("Author", "ID", bookDto.AuthorId.ToString());

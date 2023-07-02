@@ -6,10 +6,7 @@ using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Libro.WebAPI.Controllers
 {
@@ -81,7 +78,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (ValidationException ex)
             {
-                _logger.LogWarning(ex, "Invalid librarian data. Librarian ID: {LibrarianId}", librarianId);
+                _logger.LogWarning(ex, "Invalid librarian data. Librarian Name: {LibrarianName}", librarianId);
                 return BadRequest(ex.Message);
             }
             catch (ResourceNotFoundException ex)

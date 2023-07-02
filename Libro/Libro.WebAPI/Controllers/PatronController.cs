@@ -2,12 +2,10 @@
 using FluentValidation;
 using Libro.Application.Validators;
 using Libro.Domain.Dtos;
-using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace Libro.WebAPI.Controllers
@@ -18,13 +16,11 @@ namespace Libro.WebAPI.Controllers
     public class PatronController : Controller
     {
         private readonly IPatronService _patronService;
-        private readonly IMapper _mapper;
         private readonly ILogger<PatronController> _logger;
 
         public PatronController(IPatronService patronService, IMapper mapper, ILogger<PatronController> logger)
         {
             _patronService = patronService;
-            _mapper = mapper;
             _logger = logger;
         }
 

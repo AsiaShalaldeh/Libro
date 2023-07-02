@@ -164,6 +164,10 @@ namespace Libro.Application.Services
                 var reserve = await _transactionRepository.AddReservationAsync(reservation);
                 return _mapper.Map<ReservationDto>(reserve);
             }
+            catch (ResourceNotFoundException ex)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred in TransactionService while reserving a book.");

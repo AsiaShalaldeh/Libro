@@ -5,8 +5,6 @@ using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using Microsoft.Extensions.Logging;
-using Sentry;
 
 namespace Libro.WebAPI.Controllers
 {
@@ -54,7 +52,6 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                throw new Exception();
                 string token = await _authenticationService.Login(loginModel.Username, loginModel.Password);
                 if (!token.Equals(""))
                 {

@@ -34,6 +34,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Libro.Application\Libro.Application.csproj" />
     <ProjectReference Include="..\Libro.Infrastructure\Libro.Infrastructure.csproj" />
+    <ProjectReference Include="..\Libro.WebAPI\Libro.WebAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

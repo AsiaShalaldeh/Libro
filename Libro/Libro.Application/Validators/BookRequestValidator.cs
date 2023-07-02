@@ -24,12 +24,13 @@ namespace Libro.Application.Validators
             }
 
             RuleFor(request => request.AuthorId)
-            .GreaterThan(0)
-            .WithMessage("Author ID must be greater than 0");
+                .GreaterThan(0)
+                .WithMessage("Author ID must be greater than 0");
 
             RuleFor(request => request.PublicationDate)
-                .GreaterThanOrEqualTo(new DateTime(1900, 1, 1))
-                .WithMessage("Publication Date must be greater than or equal to 1900-01-01");
+                .GreaterThan(new DateTime(1900, 1, 1))
+                .When(request => request.PublicationDate.HasValue)
+                .WithMessage("Publication Date must be greater than or equal 1900-01-01 when provided");
 
             if (genre)
             {
@@ -38,11 +39,8 @@ namespace Libro.Application.Validators
             }
 
             RuleFor(request => request.Genre)
-            .Must(genreValue => Enum.TryParse(typeof(Genre), genreValue, out _))
+            .Must(genreValue => string.IsNullOrEmpty(genreValue) || Enum.TryParse(typeof(Genre), genreValue, out _))
             .WithMessage("Invalid genre value");
-
-            //RuleFor(request => request.IsAvailable)
-            //    .NotNull().NotEmpty().WithMessage("Availability is required!");
         }
     }
 

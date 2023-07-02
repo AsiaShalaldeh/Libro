@@ -7,5 +7,6 @@
         Task AddPatronToNotificationQueue(string patronId, string bookId);
         Task ProcessNotificationQueue(string bookId);
         Task<Dictionary<string, Queue<string>>> GetNotificationQueue();
+        Task RemovePatronFromNotificationQueue(string bookId);
     }
 }
