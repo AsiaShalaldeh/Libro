@@ -19,10 +19,10 @@ namespace Libro.Infrastructure.Data
             _configuration = configuration;
         }
 
-        public LibroDbContext(DbContextOptions<LibroDbContext> options)
-            : base(options)
-        {
-        }
+        //public LibroDbContext(DbContextOptions<LibroDbContext> options)
+        //    : base(options)
+        //{
+        //}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

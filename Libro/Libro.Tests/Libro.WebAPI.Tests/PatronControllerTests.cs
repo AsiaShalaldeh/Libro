@@ -4,6 +4,7 @@ using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
+using Libro.Domain.Models;
 using Libro.WebAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -74,10 +75,10 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             // Arrange
             var patronId = "1";
             var patronDto = new PatronDto { Email = "john@gmail.com", Name = "John Doe" };
-            var updatedPatron = new Patron { PatronId = patronId, Email = "name@gmail.com", Name = "Updated Name" };
+            var updatedPatron = new PatronDto { PatronId = patronId, Email = "name@gmail.com", Name = "Updated Name" };
 
             _patronServiceMock.Setup(service => service.UpdatePatronAsync(patronId, patronDto))
-                .Returns(Task.FromResult<Patron>(updatedPatron));
+                .Returns(Task.FromResult<PatronDto>(updatedPatron));
 
             // Act
             var result = await _patronController.UpdatePatronProfile(patronId, patronDto);
@@ -137,14 +138,14 @@ namespace Libro.Tests.Libro.WebAPI.Tests
         {
             // Arrange
             var patronId = "1";
-            var borrowingHistory = new List<Checkout>
+            var borrowingHistory = new List<TransactionResponseModel>
             {
-                new Checkout { CheckoutId ="123", BookId ="1234567890", PatronId="1",CheckoutDate = DateTime.Now.AddDays(-20),
+                new TransactionResponseModel { CheckoutId ="123", BookId ="1234567890", PatronId="1",CheckoutDate = DateTime.Now.AddDays(-20),
                                 DueDate = DateTime.Now.AddDays(-4), ReturnDate = DateTime.Now.AddDays(-5)}
             };
 
             _patronServiceMock.Setup(service => service.GetBorrowingHistoryAsync(patronId))
-            .Returns(Task.FromResult<IEnumerable<Checkout>>(borrowingHistory));
+            .Returns(Task.FromResult<IEnumerable<TransactionResponseModel>>(borrowingHistory));
 
             // Act
             var result = await _patronController.GetBorrowingHistory(patronId);

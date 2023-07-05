@@ -21,7 +21,7 @@ namespace Libro.Infrastructure.Repositories
         {
             try
             {
-                var query = _context.Authors.AsQueryable();
+                var query = _context.Authors.Include(a => a.Books).AsQueryable();
 
                 return await PaginatedResult<Author>.CreateAsync(query, pageNumber, pageSize);
             }

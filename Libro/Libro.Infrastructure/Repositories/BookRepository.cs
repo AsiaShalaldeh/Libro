@@ -40,7 +40,9 @@ namespace Libro.Infrastructure.Repositories
         {
             try
             {
-                var query = _context.Books.AsQueryable();
+                var query = _context.Books.Include(book => book.Author)
+                  .Include(b => b.Reviews)
+                  .AsQueryable();
 
                 if (!string.IsNullOrEmpty(title))
                 {

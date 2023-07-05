@@ -44,9 +44,6 @@ namespace Libro.WebAPI.Controllers
         {
             try
             {
-                // What should ResourceNotFoundException returns bad request or not found status code
-                // it depends, if i am trying to return a resource => Not Found
-                // if i am trying to reserve a book but it is not found so => Bad Request
                 Book book = await _bookService.GetBookByISBNAsync(ISBN);
                 var currentPatron = await _userRepository.GetCurrentUserIdAsync();
                 Patron patron = await _patronService.GetPatronAsync(currentPatron);
@@ -88,6 +85,7 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpPost("{ISBN}/checkout")]
+        [Authorize(Roles = "Librarian")]
         public async Task<IActionResult> CheckoutBook(string ISBN, [FromBody] BookTransactionDto bookCheckout)
         {
             try
@@ -149,7 +147,8 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
-        [HttpPost("{ISBN}/return")]
+        [HttpPost("{ISBN}/accept-return")]
+        [Authorize(Roles = "Librarian")]
         public async Task<IActionResult> ReturnBook(string ISBN, [FromBody] BookTransactionDto bookReturn)
         {
             try

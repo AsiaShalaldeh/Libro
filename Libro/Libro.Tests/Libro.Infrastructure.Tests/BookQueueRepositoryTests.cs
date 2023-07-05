@@ -4,12 +4,14 @@ using Libro.Infrastructure.Data;
 using Libro.Infrastructure.Repositories;
 using Libro.Tests.MockData;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Libro.Tests.Libro.Infrastructure.Tests
 {
     public class BookQueueRepositoryTests
     {
         private IBookQueueRepository _bookQueueRepository;
+        private readonly Mock<IConfiguration> _configuration;
         private LibroDbContext _dbContext;
         private ILogger<BookQueueRepository> _logger;
 
@@ -18,7 +20,8 @@ namespace Libro.Tests.Libro.Infrastructure.Tests
             var optionsBuilder = new DbContextOptionsBuilder<LibroDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestLibroDB")
                 .Options;
-            _dbContext = new LibroDbContext(optionsBuilder);
+            _configuration = new Mock<IConfiguration>();
+            _dbContext = new LibroDbContext(optionsBuilder, _configuration.Object);
             var loggerMock = new Mock<ILogger<BookQueueRepository>>();
             _logger = loggerMock.Object;
 

@@ -1,5 +1,6 @@
 ﻿using Libro.Domain.Dtos;
 using Libro.Domain.Exceptions;
+using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
 using Libro.Domain.Models;
 using Libro.WebAPI.Controllers;
@@ -12,15 +13,18 @@ namespace Libro.Tests.Libro.WebAPI.Tests
     {
         private readonly UserController _controller;
         private readonly Mock<IAuthenticationService> _authenticationServiceMock;
+        private readonly Mock<IUserRepository> _userRepository;
         private readonly Mock<ILogger<UserController>> _loggerMock;
 
         public UserControllerTests()
         {
             _authenticationServiceMock = new Mock<IAuthenticationService>();
             _loggerMock = new Mock<ILogger<UserController>>();
+            _userRepository = new Mock<IUserRepository>();
             _controller = new UserController(
                 _authenticationServiceMock.Object,
-                _loggerMock.Object
+                _loggerMock.Object,
+                _userRepository.Object
             );
         }
 
@@ -159,7 +163,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
         public async Task AssignRoleToUser_ValidRequest_ShouldReturnOkResult()
         {
             // Arrange
-            var request = new UserRoleDto
+            var request = new UserRoleModel
             {
                 UserId = "123",
                 Role = "Administrator"
@@ -180,7 +184,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
         public async Task AssignRoleToUser_InvalidRequest_ShouldReturnBadRequestResult()
         {
             // Arrange
-            var request = new UserRoleDto
+            var request = new UserRoleModel
             {
                 UserId = "123",
                 Role = "Administrator"
@@ -201,7 +205,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
         public async Task AssignRoleToUser_ResourceNotFoundException_ShouldReturnNotFoundResult()
         {
             // Arrange
-            var request = new UserRoleDto
+            var request = new UserRoleModel
             {
                 UserId = "123",
                 Role = "Administrator"
@@ -222,7 +226,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
         public async Task AssignRoleToUser_InternalServerError_ShouldReturnInternalServerErrorResult()
         {
             // Arrange
-            var request = new UserRoleDto
+            var request = new UserRoleModel
             {
                 UserId = "123",
                 Role = "Administrator"

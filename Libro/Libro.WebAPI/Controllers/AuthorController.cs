@@ -12,7 +12,7 @@ namespace Libro.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/authors")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Librarian, Administrator")]
     public class AuthorController : ControllerBase
     {
         private readonly IAuthorService _authorService;
@@ -27,7 +27,6 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Librarian, Administrator")]
         public async Task<IActionResult> GetAllAuthors([FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 10)
         {
@@ -49,7 +48,6 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpGet("{authorId}")]
-        [Authorize(Roles = "Librarian, Administrator")]
         public async Task<IActionResult> GetAuthorById(int authorId)
         {
             try
@@ -83,7 +81,6 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Librarian, Administrator")]
         public async Task<IActionResult> AddAuthor([FromBody] AuthorDto authorDto)
         {
             try
@@ -112,7 +109,6 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpPut("{authorId}")]
-        [Authorize(Roles = "Librarian, Administrator")]
         public async Task<IActionResult> UpdateAuthor(int authorId, AuthorDto authorDto)
         {
             try
@@ -146,7 +142,6 @@ namespace Libro.WebAPI.Controllers
         }
 
         [HttpDelete("{authorId}")]
-        [Authorize(Roles = "Librarian, Administrator")]
         public async Task<IActionResult> DeleteAuthor(int authorId)
         {
             try

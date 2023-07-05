@@ -4,6 +4,7 @@ using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
+using Libro.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace Libro.Application.Services
@@ -42,9 +43,9 @@ namespace Libro.Application.Services
                     {
                         var patron = overdueTransaction.Patron;
                         var content = $"Dear {patron.Name},\n\nThis is a friendly reminder that " +
-                            $"the book \"{overdueTransaction.Book.Title}\" is due on " +
+                            $"the book \"{overdueTransaction.Book.Title}\" has been due on " +
                             $"{overdueTransaction.DueDate.ToShortDateString()}.\nPlease return it to the " +
-                            $"library on time.\n\nBest regards,\nThe Libro";
+                            $"library as soon as possible.\n\nBest regards,\nThe Libro";
                         var message = new Message(new List<string> { patron.Email }, subject, content);
                         await _emailSender.SendEmailAsync(message);
                     }
@@ -186,5 +187,49 @@ namespace Libro.Application.Services
                 throw;
             }
         }
+        public async Task<bool> SendReminderNotification(string recipientEmail, string bookISBN, string recipientId)
+        {
+            try
+            {
+                var recipient = await _patronService.GetPatronAsync(recipientId);
+
+                if (recipient == null)
+                {
+                    throw new ResourceNotFoundException("Patron", "ID", recipientId);
+                }
+                var book = await _bookService.GetBookByISBNAsync(bookISBN);
+                if (book == null)
+                {
+                    throw new ResourceNotFoundException("Book", "ISBN", bookISBN);
+                }
+                IEnumerable<Checkout> checkouts = await _transactionService.GetCheckoutTransactionsByPatron(recipientId);
+                if (checkouts != null && checkouts.Any(ch => ch.BookId.Equals(bookISBN) && !ch.IsReturned))
+                {
+                    var checkout = checkouts.FirstOrDefault(ch => ch.BookId.Equals(bookISBN) && !ch.IsReturned);
+                    var subject = "Book Return Reminder";
+                    var content = $"Dear {recipient.Name},\n\nThis is a friendly reminder that " +
+                                  $"the book \"{book.Title}\" is due for return on {checkout.DueDate}.\nPlease return it to the " +
+                                  $"library on time.\n\nBest regards,\nThe Libro";
+
+                    var message = new Message(new List<string> { recipientEmail }, subject, content);
+                    await _emailSender.SendEmailAsync(message);
+
+                    _logger.LogInformation($"Reminder notification sent to {recipientEmail} for book {book.Title}.");
+                    return true;
+                }
+                else
+                {
+                    throw new ArgumentException($"No Checkouted Book With ISBN {bookISBN} Found For That Patron");
+                }
+                
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while sending the reminder notification.");
+                return false;
+            }
+        }
+
     }
 }

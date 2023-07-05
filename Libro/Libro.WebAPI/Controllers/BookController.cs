@@ -162,7 +162,7 @@ namespace Libro.WebAPI.Controllers
             {
                 _logger.LogInformation("Updating book: {ISBN}, Title: {Title}", ISBN, bookDto.Title);
 
-                BookRequestValidator validator = new BookRequestValidator(false, false, false);
+                BookRequestValidator validator = new BookRequestValidator(false, false);
                 validator.ValidateAndThrow(bookDto);
 
                 if (!ISBN.Equals(bookDto.ISBN))

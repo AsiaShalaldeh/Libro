@@ -9,6 +9,7 @@ namespace Libro.Application.Profiles
         public PatronProfile()
         {
             CreateMap<PatronDto, Patron>();
+            CreateMap<Patron, PatronDto>();
         }
     }
 }

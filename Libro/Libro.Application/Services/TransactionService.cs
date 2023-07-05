@@ -137,7 +137,7 @@ namespace Libro.Application.Services
                 var borrowedBookId = await _transactionRepository.GetBorrowedBookByIdAsync(ISBN);
 
                 if (string.IsNullOrEmpty(borrowedBookId))
-                    throw new ArgumentNullException(); // Write a message and catch it in the top level
+                    return null;
 
                 var borrowedBook = await _bookService.GetBookByISBNAsync(borrowedBookId);
                 return borrowedBook;
@@ -230,7 +230,7 @@ namespace Libro.Application.Services
                 checkout.ReturnDate = returnDate;
                 checkout.IsReturned = true;
 
-                var days = (DateTime.Now - checkout.DueDate).Days;
+                var days = (returnDate - checkout.DueDate).Days;
                 var totalFees = CalculateTotalFees(days);
                 checkout.TotalFee = totalFees;
 
@@ -239,6 +239,7 @@ namespace Libro.Application.Services
 
                 var response = new TransactionResponseModel
                 {
+                    CheckoutId = checkout.CheckoutId,
                     BookId = book.ISBN,
                     PatronId = patron.PatronId,
                     CheckoutDate = checkout.CheckoutDate,

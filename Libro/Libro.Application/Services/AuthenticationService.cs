@@ -31,7 +31,6 @@ namespace Libro.Application.Services
             _librarianService = librarianService;
             _logger = logger;
         }
-
         public async Task<Response> Register(string username, string email, string password)
         {
             try
@@ -41,27 +40,32 @@ namespace Libro.Application.Services
                     return new Response
                     {
                         Status = "Error",
-                        Message = "User already exists! " +
-                        "The UserName Should Be Unique"
+                        Message = "User already exists! The username should be unique."
                     };
 
-                IdentityUser user = new()
+                IdentityUser user = new IdentityUser
                 {
                     Email = email,
                     UserName = username
                 };
+
                 var result = await _userManager.CreateAsync(user, password);
 
                 if (result.Succeeded)
                 {
+                    // Assign the "Admin" role to the first registered user
+                    if (_userManager.Users.Count() == 1)
+                    {
+                        await _userManager.AddToRoleAsync(user, "Administrator");
+                    }
+
                     return new Response { Status = "Success", Message = "User created successfully!" };
                 }
 
                 return new Response
                 {
                     Status = "Error",
-                    Message = "User creation failed! Please check user " +
-                        "details and try again."
+                    Message = "User creation failed! Please check user details and try again."
                 };
             }
             catch (Exception ex)
@@ -89,8 +93,6 @@ namespace Libro.Application.Services
                     return token;
                 }
 
-                // Store the token in the user session
-                //HttpContextAccessor.HttpContext.Session.SetString("AuthToken", token);
                 return "";
             }
             catch (ArgumentNullException ex)

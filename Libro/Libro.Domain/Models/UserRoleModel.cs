@@ -1,8 +1,8 @@
 ﻿using Libro.Domain.Enums;
 
-namespace Libro.Domain.Dtos
+namespace Libro.Domain.Models
 {
-    public class UserRoleDto
+    public class UserRoleModel
     {
         public string UserId { get; set; }
         public string Role { get; set; }

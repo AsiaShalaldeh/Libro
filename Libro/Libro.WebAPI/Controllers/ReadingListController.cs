@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Libro.Domain.Dtos;
 using Libro.Domain.Exceptions;
+using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,36 +10,33 @@ using System.Net;
 namespace Libro.WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/patrons")]
+    [Route("api/reading-lists")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Patron")]
     public class ReadingListController : ControllerBase
     {
         private readonly IReadingListService _readingListService;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<ReadingListController> _logger;
 
         public ReadingListController(IReadingListService readingListService, IMapper mapper,
-            ILogger<ReadingListController> logger)
+            ILogger<ReadingListController> logger, IUserRepository userRepository)
         {
             _readingListService = readingListService;
+            _userRepository = userRepository;
             _mapper = mapper;
             _logger = logger;
         }
 
-        [HttpPost("{patronId}/reading-lists")]
-        public async Task<IActionResult> CreateReadingList(string patronId, [FromBody] ReadingListDto readingListDto)
+        [HttpPost]
+        public async Task<IActionResult> CreateReadingList([FromBody] ReadingListDto readingListDto)
         {
             try
             {
-                if (!patronId.Equals(readingListDto.PatronId))
-                {
-                    _logger.LogWarning("Patron ID Mismatch: {patronId}", patronId);
-                    return BadRequest("Patron ID Mismatch");
-                }
-
-                var createdListDto = await _readingListService.CreateReadingListAsync(readingListDto, patronId);
+                var currentPatron = await _userRepository.GetCurrentUserIdAsync();
+                var createdListDto = await _readingListService.CreateReadingListAsync(readingListDto, currentPatron);
                 _logger.LogInformation("Reading list created: {listId}", createdListDto.ReadingListId);
-                return CreatedAtRoute("GetReadingList", new { patronId = patronId, listId = createdListDto.ReadingListId }, createdListDto);
+                return CreatedAtRoute("GetReadingList", new { patronId = currentPatron, listId = createdListDto.ReadingListId }, createdListDto);
             }
             catch (ResourceNotFoundException ex)
             {
@@ -52,14 +50,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
-        [HttpGet("{patronId}/reading-lists")]
-        public async Task<IActionResult> GetReadingListsByPatronId(string patronId)
+        [HttpGet]
+        public async Task<IActionResult> GetReadingListsByPatronId()
         {
             try
             {
-                var readingLists = await _readingListService.GetReadingListsByPatronIdAsync(patronId);
+                var currentPatron = await _userRepository.GetCurrentUserIdAsync();
+                var readingLists = await _readingListService.GetReadingListsByPatronIdAsync(currentPatron);
                 var readingListDtos = _mapper.Map<IEnumerable<ReadingListDto>>(readingLists);
-                _logger.LogInformation("Retrieved reading lists for patron: {patronId}", patronId);
+                _logger.LogInformation("Retrieved reading lists for patron: {patronId}", currentPatron);
                 return Ok(readingListDtos);
             }
             catch (ResourceNotFoundException ex)
@@ -74,12 +73,13 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
-        [HttpGet("{patronId}/reading-lists/{listId}", Name = "GetReadingList")]
-        public async Task<IActionResult> GetReadingListById(string patronId, int listId)
+        [HttpGet("{listId}", Name = "GetReadingList")]
+        public async Task<IActionResult> GetReadingListById(int listId)
         {
             try
             {
-                var readingList = await _readingListService.GetReadingListByIdAsync(listId, patronId);
+                var currentPatron = await _userRepository.GetCurrentUserIdAsync();
+                var readingList = await _readingListService.GetReadingListByIdAsync(listId, currentPatron);
                 var readingListDto = _mapper.Map<ReadingListDto>(readingList);
                 _logger.LogInformation("Retrieved reading list: {listId}", listId);
                 return Ok(readingListDto);
@@ -96,12 +96,13 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
-        [HttpPost("{patronId}/reading-lists/{listId}/books/{ISBN}/add")]
-        public async Task<IActionResult> AddBookToReadingList(string patronId, int listId, string ISBN)
+        [HttpPost("{listId}/books/{ISBN}/add")]
+        public async Task<IActionResult> AddBookToReadingList(int listId, string ISBN)
         {
             try
             {
-                var response = await _readingListService.AddBookToReadingListAsync(listId, patronId, ISBN);
+                var currentPatron = await _userRepository.GetCurrentUserIdAsync();
+                var response = await _readingListService.AddBookToReadingListAsync(listId, currentPatron, ISBN);
                 if (!response)
                 {
                     _logger.LogWarning("The book already added to the list: {listId}, ISBN: {ISBN}", listId, ISBN);
@@ -122,12 +123,13 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
-        [HttpGet("{patronId}/reading-lists/{listId}/books")]
-        public async Task<IActionResult> GetBooksOfReadingList(string patronId, int listId)
+        [HttpGet("{listId}/books")]
+        public async Task<IActionResult> GetBooksOfReadingList(int listId)
         {
             try
             {
-                var books = await _readingListService.GetBooksByReadingListAsync(listId, patronId);
+                var currentPatron = await _userRepository.GetCurrentUserIdAsync();
+                var books = await _readingListService.GetBooksByReadingListAsync(listId, currentPatron);
                 _logger.LogInformation("Retrieved books of reading list: {listId}", listId);
                 return Ok(books);
             }
@@ -143,12 +145,13 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
-        [HttpDelete("{patronId}/reading-lists/{listId}/books/{ISBN}/remove")]
-        public async Task<IActionResult> RemoveBookFromReadingList(string patronId, int listId, string ISBN)
+        [HttpDelete("{listId}/books/{ISBN}/remove")]
+        public async Task<IActionResult> RemoveBookFromReadingList(int listId, string ISBN)
         {
             try
             {
-                await _readingListService.RemoveBookFromReadingListAsync(listId, patronId, ISBN);
+                var currentPatron = await _userRepository.GetCurrentUserIdAsync();
+                await _readingListService.RemoveBookFromReadingListAsync(listId, currentPatron, ISBN);
                 _logger.LogInformation("Book removed from reading list: {listId}, ISBN: {ISBN}", listId, ISBN);
                 return NoContent();
             }
@@ -164,12 +167,13 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
-        [HttpDelete("{patronId}/reading-lists/{listId}")]
-        public async Task<IActionResult> RemoveReadingList(string patronId, int listId)
+        [HttpDelete("{listId}")]
+        public async Task<IActionResult> RemoveReadingList(int listId)
         {
             try
             {
-                await _readingListService.RemoveReadingListAsync(listId, patronId);
+                var currentPatron = await _userRepository.GetCurrentUserIdAsync();
+                await _readingListService.RemoveReadingListAsync(listId, currentPatron);
                 _logger.LogInformation("Reading list removed: {listId}", listId);
                 return NoContent();
             }

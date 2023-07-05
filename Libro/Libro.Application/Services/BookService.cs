@@ -104,7 +104,7 @@ namespace Libro.Application.Services
                 {
                     throw new ResourceNotFoundException("Book", "ID", ISBN);
                 }
-                if (bookDto.AuthorId != null)
+                if (bookDto.AuthorId.HasValue)
                 {
                     Author author = await _authorRepository.GetAuthorByIdAsync(bookDto.AuthorId ?? 0);
                     if (author == null)
@@ -115,7 +115,16 @@ namespace Libro.Application.Services
                 }
                 existingBook.Title = bookDto.Title;
                 existingBook.IsAvailable = bookDto.IsAvailable;
-                existingBook.Genre = Enum.Parse<Genre>(bookDto.Genre, ignoreCase: true);
+                if (!string.IsNullOrWhiteSpace(bookDto.Genre))
+                    existingBook.Genre = Enum.Parse<Genre>(bookDto.Genre, ignoreCase: true);
+                if (bookDto.PublicationDate.HasValue)
+                {
+                    var newPublicationDate = bookDto.PublicationDate.Value;
+                    if (existingBook.PublicationDate.GetValueOrDefault() != newPublicationDate)
+                    {
+                        existingBook.PublicationDate = newPublicationDate;
+                    }
+                }
                 await _bookRepository.UpdateBookAsync(existingBook);
             }
             catch (Exception ex)

@@ -2,6 +2,7 @@
 using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
+using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
 using Libro.WebAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
     public class ReadingListControllerTests
     {
         private readonly Mock<IReadingListService> _readingListServiceMock;
+        private readonly Mock<IUserRepository> _userRepository;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<ILogger<ReadingListController>> _loggerMock;
         private readonly ReadingListController _readingListController;
@@ -19,8 +21,10 @@ namespace Libro.Tests.Libro.WebAPI.Tests
         {
             _readingListServiceMock = new Mock<IReadingListService>();
             _mapperMock = new Mock<IMapper>();
+            _userRepository = new Mock<IUserRepository>();
             _loggerMock = new Mock<ILogger<ReadingListController>>();
-            _readingListController = new ReadingListController(_readingListServiceMock.Object, _mapperMock.Object, _loggerMock.Object);
+            _readingListController = new ReadingListController(_readingListServiceMock.Object,
+                _mapperMock.Object, _loggerMock.Object, _userRepository.Object);
         }
 
         [Fact]
@@ -39,7 +43,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             _mapperMock.Setup(x => x.Map<IEnumerable<ReadingListDto>>(readingLists)).Returns(readingListDtos);
 
             // Act
-            var result = await _readingListController.GetReadingListsByPatronId(patronId);
+            var result = await _readingListController.GetReadingListsByPatronId();
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
@@ -57,7 +61,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             _readingListServiceMock.Setup(x => x.GetReadingListsByPatronIdAsync(patronId)).ThrowsAsync(exception);
 
             // Act
-            var result = await _readingListController.GetReadingListsByPatronId(patronId);
+            var result = await _readingListController.GetReadingListsByPatronId();
 
             // Assert
             Assert.IsType<NotFoundObjectResult>(result);
@@ -78,7 +82,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             _mapperMock.Setup(x => x.Map<ReadingListDto>(readingList)).Returns(readingListDto);
 
             // Act
-            var result = await _readingListController.GetReadingListById(patronId, listId);
+            var result = await _readingListController.GetReadingListById(listId);
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
@@ -97,7 +101,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             _readingListServiceMock.Setup(x => x.GetReadingListByIdAsync(listId, patronId)).ThrowsAsync(exception);
 
             // Act
-            var result = await _readingListController.GetReadingListById(patronId, listId);
+            var result = await _readingListController.GetReadingListById(listId);
 
             // Assert
             Assert.IsType<NotFoundObjectResult>(result);
@@ -116,7 +120,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             _readingListServiceMock.Setup(x => x.AddBookToReadingListAsync(listId, patronId, isbn)).ReturnsAsync(true);
 
             // Act
-            var result = await _readingListController.AddBookToReadingList(patronId, listId, isbn);
+            var result = await _readingListController.AddBookToReadingList(listId, isbn);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -133,7 +137,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             _readingListServiceMock.Setup(x => x.AddBookToReadingListAsync(listId, patronId, isbn)).ReturnsAsync(false);
 
             // Act
-            var result = await _readingListController.AddBookToReadingList(patronId, listId, isbn);
+            var result = await _readingListController.AddBookToReadingList(listId, isbn);
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
@@ -150,7 +154,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             string isbn = "1234567890";
 
             // Act
-            var result = await _readingListController.RemoveBookFromReadingList(patronId, listId, isbn);
+            var result = await _readingListController.RemoveBookFromReadingList(listId, isbn);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -164,7 +168,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             int listId = 1;
 
             // Act
-            var result = await _readingListController.RemoveReadingList(patronId, listId);
+            var result = await _readingListController.RemoveReadingList(listId);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -180,7 +184,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             _readingListServiceMock.Setup(x => x.CreateReadingListAsync(readingListDto, patronId)).ReturnsAsync(createdListDto);
 
             // Act
-            var result = await _readingListController.CreateReadingList(patronId, readingListDto);
+            var result = await _readingListController.CreateReadingList(readingListDto);
 
             // Assert
             Assert.IsType<CreatedAtRouteResult>(result);
@@ -199,7 +203,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             var readingListDto = new ReadingListDto { PatronId = "2" };
 
             // Act
-            var result = await _readingListController.CreateReadingList(patronId, readingListDto);
+            var result = await _readingListController.CreateReadingList(readingListDto);
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
@@ -218,7 +222,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             _readingListServiceMock.Setup(x => x.CreateReadingListAsync(readingListDto, patronId)).ThrowsAsync(exception);
 
             // Act
-            var result = await _readingListController.CreateReadingList(patronId, readingListDto);
+            var result = await _readingListController.CreateReadingList(readingListDto);
 
             // Assert
             Assert.IsType<NotFoundObjectResult>(result);
@@ -237,7 +241,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             _readingListServiceMock.Setup(x => x.GetBooksByReadingListAsync(listId, patronId)).ReturnsAsync(books);
 
             // Act
-            var result = await _readingListController.GetBooksOfReadingList(patronId, listId);
+            var result = await _readingListController.GetBooksOfReadingList(listId);
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
@@ -256,7 +260,7 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             _readingListServiceMock.Setup(x => x.GetBooksByReadingListAsync(listId, patronId)).ThrowsAsync(exception);
 
             // Act
-            var result = await _readingListController.GetBooksOfReadingList(patronId, listId);
+            var result = await _readingListController.GetBooksOfReadingList(listId);
 
             // Assert
             Assert.IsType<NotFoundObjectResult>(result);

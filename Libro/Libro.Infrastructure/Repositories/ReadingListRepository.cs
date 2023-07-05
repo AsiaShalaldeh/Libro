@@ -31,7 +31,20 @@ namespace Libro.Infrastructure.Repositories
                 throw;
             }
         }
-
+        public async Task<ReadingList> GetReadingListByNameAsync(string listName, string patronId)
+        {
+            try
+            {
+                var list = await _context.ReadingLists.Include(r => r.BookLists)
+                    .FirstOrDefaultAsync(r => r.Name.Equals(listName) && r.PatronId.Equals(patronId));
+                return list;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in ReadingListRepository while getting the reading list with Name: {listName} for patron with ID: {patronId}.");
+                throw;
+            }
+        }
         public async Task<IEnumerable<ReadingList>> GetReadingListsByPatronIdAsync(string patronId)
         {
             try

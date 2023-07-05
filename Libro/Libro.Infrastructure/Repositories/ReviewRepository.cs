@@ -31,7 +31,19 @@ namespace Libro.Infrastructure.Repositories
                 throw;
             }
         }
-
+        public async Task<Review> GetBookReviewByPatronIdAsync(string ISBN, string patronId)
+        {
+            try
+            {
+                return await _context.Reviews.FirstOrDefaultAsync(r => r.BookId.Equals(ISBN)
+                                            && r.PatronId.Equals(patronId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred in ReviewRepository while getting a review for book with ISBN: {ISBN}.");
+                throw;
+            }
+        }
         public async Task<Review> UpdateReviewAsync(Review review)
         {
             try

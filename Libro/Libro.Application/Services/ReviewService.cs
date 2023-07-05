@@ -61,6 +61,13 @@ namespace Libro.Application.Services
                 {
                     throw new ResourceNotFoundException("Review", "ID", reviewId.ToString());
                 }
+                string patronId = await _userRepository.GetCurrentUserIdAsync();
+                if (!patronId.Equals(existingReview.PatronId))
+                {
+                    Console.WriteLine("Current " + patronId);
+                    Console.WriteLine("Review Patron " + existingReview.PatronId);
+                    throw new UnauthorizedAccessException("Access denied: You are not allowed to update a review that was not written by you.");
+                }
                 if (reviewDto.Rating != 0)
                     existingReview.Rating = reviewDto.Rating;
 
@@ -91,7 +98,11 @@ namespace Libro.Application.Services
                 {
                     throw new ResourceNotFoundException("Review", "ID", reviewId.ToString());
                 }
-
+                string patronId = await _userRepository.GetCurrentUserIdAsync();
+                if (!patronId.Equals(review.PatronId))
+                {
+                    throw new UnauthorizedAccessException("Access denied: You are not allowed to delete a review that was not written by you.");
+                }
                 await _reviewRepository.DeleteReviewAsync(review);
             }
             catch (Exception ex)
@@ -114,9 +125,13 @@ namespace Libro.Application.Services
                 string patronId = await _userRepository.GetCurrentUserIdAsync();
                 if (string.IsNullOrEmpty(patronId))
                 {
-                    throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
+                    throw new ResourceNotFoundException("Patron", "ID", patronId);
                 }
-
+                var isExist = _reviewRepository.GetBookReviewByPatronIdAsync(ISBN, patronId);
+                if (isExist!=null)
+                {
+                    throw new ArgumentException("You already Reviewed this Book !!");
+                }
                 Patron patron = await _patronRepository.GetPatronByIdAsync(patronId);
 
                 var review = new Review()

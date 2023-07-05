@@ -6,6 +6,7 @@ namespace Libro.Domain.Interfaces.IRepositories
     public interface IReadingListRepository
     {
         Task<ReadingList> GetReadingListByIdAsync(int listId, string patronId);
+        Task<ReadingList> GetReadingListByNameAsync(string listName, string patronId);
         Task<IEnumerable<ReadingList>> GetReadingListsByPatronIdAsync(string patronId);
         Task<ReadingList> CreateReadingListAsync(ReadingList readingList);
         Task RemoveReadingListAsync(ReadingList readingList);

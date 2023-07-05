@@ -2,6 +2,7 @@
 {
     public class TransactionResponseModel
     {
+        public string CheckoutId { get; set; }
         public string BookId { get; set; }
         public string PatronId { get; set; }
         public DateTime CheckoutDate { get; set; }

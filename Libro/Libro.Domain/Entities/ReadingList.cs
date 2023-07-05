@@ -2,7 +2,7 @@
 {
     public class ReadingList
     {
-        // Update: ListId and PatronID are both PK
+        // Possible Update: ListId and PatronID are both PK
         public int ReadingListId { get; set; }
         public string Name { get; set; }
         public string PatronId { get; set; }

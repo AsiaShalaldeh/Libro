@@ -2,24 +2,31 @@
 using Infrastructure.EmailService.Interface;
 using MailKit.Net.Smtp;
 using MimeKit;
-using System.Net;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace EmailService.Service
 {
     public class EmailSenderService : IEmailSender
     {
         private readonly EmailConfiguration _emailConfig;
-        public EmailSenderService(EmailConfiguration emailConfig)
+        private readonly ILogger<EmailSenderService> _logger;
+
+        public EmailSenderService(EmailConfiguration emailConfig, ILogger<EmailSenderService> logger)
         {
             _emailConfig = emailConfig;
+            _logger = logger;
         }
+
         public async Task<string> SendEmailAsync(Message message)
         {
             var mailMessage = CreateEmailMessage(message);
 
             await SendAsync(mailMessage);
+            _logger.LogInformation("Email sent successfully.");
             return "Email Sent Successfully";
         }
+
         private MimeMessage CreateEmailMessage(Message message)
         {
             var emailMessage = new MimeMessage();
@@ -46,7 +53,7 @@ namespace EmailService.Service
                 }
                 catch (Exception ex)
                 {
-                    // Log an error message or handle the exception accordingly.
+                    _logger.LogError(ex, "Failed to send email.");
                     throw new Exception("Failed to send email", ex);
                 }
                 finally
@@ -56,6 +63,5 @@ namespace EmailService.Service
                 }
             }
         }
-
     }
 }

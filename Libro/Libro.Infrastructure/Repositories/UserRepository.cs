@@ -1,6 +1,9 @@
-﻿using Libro.Domain.Interfaces.IRepositories;
+﻿using AutoMapper;
+using Libro.Domain.Dtos;
+using Libro.Domain.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 
@@ -10,16 +13,31 @@ namespace Libro.Infrastructure.Repositories
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMapper _mapper;
         private readonly ILogger<UserRepository> _logger;
 
         public UserRepository(UserManager<IdentityUser> userManager, IHttpContextAccessor httpContextAccessor,
-            ILogger<UserRepository> logger)
+            ILogger<UserRepository> logger, IMapper mapper)
         {
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
+            _mapper = mapper;
         }
-
+        public async Task<List<UserDto>> GetAllUsersAsync()
+        {
+            try
+            {
+                var users = await _userManager.Users.ToListAsync();
+                var userDtos = _mapper.Map<List<UserDto>>(users);
+                return userDtos;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving all users.");
+                throw;
+            }
+        }
         public async Task UpdateUserAsync(string userId, string name, string email)
         {
             try

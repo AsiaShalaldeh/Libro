@@ -34,7 +34,7 @@ namespace Libro.Application.Services
         {
             try
             {
-                // this code should be deleted fro here
+                // this code should be deleted from here
                 var patron = await _patronService.GetPatronAsync(patronId);
                 if (patron == null)
                 {
@@ -56,7 +56,20 @@ namespace Libro.Application.Services
                 throw;
             }
         }
+        public async Task<ReadingList> GetReadingListByNameAsync(string listName, string patronId)
+        {
+            try
+            {
+                ReadingList readingList = await _readingListRepository.GetReadingListByNameAsync(listName, patronId);
 
+                return readingList;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while in ReadingListService retrieving the reading list with Name: {listName} for patron with ID: {patronId}.");
+                throw;
+            }
+        }
         public async Task<IEnumerable<ReadingList>> GetReadingListsByPatronIdAsync(string patronId)
         {
             try
@@ -86,7 +99,8 @@ namespace Libro.Application.Services
                 {
                     throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
                 }
-
+                readingListDto.PatronId = patronId;
+                // check if there is a reading list with the same name for that patron
                 var readingList = _mapper.Map<ReadingList>(readingListDto);
 
                 var createdList = await _readingListRepository.CreateReadingListAsync(readingList);

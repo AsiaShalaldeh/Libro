@@ -1,0 +1,3111 @@
+{
+	"info": {
+		"_postman_id": "a723447d-717e-4e40-a393-2c2a136e3ea6",
+		"name": "Libro",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25768761"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Username\": \"johnedoe\",\r\n    \"Email\":\"johnedoe@gmail.com\",\r\n    \"Password\": \"1234hello\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/users/register",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Register",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Username\": \"johnedoe\",\r\n    \"Email\":\"johnedoe@gmail.com\",\r\n    \"Password\": \"1234hello\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APIURL}}/users/register",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"users",
+										"register"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 14:58:22 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"Success\",\n    \"message\": \"User created successfully!\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserName\": \"johndoe\",\r\n    \"Password\": \"1234hello\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/users/login",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"UserName\": \"johndoe\",\r\n    \"Password\": \"1234hello\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APIURL}}/users/login",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 14:59:00 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MDBkZWU3Yy0wN2VlLTRlODAtYTM1Yi0wOWYxNmU5ODU1YTUiLCJ1bmlxdWVfbmFtZSI6ImxpYiIsImVtYWlsIjoibGliQGdtYWlsLmNvbSIsInJvbGUiOiJMaWJyYXJpYW4iLCJuYmYiOjE2ODg1NjkxNDAsImV4cCI6MTY4OTAwMTE0MCwiaWF0IjoxNjg4NTY5MTQwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.McXp7WxwLR33kCif45snjbi6X-8c67a2UYOXQZ2noig"
+						}
+					]
+				},
+				{
+					"name": "Assign Role As Admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\":\"600dee7c-07ee-4e80-a35b-09f16e9855a5\",\r\n    \"Role\":\"Librarian\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/users/assign-role",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"users",
+								"assign-role"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Assign Role As Admin",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"UserId\":\"600dee7c-07ee-4e80-a35b-09f16e9855a5\",\r\n    \"Role\":\"Librarian\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APIURL}}/users/assign-role",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"users",
+										"assign-role"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 14:58:49 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"Success\",\n    \"message\": \"Role assigned successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/users",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get All Users",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/users",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 04 Jul 2023 15:04:18 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\",\n        \"name\": \"jane\",\n        \"email\": \"jane@gmail.com\"\n    },\n    {\n        \"id\": \"60a17dff-2610-4d00-8e11-04bb00ea13ed\",\n        \"name\": \"johndoe\",\n        \"email\": \"johndoe@gmail.com\"\n    },\n    {\n        \"id\": \"6b19ca55-75b2-4fd0-9e38-053d68301483\",\n        \"name\": \"jony\",\n        \"email\": \"jony@gmail.com\"\n    }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Books",
+			"item": [
+				{
+					"name": "Get A Book",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/books/973-20985986-0",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"973-20985986-0"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get A Book",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/books/973-20985986-0",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"books",
+										"973-20985986-0"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 14:46:58 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isbn\": \"973-20985986-0\",\n    \"title\": \"Dogs\",\n    \"publicationDate\": \"2023-06-15\",\n    \"genre\": \"ScienceFiction\",\n    \"isAvailable\": false,\n    \"authorId\": 3,\n    \"authorName\": \"Stephen King\",\n    \"reviews\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/books?pageNumber=1&pageSize=2",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get All Books",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/books?pageNumber=1&pageSize=2",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "pageNumber",
+											"value": "1"
+										},
+										{
+											"key": "pageSize",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:28:29 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"totalCount\": 10,\n    \"pageNumber\": 1,\n    \"pageSize\": 2,\n    \"items\": [\n        {\n            \"isbn\": \"973-12085986-0\",\n            \"title\": \"Animals\",\n            \"publicationDate\": \"2023-06-15\",\n            \"genre\": \"ScienceFiction\",\n            \"isAvailable\": true,\n            \"authorId\": 1,\n            \"authorName\": \"John Green\",\n            \"reviews\": [\n                {\n                    \"reviewId\": 19,\n                    \"bookId\": \"973-12085986-0\",\n                    \"bookTitle\": \"Animals\",\n                    \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n                    \"rating\": 4,\n                    \"comment\": \"This book was amazing!\"\n                },\n                {\n                    \"reviewId\": 20,\n                    \"bookId\": \"973-12085986-0\",\n                    \"bookTitle\": \"Animals\",\n                    \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n                    \"rating\": 3,\n                    \"comment\": \"This book was amazing!\"\n                }\n            ]\n        },\n        {\n            \"isbn\": \"973-1608986-0\",\n            \"title\": \"To The Moon\",\n            \"publicationDate\": \"2023-06-15\",\n            \"genre\": \"ScienceFiction\",\n            \"isAvailable\": true,\n            \"authorId\": 3,\n            \"authorName\": \"Stephen King\",\n            \"reviews\": []\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Search Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/books/search?title=The&genre=Fantasy&author=J.K. Rowling",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"search"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "The"
+								},
+								{
+									"key": "genre",
+									"value": "Fantasy"
+								},
+								{
+									"key": "author",
+									"value": "J.K. Rowling"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Search Books",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/books/search?title=the&genre=Fantasy&author=J.K. Rowling",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"books",
+										"search"
+									],
+									"query": [
+										{
+											"key": "title",
+											"value": "the"
+										},
+										{
+											"key": "genre",
+											"value": "Fantasy"
+										},
+										{
+											"key": "author",
+											"value": "J.K. Rowling"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:30:35 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"totalCount\": 5,\n    \"pageNumber\": 1,\n    \"pageSize\": 10,\n    \"items\": [\n        {\n            \"isbn\": \"973-12085986-0\",\n            \"title\": \"Animals\",\n            \"publicationDate\": \"2023-06-15\",\n            \"genre\": \"ScienceFiction\",\n            \"isAvailable\": true,\n            \"authorId\": 1,\n            \"authorName\": \"John Green\",\n            \"reviews\": [\n                {\n                    \"reviewId\": 19,\n                    \"bookId\": \"973-12085986-0\",\n                    \"bookTitle\": \"Animals\",\n                    \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n                    \"rating\": 4,\n                    \"comment\": \"This book was amazing!\"\n                },\n                {\n                    \"reviewId\": 20,\n                    \"bookId\": \"973-12085986-0\",\n                    \"bookTitle\": \"Animals\",\n                    \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n                    \"rating\": 3,\n                    \"comment\": \"This book was amazing!\"\n                }\n            ]\n        },\n        {\n            \"isbn\": \"973-1908986-0\",\n            \"title\": \"Space\",\n            \"publicationDate\": \"2023-06-15\",\n            \"genre\": \"ScienceFiction\",\n            \"isAvailable\": true,\n            \"authorId\": 3,\n            \"authorName\": \"Stephen King\",\n            \"reviews\": []\n        },\n        {\n            \"isbn\": \"9780061122415\",\n            \"title\": \"To Kill a Mockingbird\",\n            \"publicationDate\": \"1960-07-11\",\n            \"genre\": \"Poetry\",\n            \"isAvailable\": false,\n            \"authorId\": 4,\n            \"authorName\": \"Agatha Christie\",\n            \"reviews\": []\n        },\n        {\n            \"isbn\": \"9780743273565\",\n            \"title\": \"The Da Vinci Code\",\n            \"publicationDate\": \"2003-03-18\",\n            \"genre\": \"ScienceFiction\",\n            \"isAvailable\": true,\n            \"authorId\": 5,\n            \"authorName\": \"Haruki Murakami\",\n            \"reviews\": [\n                {\n                    \"reviewId\": 5,\n                    \"bookId\": \"9780743273565\",\n                    \"bookTitle\": \"The Da Vinci Code\",\n                    \"patronId\": \"1\",\n                    \"rating\": 5,\n                    \"comment\": \"Loved it!\"\n                }\n            ]\n        },\n        {\n            \"isbn\": \"9781451673319\",\n            \"title\": \"The Great Gatsby\",\n            \"publicationDate\": \"1925-04-10\",\n            \"genre\": \"Mystery\",\n            \"isAvailable\": true,\n            \"authorId\": 1,\n            \"authorName\": \"John Green\",\n            \"reviews\": [\n                {\n                    \"reviewId\": 3,\n                    \"bookId\": \"9781451673319\",\n                    \"bookTitle\": \"The Great Gatsby\",\n                    \"patronId\": \"3\",\n                    \"rating\": 5,\n                    \"comment\": \"Highly recommended!\"\n                },\n                {\n                    \"reviewId\": 4,\n                    \"bookId\": \"9781451673319\",\n                    \"bookTitle\": \"The Great Gatsby\",\n                    \"patronId\": \"4\",\n                    \"rating\": 2,\n                    \"comment\": \"Disappointing.\"\n                },\n                {\n                    \"reviewId\": 26,\n                    \"bookId\": \"9781451673319\",\n                    \"bookTitle\": \"The Great Gatsby\",\n                    \"patronId\": \"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\",\n                    \"rating\": 2,\n                    \"comment\": \"Amazing !!\"\n                },\n                {\n                    \"reviewId\": 27,\n                    \"bookId\": \"9781451673319\",\n                    \"bookTitle\": \"The Great Gatsby\",\n                    \"patronId\": \"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\",\n                    \"rating\": 1,\n                    \"comment\": \"This book was amazing!\"\n                }\n            ]\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Add A Book",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"ISBN\": \"973-19089986-0\",\r\n  \"Title\": \"Space\",\r\n  \"PublicationDate\": \"2023-06-15\",\r\n  \"Genre\": \"ScienceFiction\",\r\n  \"IsAvailable\": true,\r\n  \"AuthorId\": 3\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/books",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Add A Book",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"ISBN\": \"973-19089986-0\",\r\n  \"Title\": \"Space\",\r\n  \"PublicationDate\": \"2023-06-15\",\r\n  \"Genre\": \"ScienceFiction\",\r\n  \"IsAvailable\": true,\r\n  \"AuthorId\": 3\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APIURL}}/books",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"books"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:31:11 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Location",
+									"value": "https://localhost:7283/api/books/973-19089986-0"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isbn\": \"973-19089986-0\",\n    \"title\": \"Space\",\n    \"publicationDate\": \"2023-06-15\",\n    \"genre\": \"ScienceFiction\",\n    \"isAvailable\": true,\n    \"authorId\": 3,\n    \"authorName\": \"Stephen King\",\n    \"reviews\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "Update A Book",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"ISBN\": \"973-20985986-0\",\r\n  \"Title\": \"No Problem\",\r\n  \"PublicationDate\": \"2000-06-15\",\r\n  \"Genre\": \"Drama\",\r\n  \"IsAvailable\": true,\r\n  \"AuthorId\": \"3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/books/973-20985986-0",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"973-20985986-0"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Update A Book",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"ISBN\": \"973-20985986-0\",\r\n  \"Title\": \"No Problem\",\r\n  \"PublicationDate\": \"2000-06-15\",\r\n  \"Genre\": \"Drama\",\r\n  \"IsAvailable\": true,\r\n  \"AuthorId\": \"3\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APIURL}}/books/973-20985986-0",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"books",
+										"973-20985986-0"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:31:29 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Remove A Book",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/books/973-1208986-0",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"973-1208986-0"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Remove A Book",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/books/973-1208986-0",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"books",
+										"973-1208986-0"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:31:56 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "No Book found with ISBN = 973-1208986-0"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Patrons",
+			"item": [
+				{
+					"name": "Get A Patron",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{APIURL}}/patrons/ba6e1901-e35f-40c1-8c52-e4d56cb11ace",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"patrons",
+								"ba6e1901-e35f-40c1-8c52-e4d56cb11ace"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get A Patron",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{APIURL}}/patrons/ba6e1901-e35f-40c1-8c52-e4d56cb11ace",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"patrons",
+										"ba6e1901-e35f-40c1-8c52-e4d56cb11ace"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:22:28 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n    \"name\": \"Will Smith\",\n    \"email\": \"will@gmail.com\",\n    \"reviews\": [\n        {\n            \"reviewId\": 19,\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"bookId\": \"973-12085986-0\",\n            \"book\": null,\n            \"rating\": 4,\n            \"comment\": \"This book was amazing!\"\n        },\n        {\n            \"reviewId\": 20,\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"bookId\": \"973-12085986-0\",\n            \"book\": null,\n            \"rating\": 3,\n            \"comment\": \"This book was amazing!\"\n        },\n        {\n            \"reviewId\": 22,\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"bookId\": \"973-85986-0\",\n            \"book\": null,\n            \"rating\": 3,\n            \"comment\": \"This book is bad!\"\n        },\n        {\n            \"reviewId\": 23,\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"bookId\": \"973-85986-0\",\n            \"book\": null,\n            \"rating\": 4,\n            \"comment\": \"\"\n        },\n        {\n            \"reviewId\": 24,\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"bookId\": \"973-85986-0\",\n            \"book\": null,\n            \"rating\": 3,\n            \"comment\": \"This book is bad!\"\n        }\n    ],\n    \"reservedBooks\": [\n        {\n            \"reservationId\": \"81a0ccd7-2c1b-4263-be41-40b1b1c5dd3c\",\n            \"bookId\": \"973-85986-0\",\n            \"book\": null,\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"reservationDate\": \"2023-06-27T10:17:39.7945695\"\n        },\n        {\n            \"reservationId\": \"c55fceef-93ef-4be2-b385-5881147d6dc8\",\n            \"bookId\": \"973-85986-0\",\n            \"book\": null,\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"reservationDate\": \"2023-06-27T10:28:19.5354709\"\n        }\n    ],\n    \"checkedoutBooks\": [\n        {\n            \"checkoutId\": \"0c695790-99e0-45dd-9996-f9be20d14ea6\",\n            \"bookId\": \"973-20985986-0\",\n            \"book\": null,\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"checkoutDate\": \"2023-06-27T11:34:06.2768613\",\n            \"dueDate\": \"2023-07-11T11:34:06.2768619\",\n            \"isReturned\": true,\n            \"returnDate\": \"2023-06-27T12:34:15.9491704\",\n            \"totalFee\": -26\n        },\n        {\n            \"checkoutId\": \"82f028a5-fdc5-4be9-a96b-64fa1f93fe60\",\n            \"bookId\": \"9780061122415\",\n            \"book\": null,\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"checkoutDate\": \"2023-06-27T16:01:21.1131961\",\n            \"dueDate\": \"2023-07-11T16:01:21.1131961\",\n            \"isReturned\": false,\n            \"returnDate\": \"0001-01-01T00:00:00\",\n            \"totalFee\": 0\n        },\n        {\n            \"checkoutId\": \"906600f5-f0b1-411e-ad64-d01d9b860b22\",\n            \"bookId\": \"973-20985986-0\",\n            \"book\": null,\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"checkoutDate\": \"2023-06-27T11:14:20.8438727\",\n            \"dueDate\": \"2023-07-11T11:14:20.8438728\",\n            \"isReturned\": true,\n            \"returnDate\": \"2023-06-27T11:30:51.5775324\",\n            \"totalFee\": -26\n        },\n        {\n            \"checkoutId\": \"9731b1eb-cf26-4b1d-a8aa-214740fcbfd0\",\n            \"bookId\": \"973-20985986-0\",\n            \"book\": null,\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"checkoutDate\": \"2023-06-27T12:34:21.0986108\",\n            \"dueDate\": \"2023-07-11T12:34:21.0986119\",\n            \"isReturned\": false,\n            \"returnDate\": \"0001-01-01T00:00:00\",\n            \"totalFee\": 0\n        },\n        {\n            \"checkoutId\": \"c9c29b95-38c3-47ec-b461-006652095ebb\",\n            \"bookId\": \"973-20985986-0\",\n            \"book\": null,\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"checkoutDate\": \"2023-06-27T11:26:54.1397507\",\n            \"dueDate\": \"2023-07-11T11:26:54.1397515\",\n            \"isReturned\": false,\n            \"returnDate\": \"0001-01-01T00:00:00\",\n            \"totalFee\": 0\n        },\n        {\n            \"checkoutId\": \"fcb09d34-5f67-4dcd-8770-f31071c4c3db\",\n            \"bookId\": \"973-85986-0\",\n            \"book\": null,\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"checkoutDate\": \"2023-06-27T11:10:16.3674547\",\n            \"dueDate\": \"2023-07-11T11:10:16.3674553\",\n            \"isReturned\": false,\n            \"returnDate\": \"0001-01-01T00:00:00\",\n            \"totalFee\": 0\n        }\n    ],\n    \"readingLists\": [\n        {\n            \"readingListId\": 6,\n            \"name\": \"My Reading List\",\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"bookLists\": null\n        },\n        {\n            \"readingListId\": 7,\n            \"name\": \"My Reading List\",\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"bookLists\": null\n        },\n        {\n            \"readingListId\": 8,\n            \"name\": \"My Reading List\",\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"bookLists\": null\n        },\n        {\n            \"readingListId\": 9,\n            \"name\": \"My Reading List\",\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"bookLists\": null\n        },\n        {\n            \"readingListId\": 10,\n            \"name\": \"My Reading List\",\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"bookLists\": null\n        },\n        {\n            \"readingListId\": 11,\n            \"name\": \"My Reading List\",\n            \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n            \"patron\": null,\n            \"bookLists\": null\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Update A Patron",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\":\"Will Smith\",\r\n    \"Email\":\"will@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/patrons/ba6e1901-e35f-40c1-8c52-e4d56cb11ace",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"patrons",
+								"ba6e1901-e35f-40c1-8c52-e4d56cb11ace"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Update A Patron",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\":\"Will Smith\",\r\n    \"Email\":\"will@gmail.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APIURL}}/patrons/ba6e1901-e35f-40c1-8c52-e4d56cb11ace",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"patrons",
+										"ba6e1901-e35f-40c1-8c52-e4d56cb11ace"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:22:22 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n    \"email\": \"will@gmail.com\",\n    \"name\": \"Will Smith\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Borrowing History of A Patron",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/patrons/ba6e1901-e35f-40c1-8c52-e4d56cb11ace/borrowing-history",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"patrons",
+								"ba6e1901-e35f-40c1-8c52-e4d56cb11ace",
+								"borrowing-history"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Borrowing History of A Patron",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/patrons/ba6e1901-e35f-40c1-8c52-e4d56cb11ace/borrowing-history",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"patrons",
+										"ba6e1901-e35f-40c1-8c52-e4d56cb11ace",
+										"borrowing-history"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:22:12 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"checkoutId\": \"0c695790-99e0-45dd-9996-f9be20d14ea6\",\n        \"bookId\": \"973-20985986-0\",\n        \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n        \"checkoutDate\": \"2023-06-27T11:34:06.2768613\",\n        \"dueDate\": \"2023-07-11T11:34:06.2768619\",\n        \"returnDate\": \"2023-06-27T12:34:15.9491704\",\n        \"totalFee\": -26\n    },\n    {\n        \"checkoutId\": \"82f028a5-fdc5-4be9-a96b-64fa1f93fe60\",\n        \"bookId\": \"9780061122415\",\n        \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n        \"checkoutDate\": \"2023-06-27T16:01:21.1131961\",\n        \"dueDate\": \"2023-07-11T16:01:21.1131961\",\n        \"returnDate\": \"0001-01-01T00:00:00\",\n        \"totalFee\": 0\n    },\n    {\n        \"checkoutId\": \"906600f5-f0b1-411e-ad64-d01d9b860b22\",\n        \"bookId\": \"973-20985986-0\",\n        \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n        \"checkoutDate\": \"2023-06-27T11:14:20.8438727\",\n        \"dueDate\": \"2023-07-11T11:14:20.8438728\",\n        \"returnDate\": \"2023-06-27T11:30:51.5775324\",\n        \"totalFee\": -26\n    },\n    {\n        \"checkoutId\": \"9731b1eb-cf26-4b1d-a8aa-214740fcbfd0\",\n        \"bookId\": \"973-20985986-0\",\n        \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n        \"checkoutDate\": \"2023-06-27T12:34:21.0986108\",\n        \"dueDate\": \"2023-07-11T12:34:21.0986119\",\n        \"returnDate\": \"0001-01-01T00:00:00\",\n        \"totalFee\": 0\n    },\n    {\n        \"checkoutId\": \"c9c29b95-38c3-47ec-b461-006652095ebb\",\n        \"bookId\": \"973-20985986-0\",\n        \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n        \"checkoutDate\": \"2023-06-27T11:26:54.1397507\",\n        \"dueDate\": \"2023-07-11T11:26:54.1397515\",\n        \"returnDate\": \"0001-01-01T00:00:00\",\n        \"totalFee\": 0\n    },\n    {\n        \"checkoutId\": \"fcb09d34-5f67-4dcd-8770-f31071c4c3db\",\n        \"bookId\": \"973-85986-0\",\n        \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n        \"checkoutDate\": \"2023-06-27T11:10:16.3674547\",\n        \"dueDate\": \"2023-07-11T11:10:16.3674553\",\n        \"returnDate\": \"0001-01-01T00:00:00\",\n        \"totalFee\": 0\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get All Patrons",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/patrons",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"patrons"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get All Patrons",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/patrons",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"patrons"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:22:03 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"patronId\": \"1\",\n        \"email\": \"johndoe@gmail.com\",\n        \"name\": \"John Doe\"\n    },\n    {\n        \"patronId\": \"2\",\n        \"email\": \"janesmith@gmail.com\",\n        \"name\": \"Jane Smith\"\n    },\n    {\n        \"patronId\": \"3\",\n        \"email\": \"michaeljohnson@gmail.com\",\n        \"name\": \"Michael Johnson\"\n    },\n    {\n        \"patronId\": \"4\",\n        \"email\": \"emilydavis@gmail.com\",\n        \"name\": \"Emily Davis\"\n    },\n    {\n        \"patronId\": \"5\",\n        \"email\": \"danielwilson@gmail.com\",\n        \"name\": \"Daniel Wilson\"\n    },\n    {\n        \"patronId\": \"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\",\n        \"email\": \"jane@gmail.com\",\n        \"name\": \"jane\"\n    },\n    {\n        \"patronId\": \"5abe7ff0-74e4-48a8-af23-425d0967094c\",\n        \"email\": \"danie@gmail.com\",\n        \"name\": \"danie\"\n    },\n    {\n        \"patronId\": \"5bfcd1eb-e08d-4b78-9232-be84519ad833\",\n        \"email\": \"arwwd2002@gmail.com\",\n        \"name\": \"ola\"\n    },\n    {\n        \"patronId\": \"63e7da7f-f1c8-46c9-aa6b-06035402524f\",\n        \"email\": \"gigi@gmail.com\",\n        \"name\": \"gigi\"\n    },\n    {\n        \"patronId\": \"6b19ca55-75b2-4fd0-9e38-053d68301483\",\n        \"email\": \"jony@gmail.com\",\n        \"name\": \"jony\"\n    },\n    {\n        \"patronId\": \"a13c2fd8-86f1-4bfb-95ce-1aeb8cb1d123\",\n        \"email\": \"arwwd2002@gmail.com\",\n        \"name\": \"Asia\"\n    },\n    {\n        \"patronId\": \"b74ddd14-6340-4840-95c2-db12554843e5\",\n        \"email\": \"will@gmail.com\",\n        \"name\": \"Will\"\n    },\n    {\n        \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n        \"email\": \"will@gmail.com\",\n        \"name\": \"Will Smith\"\n    }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Authors",
+			"item": [
+				{
+					"name": "Get All Authors",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{APIURL}}/authors?pageNumber=1&pageSize=2",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"authors"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get All Authors",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "default",
+										"disabled": true
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "default",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{APIURL}}/authors?pageNumber=1&pageSize=2",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"authors"
+									],
+									"query": [
+										{
+											"key": "pageNumber",
+											"value": "1"
+										},
+										{
+											"key": "pageSize",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:32:25 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"totalCount\": 6,\n    \"pageNumber\": 1,\n    \"pageSize\": 2,\n    \"items\": [\n        {\n            \"authorId\": 1,\n            \"name\": \"John Green\",\n            \"books\": [\n                {\n                    \"isbn\": \"973-12085986-0\",\n                    \"title\": \"Animals\",\n                    \"publicationDate\": \"2023-06-15T00:00:00\",\n                    \"genre\": 2,\n                    \"isAvailable\": true,\n                    \"authorId\": 1,\n                    \"author\": null,\n                    \"reviews\": null,\n                    \"checkouts\": null,\n                    \"reservations\": null,\n                    \"bookLists\": null\n                },\n                {\n                    \"isbn\": \"9781451673319\",\n                    \"title\": \"The Great Gatsby\",\n                    \"publicationDate\": \"1925-04-10T00:00:00\",\n                    \"genre\": 0,\n                    \"isAvailable\": true,\n                    \"authorId\": 1,\n                    \"author\": null,\n                    \"reviews\": null,\n                    \"checkouts\": null,\n                    \"reservations\": null,\n                    \"bookLists\": null\n                },\n                {\n                    \"isbn\": \"9783-1208986-0\",\n                    \"title\": \"The Moon\",\n                    \"publicationDate\": \"2023-06-15T00:00:00\",\n                    \"genre\": 2,\n                    \"isAvailable\": true,\n                    \"authorId\": 1,\n                    \"author\": null,\n                    \"reviews\": null,\n                    \"checkouts\": null,\n                    \"reservations\": null,\n                    \"bookLists\": null\n                }\n            ]\n        },\n        {\n            \"authorId\": 3,\n            \"name\": \"Stephen King\",\n            \"books\": [\n                {\n                    \"isbn\": \"973-1608986-0\",\n                    \"title\": \"To The Moon\",\n                    \"publicationDate\": \"2023-06-15T00:00:00\",\n                    \"genre\": 2,\n                    \"isAvailable\": true,\n                    \"authorId\": 3,\n                    \"author\": null,\n                    \"reviews\": null,\n                    \"checkouts\": null,\n                    \"reservations\": null,\n                    \"bookLists\": null\n                },\n                {\n                    \"isbn\": \"973-1908986-0\",\n                    \"title\": \"Space\",\n                    \"publicationDate\": \"2023-06-15T00:00:00\",\n                    \"genre\": 2,\n                    \"isAvailable\": true,\n                    \"authorId\": 3,\n                    \"author\": null,\n                    \"reviews\": null,\n                    \"checkouts\": null,\n                    \"reservations\": null,\n                    \"bookLists\": null\n                },\n                {\n                    \"isbn\": \"973-19089986-0\",\n                    \"title\": \"Space\",\n                    \"publicationDate\": \"2023-06-15T00:00:00\",\n                    \"genre\": 2,\n                    \"isAvailable\": true,\n                    \"authorId\": 3,\n                    \"author\": null,\n                    \"reviews\": null,\n                    \"checkouts\": null,\n                    \"reservations\": null,\n                    \"bookLists\": null\n                },\n                {\n                    \"isbn\": \"973-20985986-0\",\n                    \"title\": \"No Problem\",\n                    \"publicationDate\": \"2000-06-15T00:00:00\",\n                    \"genre\": 9,\n                    \"isAvailable\": true,\n                    \"authorId\": 3,\n                    \"author\": null,\n                    \"reviews\": null,\n                    \"checkouts\": null,\n                    \"reservations\": null,\n                    \"bookLists\": null\n                },\n                {\n                    \"isbn\": \"973-85986-0\",\n                    \"title\": \"To the moon\",\n                    \"publicationDate\": \"2023-06-15T00:00:00\",\n                    \"genre\": 2,\n                    \"isAvailable\": false,\n                    \"authorId\": 3,\n                    \"author\": null,\n                    \"reviews\": null,\n                    \"checkouts\": null,\n                    \"reservations\": null,\n                    \"bookLists\": null\n                },\n                {\n                    \"isbn\": \"973-859861-0\",\n                    \"title\": \"No Problem\",\n                    \"publicationDate\": \"2023-06-15T00:00:00\",\n                    \"genre\": 9,\n                    \"isAvailable\": false,\n                    \"authorId\": 3,\n                    \"author\": null,\n                    \"reviews\": null,\n                    \"checkouts\": null,\n                    \"reservations\": null,\n                    \"bookLists\": null\n                }\n            ]\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get An Author",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/authors/1",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"authors",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get An Author",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/authors/1",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"authors",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:32:41 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"authorId\": 1,\n    \"name\": \"John Green\",\n    \"books\": [\n        {\n            \"isbn\": \"973-12085986-0\",\n            \"title\": \"Animals\",\n            \"publicationDate\": \"2023-06-15\",\n            \"genre\": \"ScienceFiction\",\n            \"isAvailable\": true,\n            \"authorId\": 1,\n            \"authorName\": \"John Green\",\n            \"reviews\": []\n        },\n        {\n            \"isbn\": \"9781451673319\",\n            \"title\": \"The Great Gatsby\",\n            \"publicationDate\": \"1925-04-10\",\n            \"genre\": \"Mystery\",\n            \"isAvailable\": true,\n            \"authorId\": 1,\n            \"authorName\": \"John Green\",\n            \"reviews\": []\n        },\n        {\n            \"isbn\": \"9783-1208986-0\",\n            \"title\": \"The Moon\",\n            \"publicationDate\": \"2023-06-15\",\n            \"genre\": \"ScienceFiction\",\n            \"isAvailable\": true,\n            \"authorId\": 1,\n            \"authorName\": \"John Green\",\n            \"reviews\": []\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Add An Author",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\":\"Mahmoud Darwish\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/authors",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"authors"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Add An Author",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\":\"Mahmoud Darwish\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APIURL}}/authors",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"authors"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:33:08 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Location",
+									"value": "https://localhost:7283/api/authors/9"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"authorId\": 9,\n    \"name\": \"Mahmoud Darwish\",\n    \"books\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Update An Author",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\":\"Bilal\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/authors/6",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"authors",
+								"6"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Update An Author",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\":\"Bilal\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APIURL}}/authors/6",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"authors",
+										"6"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:33:29 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Delete An Author",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/authors/12",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"authors",
+								"12"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Delete An Author",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/authors/12",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"authors",
+										"12"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:33:51 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "No Author found with ID = 12"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Librarians",
+			"item": [
+				{
+					"name": "Get All Librarians",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/librarians?pageNumber=1&pageSize=2",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"librarians"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get All Librarians",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/librarians?pageNumber=1&pageSize=2",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"librarians"
+									],
+									"query": [
+										{
+											"key": "pageNumber",
+											"value": "1"
+										},
+										{
+											"key": "pageSize",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:34:18 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"totalCount\": 5,\n    \"pageNumber\": 1,\n    \"pageSize\": 2,\n    \"items\": [\n        {\n            \"librarianId\": \"1\",\n            \"name\": \"Tomy Tim\"\n        },\n        {\n            \"librarianId\": \"2\",\n            \"name\": \"Emily Johnson\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get A Librarian",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/librarians/ba6e1901-e35f-40c1-8c52-e4d56cb11ace",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"librarians",
+								"ba6e1901-e35f-40c1-8c52-e4d56cb11ace"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get A Librarian",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/librarians/ba6e1901-e35f-40c1-8c52-e4d56cb11ace",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"librarians",
+										"ba6e1901-e35f-40c1-8c52-e4d56cb11ace"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:34:50 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"librarianId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n    \"name\": \"Jane\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update A Librarian",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Jane\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/librarians/ba6e1901-e35f-40c1-8c52-e4d56cb11ace",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"librarians",
+								"ba6e1901-e35f-40c1-8c52-e4d56cb11ace"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Update A Librarian",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"Jane\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APIURL}}/librarians/ba6e1901-e35f-40c1-8c52-e4d56cb11ace",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"librarians",
+										"ba6e1901-e35f-40c1-8c52-e4d56cb11ace"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:35:08 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"librarianId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n    \"name\": \"Jane\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete A Librarian",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MGExN2RmZi0yNjEwLTRkMDAtOGUxMS0wNGJiMDBlYTEzZWQiLCJ1bmlxdWVfbmFtZSI6ImpvaG5kb2UiLCJlbWFpbCI6ImpvaG5kb2VAZ21haWwuY29tIiwicm9sZSI6IkFkbWluaXN0cmF0b3IiLCJuYmYiOjE2ODg0MTc5NjUsImV4cCI6MTY4ODg0OTk2NSwiaWF0IjoxNjg4NDE3OTY1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.hBBMspjSkv-4tHrcUCpkyN3k7IQk6KjdmQsNTE1YJ5E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/librarians/1",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"librarians",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Delete A Librarian",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/librarians/1",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"librarians",
+										"1"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:35:49 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Patron's Reading Lists",
+			"item": [
+				{
+					"name": "Create Reading List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ2OTIzNSwiZXhwIjoxNjg4OTAxMjM1LCJpYXQiOjE2ODg0NjkyMzUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.icEwUP6BcM0Yrr7aLORdKGbtAU_OK1wcbTPZAaOEpdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"To Read\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/reading-lists",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"reading-lists"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Reading List",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"To Read\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APIURL}}/reading-lists",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"reading-lists"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:36:19 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Location",
+									"value": "https://localhost:7283/api/reading-lists/19?patronId=5921bf35-c889-4a9c-9a3c-47c4271f9a9f"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"readingListId\": 19,\n    \"name\": \"To Read\",\n    \"patronId\": \"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Reading Lists",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ2OTIzNSwiZXhwIjoxNjg4OTAxMjM1LCJpYXQiOjE2ODg0NjkyMzUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.icEwUP6BcM0Yrr7aLORdKGbtAU_OK1wcbTPZAaOEpdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/reading-lists",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"reading-lists"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Reading Lists",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/reading-lists",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"reading-lists"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:37:04 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"readingListId\": 16,\n        \"name\": \"Reading List1\",\n        \"patronId\": \"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\"\n    },\n    {\n        \"readingListId\": 17,\n        \"name\": \"Reading List2\",\n        \"patronId\": \"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\"\n    },\n    {\n        \"readingListId\": 19,\n        \"name\": \"To Read\",\n        \"patronId\": \"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Reading List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ2OTIzNSwiZXhwIjoxNjg4OTAxMjM1LCJpYXQiOjE2ODg0NjkyMzUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.icEwUP6BcM0Yrr7aLORdKGbtAU_OK1wcbTPZAaOEpdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/reading-lists/16",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"reading-lists",
+								"16"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Reading List",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/reading-lists/16",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"reading-lists",
+										"16"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:37:23 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"readingListId\": 16,\n    \"name\": \"Reading List1\",\n    \"patronId\": \"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Add Book To Reading List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ2OTIzNSwiZXhwIjoxNjg4OTAxMjM1LCJpYXQiOjE2ODg0NjkyMzUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.icEwUP6BcM0Yrr7aLORdKGbtAU_OK1wcbTPZAaOEpdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/reading-lists/16/books/973-12085986-0/add",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"reading-lists",
+								"16",
+								"books",
+								"973-12085986-0",
+								"add"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Add Book To Reading List",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/reading-lists/16/books/973-12085986-0/add",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"reading-lists",
+										"16",
+										"books",
+										"973-12085986-0",
+										"add"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:37:50 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Remove Book From Reading List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ2OTIzNSwiZXhwIjoxNjg4OTAxMjM1LCJpYXQiOjE2ODg0NjkyMzUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.icEwUP6BcM0Yrr7aLORdKGbtAU_OK1wcbTPZAaOEpdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/reading-lists/16/books/973-12085986-0/remove",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"reading-lists",
+								"16",
+								"books",
+								"973-12085986-0",
+								"remove"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Remove Book From Reading List",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/reading-lists/16/books/973-12085986-0/remove",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"reading-lists",
+										"16",
+										"books",
+										"973-12085986-0",
+										"remove"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:38:32 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "Get Books Of Reading List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ2OTIzNSwiZXhwIjoxNjg4OTAxMjM1LCJpYXQiOjE2ODg0NjkyMzUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.icEwUP6BcM0Yrr7aLORdKGbtAU_OK1wcbTPZAaOEpdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/reading-lists/16/books",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"reading-lists",
+								"16",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Reading List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ2OTIzNSwiZXhwIjoxNjg4OTAxMjM1LCJpYXQiOjE2ODg0NjkyMzUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.icEwUP6BcM0Yrr7aLORdKGbtAU_OK1wcbTPZAaOEpdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/reading-lists/18",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"reading-lists",
+								"18"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Book Reviews",
+			"item": [
+				{
+					"name": "Add A Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ2OTIzNSwiZXhwIjoxNjg4OTAxMjM1LCJpYXQiOjE2ODg0NjkyMzUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.icEwUP6BcM0Yrr7aLORdKGbtAU_OK1wcbTPZAaOEpdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"rating\": 3,\r\n  \"comment\": \"This book was amazing!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/books/973-12085986-0/reviews",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"973-12085986-0",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Reviews By Book ISBN",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ2OTIzNSwiZXhwIjoxNjg4OTAxMjM1LCJpYXQiOjE2ODg0NjkyMzUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.icEwUP6BcM0Yrr7aLORdKGbtAU_OK1wcbTPZAaOEpdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/books/9781451673319/reviews",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"9781451673319",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get A Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ2OTIzNSwiZXhwIjoxNjg4OTAxMjM1LCJpYXQiOjE2ODg0NjkyMzUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.icEwUP6BcM0Yrr7aLORdKGbtAU_OK1wcbTPZAaOEpdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/books/973-85986-0/reviews/1",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"973-85986-0",
+								"reviews",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Average Rating By BookId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ2OTIzNSwiZXhwIjoxNjg4OTAxMjM1LCJpYXQiOjE2ODg0NjkyMzUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.icEwUP6BcM0Yrr7aLORdKGbtAU_OK1wcbTPZAaOEpdM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/books/9781451673319/reviews/average-rating",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"9781451673319",
+								"reviews",
+								"average-rating"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update A Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ4MzM0NSwiZXhwIjoxNjg4OTE1MzQ1LCJpYXQiOjE2ODg0ODMzNDUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.JjTox6mOkiDgSzOrfwtTPpMCj9Ac2pll21-Q6OaILhU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"rating\": \"2\",\r\n  \"comment\": \"Amazing !!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/books/9781451673319/reviews/26",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"9781451673319",
+								"reviews",
+								"26"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete A Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ4MzM0NSwiZXhwIjoxNjg4OTE1MzQ1LCJpYXQiOjE2ODg0ODMzNDUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.JjTox6mOkiDgSzOrfwtTPpMCj9Ac2pll21-Q6OaILhU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/books/9781451673319/reviews/3",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"9781451673319",
+								"reviews",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Send Overdue Notifications",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJiYTZlMTkwMS1lMzVmLTQwYzEtOGM1Mi1lNGQ1NmNiMTFhY2UiLCJ1bmlxdWVfbmFtZSI6ImF5YSIsImVtYWlsIjoiYXlhQGdtYWlsLmNvbSIsInJvbGUiOlsiUGF0cm9uIiwiTGlicmFyaWFuIl0sIm5iZiI6MTY4Nzg2OTczMSwiZXhwIjoxNjg4MzAxNzMxLCJpYXQiOjE2ODc4Njk3MzEsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.8oq6Aa0ocMHAVXPLbGxyT1b_njtjoyqCGnyjTOmv0rY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/notifications/overdue-books/send",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"notifications",
+								"overdue-books",
+								"send"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Reminder Notification",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJiYTZlMTkwMS1lMzVmLTQwYzEtOGM1Mi1lNGQ1NmNiMTFhY2UiLCJ1bmlxdWVfbmFtZSI6ImF5YSIsImVtYWlsIjoiYXlhQGdtYWlsLmNvbSIsInJvbGUiOlsiUGF0cm9uIiwiTGlicmFyaWFuIl0sIm5iZiI6MTY4Nzg2OTczMSwiZXhwIjoxNjg4MzAxNzMxLCJpYXQiOjE2ODc4Njk3MzEsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.8oq6Aa0ocMHAVXPLbGxyT1b_njtjoyqCGnyjTOmv0rY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RecipientEmail\":\"arwwd2002@gmail.com\",\r\n    \"BookISBN\":\"973-20985986-0\",\r\n    \"recipientId\":\"a13c2fd8-86f1-4bfb-95ce-1aeb8cb1d123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/notifications/reminder/send",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"notifications",
+								"reminder",
+								"send"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Recommendations",
+			"item": [
+				{
+					"name": "Get Recommended Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ4MzM0NSwiZXhwIjoxNjg4OTE1MzQ1LCJpYXQiOjE2ODg0ODMzNDUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.JjTox6mOkiDgSzOrfwtTPpMCj9Ac2pll21-Q6OaILhU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/patrons/5921bf35-c889-4a9c-9a3c-47c4271f9a9f/recommendations",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"patrons",
+								"5921bf35-c889-4a9c-9a3c-47c4271f9a9f",
+								"recommendations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Book Transactions",
+			"item": [
+				{
+					"name": "Reserve Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ4MzM0NSwiZXhwIjoxNjg4OTE1MzQ1LCJpYXQiOjE2ODg0ODMzNDUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.JjTox6mOkiDgSzOrfwtTPpMCj9Ac2pll21-Q6OaILhU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/books/973-20985986-0/reserve",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"973-20985986-0",
+								"reserve"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Reserve Books",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APIURL}}/books/973-20985986-0/reserve",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"books",
+										"973-20985986-0",
+										"reserve"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:14:55 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"reservationId\": \"20b791e6-eb05-4aca-ad50-c7f822e0ce14\",\n    \"patronId\": \"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\",\n    \"bookId\": \"973-20985986-0\",\n    \"reservationDate\": \"2023-07-05T00:00:00\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Checkout Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1OTIxYmYzNS1jODg5LTRhOWMtOWEzYy00N2M0MjcxZjlhOWYiLCJ1bmlxdWVfbmFtZSI6ImphbmUiLCJlbWFpbCI6ImphbmVAZ21haWwuY29tIiwicm9sZSI6IlBhdHJvbiIsIm5iZiI6MTY4ODQ4MzM0NSwiZXhwIjoxNjg4OTE1MzQ1LCJpYXQiOjE2ODg0ODMzNDUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE4ODUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1In0.JjTox6mOkiDgSzOrfwtTPpMCj9Ac2pll21-Q6OaILhU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ISBN\":\"973-20985986-0\",\r\n    \"PatronId\":\"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/books/973-20985986-0/checkout",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"973-20985986-0",
+								"checkout"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Checkout Books",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"ISBN\":\"973-20985986-0\",\r\n    \"PatronId\":\"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APIURL}}/books/973-20985986-0/checkout",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"books",
+										"973-20985986-0",
+										"checkout"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:15:44 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"checkoutId\": \"89dee9e9-e362-438a-b2f0-b475090e17f0\",\n    \"bookId\": \"973-20985986-0\",\n    \"patronId\": \"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\",\n    \"checkoutDate\": \"2023-07-05T15:15:44.0160391Z\",\n    \"dueDate\": \"2023-07-19T15:15:44.0160399Z\",\n    \"returnDate\": \"0001-01-01T00:00:00\",\n    \"totalFee\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "Return Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MDBkZWU3Yy0wN2VlLTRlODAtYTM1Yi0wOWYxNmU5ODU1YTUiLCJ1bmlxdWVfbmFtZSI6ImxpYiIsImVtYWlsIjoibGliQGdtYWlsLmNvbSIsInJvbGUiOiJMaWJyYXJpYW4iLCJuYmYiOjE2ODg1NjkxNDAsImV4cCI6MTY4OTAwMTE0MCwiaWF0IjoxNjg4NTY5MTQwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.McXp7WxwLR33kCif45snjbi6X-8c67a2UYOXQZ2noig",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ISBN\":\"973-20985986-0\",\r\n    \"PatronId\":\"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/books/973-20985986-0/accept-return",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"973-20985986-0",
+								"accept-return"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Return Books",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"ISBN\":\"973-20985986-0\",\r\n    \"PatronId\":\"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APIURL}}/books/973-20985986-0/accept-return",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"books",
+										"973-20985986-0",
+										"accept-return"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:16:06 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"checkoutId\": \"89dee9e9-e362-438a-b2f0-b475090e17f0\",\n    \"bookId\": \"973-20985986-0\",\n    \"patronId\": \"5921bf35-c889-4a9c-9a3c-47c4271f9a9f\",\n    \"checkoutDate\": \"2023-07-05T15:15:44.0160391\",\n    \"dueDate\": \"2023-07-19T15:15:44.0160399\",\n    \"returnDate\": \"2023-07-05T15:16:04.2500681Z\",\n    \"totalFee\": -26\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Overdue Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJiYTZlMTkwMS1lMzVmLTQwYzEtOGM1Mi1lNGQ1NmNiMTFhY2UiLCJ1bmlxdWVfbmFtZSI6ImF5YSIsImVtYWlsIjoiYXlhQGdtYWlsLmNvbSIsInJvbGUiOiJQYXRyb24iLCJuYmYiOjE2ODc4MDM0NTAsImV4cCI6MTY4ODIzNTQ1MCwiaWF0IjoxNjg3ODAzNDUwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.SJgjxQMcwwB0Dox3d7_KE2L1OckDT0viqUC-01yi3UE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/books/borrowed-books/overdue",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"borrowed-books",
+								"overdue"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Overdue Books",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/books/borrowed-books/overdue",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"books",
+										"borrowed-books",
+										"overdue"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:04:35 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"isbn\": \"9780061122415\",\n        \"title\": \"To Kill a Mockingbird\",\n        \"publicationDate\": \"1960-07-11\",\n        \"genre\": \"Poetry\",\n        \"isAvailable\": false,\n        \"authorId\": 4,\n        \"authorName\": \"Agatha Christie\",\n        \"reviews\": []\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Borrowed Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MDBkZWU3Yy0wN2VlLTRlODAtYTM1Yi0wOWYxNmU5ODU1YTUiLCJ1bmlxdWVfbmFtZSI6ImxpYiIsImVtYWlsIjoibGliQGdtYWlsLmNvbSIsInJvbGUiOiJMaWJyYXJpYW4iLCJuYmYiOjE2ODg1NjkxNDAsImV4cCI6MTY4OTAwMTE0MCwiaWF0IjoxNjg4NTY5MTQwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.McXp7WxwLR33kCif45snjbi6X-8c67a2UYOXQZ2noig",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/books/borrowed-books",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"borrowed-books"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Borrowed Books",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/books/borrowed-books",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"books",
+										"borrowed-books"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:05:47 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"isbn\": \"973-20985986-0\",\n        \"title\": \"No Problem\",\n        \"publicationDate\": \"2000-06-15\",\n        \"genre\": \"Drama\",\n        \"isAvailable\": true,\n        \"authorId\": 3,\n        \"authorName\": \"Stephen King\",\n        \"reviews\": []\n    },\n    {\n        \"isbn\": \"9780061122415\",\n        \"title\": \"To Kill a Mockingbird\",\n        \"publicationDate\": \"1960-07-11\",\n        \"genre\": \"Poetry\",\n        \"isAvailable\": false,\n        \"authorId\": 4,\n        \"authorName\": \"Agatha Christie\",\n        \"reviews\": []\n    },\n    {\n        \"isbn\": \"9780061122415\",\n        \"title\": \"To Kill a Mockingbird\",\n        \"publicationDate\": \"1960-07-11\",\n        \"genre\": \"Poetry\",\n        \"isAvailable\": false,\n        \"authorId\": 4,\n        \"authorName\": \"Agatha Christie\",\n        \"reviews\": []\n    },\n    {\n        \"isbn\": \"973-20985986-0\",\n        \"title\": \"No Problem\",\n        \"publicationDate\": \"2000-06-15\",\n        \"genre\": \"Drama\",\n        \"isAvailable\": true,\n        \"authorId\": 3,\n        \"authorName\": \"Stephen King\",\n        \"reviews\": []\n    },\n    {\n        \"isbn\": \"973-20985986-0\",\n        \"title\": \"No Problem\",\n        \"publicationDate\": \"2000-06-15\",\n        \"genre\": \"Drama\",\n        \"isAvailable\": true,\n        \"authorId\": 3,\n        \"authorName\": \"Stephen King\",\n        \"reviews\": []\n    },\n    {\n        \"isbn\": \"973-85986-0\",\n        \"title\": \"To the moon\",\n        \"publicationDate\": \"2023-06-15\",\n        \"genre\": \"ScienceFiction\",\n        \"isAvailable\": false,\n        \"authorId\": 3,\n        \"authorName\": \"Stephen King\",\n        \"reviews\": [\n            {\n                \"reviewId\": 22,\n                \"bookId\": \"973-85986-0\",\n                \"bookTitle\": \"To the moon\",\n                \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n                \"rating\": 3,\n                \"comment\": \"This book is bad!\"\n            },\n            {\n                \"reviewId\": 23,\n                \"bookId\": \"973-85986-0\",\n                \"bookTitle\": \"To the moon\",\n                \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n                \"rating\": 4,\n                \"comment\": \"\"\n            },\n            {\n                \"reviewId\": 24,\n                \"bookId\": \"973-85986-0\",\n                \"bookTitle\": \"To the moon\",\n                \"patronId\": \"ba6e1901-e35f-40c1-8c52-e4d56cb11ace\",\n                \"rating\": 3,\n                \"comment\": \"This book is bad!\"\n            }\n        ]\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Borrowed Book By ISBN",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI2MDBkZWU3Yy0wN2VlLTRlODAtYTM1Yi0wOWYxNmU5ODU1YTUiLCJ1bmlxdWVfbmFtZSI6ImxpYiIsImVtYWlsIjoibGliQGdtYWlsLmNvbSIsInJvbGUiOiJMaWJyYXJpYW4iLCJuYmYiOjE2ODg1NjkxNDAsImV4cCI6MTY4OTAwMTE0MCwiaWF0IjoxNjg4NTY5MTQwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxODg1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo2MTg4NSJ9.McXp7WxwLR33kCif45snjbi6X-8c67a2UYOXQZ2noig",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/books/borrowed-books/973-20985986-0",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"books",
+								"borrowed-books",
+								"973-20985986-0"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Borrowed Book By ISBN",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APIURL}}/books/borrowed-books/973-20985986-0",
+									"host": [
+										"{{APIURL}}"
+									],
+									"path": [
+										"books",
+										"borrowed-books",
+										"973-20985986-0"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 05 Jul 2023 15:12:49 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isbn\": \"973-20985986-0\",\n    \"title\": \"No Problem\",\n    \"publicationDate\": \"2000-06-15\",\n    \"genre\": \"Drama\",\n    \"isAvailable\": true,\n    \"authorId\": 3,\n    \"authorName\": \"Stephen King\",\n    \"reviews\": []\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "APIURL",
+			"value": "https://localhost:7283/api",
+			"type": "default"
+		}
+	]
+}

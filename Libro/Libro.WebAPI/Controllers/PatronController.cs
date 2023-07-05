@@ -51,6 +51,23 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Librarian, Administrator")]
+        public async Task<ActionResult<List<PatronDto>>> GetAllPatrons()
+        {
+            try
+            {
+                var patrons = await _patronService.GetAllPatrons();
+                _logger.LogInformation("Retrieved all patrons successfully.");
+                return Ok(patrons);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving patrons.");
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
         [HttpPut("{patronId}")]
         [Authorize(Roles = "Librarian, Administrator")]
         public async Task<IActionResult> UpdatePatronProfile(string patronId, [FromBody] PatronDto patronDto)

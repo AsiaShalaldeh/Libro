@@ -4,6 +4,6 @@
     {
         public int? ReadingListId { get; set; }
         public string Name { get; set; }
-        public string PatronId { get; set; }
+        public string? PatronId { get; set; }
     }
 }

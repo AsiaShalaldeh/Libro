@@ -16,6 +16,19 @@ namespace Libro.Infrastructure.Repositories
             _context = context;
             _logger = logger;
         }
+        public async Task<List<Patron>> GetAllPatrons()
+        {
+            try
+            {
+                var patrons = await _context.Patrons.ToListAsync();
+                return patrons;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving all patrons.");
+                throw;
+            }
+        }
 
         public async Task<Patron> GetPatronByIdAsync(string patronId)
         {

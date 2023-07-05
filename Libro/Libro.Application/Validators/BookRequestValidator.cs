@@ -6,16 +6,13 @@ namespace Libro.Application.Validators
 {
     public class BookRequestValidator : AbstractValidator<BookRequest>
     {
-        public BookRequestValidator(bool title = true, bool author = true, bool genre = true)
+        public BookRequestValidator(bool author = true, bool genre = true)
         {
             RuleFor(request => request.ISBN)
                 .NotNull().NotEmpty().WithMessage("ISBN is required!");
 
-            if (title)
-            {
-                RuleFor(request => request.Title)
-                .NotNull().NotEmpty().WithMessage("Title is required!");
-            }
+            RuleFor(request => request.Title)
+            .NotNull().NotEmpty().WithMessage("Title is required!");
 
             if (author)
             {
@@ -29,8 +26,7 @@ namespace Libro.Application.Validators
 
             RuleFor(request => request.PublicationDate)
                 .GreaterThan(new DateTime(1900, 1, 1))
-                .When(request => request.PublicationDate.HasValue)
-                .WithMessage("Publication Date must be greater than or equal 1900-01-01 when provided");
+                .WithMessage("Publication Date must be greater than or equal 1900-01-01");
 
             if (genre)
             {
@@ -40,7 +36,7 @@ namespace Libro.Application.Validators
 
             RuleFor(request => request.Genre)
             .Must(genreValue => string.IsNullOrEmpty(genreValue) || Enum.TryParse(typeof(Genre), genreValue, out _))
-            .WithMessage("Invalid genre value");
+            .WithMessage("Must be valid genre value");
         }
     }
 

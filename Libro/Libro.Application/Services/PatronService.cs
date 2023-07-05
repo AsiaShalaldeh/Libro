@@ -4,6 +4,8 @@ using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.Extensions.Logging;
+using AutoMapper;
+using Libro.Domain.Models;
 
 namespace Libro.Application.Services
 {
@@ -12,12 +14,29 @@ namespace Libro.Application.Services
         private readonly IPatronRepository _patronRepository;
         private readonly IUserRepository _userRepository;
         private readonly ILogger<PatronService> _logger;
+        private readonly IMapper _mapper;
 
-        public PatronService(IPatronRepository patronRepository, IUserRepository userRepository, ILogger<PatronService> logger)
+        public PatronService(IPatronRepository patronRepository, IUserRepository userRepository,
+            ILogger<PatronService> logger, IMapper mapper)
         {
             _patronRepository = patronRepository;
             _userRepository = userRepository;
             _logger = logger;
+            _mapper = mapper;
+        }
+        public async Task<List<PatronDto>> GetAllPatrons()
+        {
+            try
+            {
+                var patrons = await _patronRepository.GetAllPatrons();
+                var patronDtos = _mapper.Map<List<PatronDto>>(patrons);
+                return patronDtos;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred in PatronService while getting all patrons.");
+                throw;
+            }
         }
 
         public async Task<Patron> GetPatronAsync(string patronId)
@@ -53,7 +72,7 @@ namespace Libro.Application.Services
             }
         }
 
-        public async Task<Patron> UpdatePatronAsync(string patronId, PatronDto patronDto)
+        public async Task<PatronDto> UpdatePatronAsync(string patronId, PatronDto patronDto)
         {
             try
             {
@@ -61,7 +80,7 @@ namespace Libro.Application.Services
 
                 if (existingPatron == null)
                 {
-                    throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
+                    throw new ResourceNotFoundException("Patron", "ID", patronId);
                 }
 
                 if (!string.IsNullOrEmpty(patronDto.Email))
@@ -76,7 +95,7 @@ namespace Libro.Application.Services
 
                 Patron patron = await _patronRepository.UpdatePatronAsync(existingPatron);
                 await _userRepository.UpdateUserAsync(patronId, patronDto.Name, patronDto.Email);
-                return patron;
+                return _mapper.Map<PatronDto>(patron);
             }
             catch (Exception ex)
             {
@@ -85,16 +104,17 @@ namespace Libro.Application.Services
             }
         }
 
-        public async Task<IEnumerable<Checkout>> GetBorrowingHistoryAsync(string patronId)
+        public async Task<IEnumerable<TransactionResponseModel>> GetBorrowingHistoryAsync(string patronId)
         {
             try
             {
                 Patron patron = await _patronRepository.GetPatronByIdAsync(patronId);
                 if (patron == null)
                 {
-                    throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
+                    throw new ResourceNotFoundException("Patron", "ID", patronId);
                 }
-                return patron.CheckedoutBooks;
+                var response = _mapper.Map<List<TransactionResponseModel>>(patron.CheckedoutBooks);
+                return response;
             }
             catch (Exception ex)
             {

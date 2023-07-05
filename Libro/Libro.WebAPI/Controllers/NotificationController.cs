@@ -1,6 +1,7 @@
 ﻿using Libro.Domain.Dtos;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
+using Libro.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -9,7 +10,7 @@ namespace Libro.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/notifications")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Librarian")]
+    //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Librarian")]
     public class NotificationController : ControllerBase
     {
         private readonly INotificationService _notificationService;
@@ -21,7 +22,7 @@ namespace Libro.WebAPI.Controllers
             _logger = logger;
         }
 
-        [HttpPost("overdue/send")]
+        [HttpPost("overdue-books/send")]
         public async Task<IActionResult> SendOverdueNotification()
         {
             try
@@ -45,32 +46,33 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
-        [HttpPost("reservation/send")]
-        public async Task<IActionResult> SendReservationNotification([FromBody] ReservationNotificationRequest request)
+        [HttpPost("reminder/send")]
+        public async Task<IActionResult> SendReminderNotification([FromBody] ReminderNotificationModel request)
         {
             try
             {
-                var response = await _notificationService.SendReservationNotification(request.RecipientEmail, request.BookTitle, request.RecipientId);
-                if (response)
+                var recipientEmail = request.RecipientEmail;
+                var bookISBN = request.BookISBN;
+                var recipientId = request.RecipientId;
+
+                // Send the reminder notification
+                var success = await _notificationService.SendReminderNotification(recipientEmail, bookISBN, recipientId);
+
+                if (success)
                 {
-                    _logger.LogInformation("Reservation notification sent successfully");
-                    return Ok("Reservation notification sent successfully");
+                    _logger.LogInformation($"Reminder notification sent to {recipientEmail} for book with ISBN = '{bookISBN}'.");
+                    return Ok();
                 }
                 else
                 {
-                    _logger.LogInformation($"No Reservation done by Patron ID = {request.RecipientId} Recently for {request.BookTitle} Book !!");
-                    return NotFound($"No Reservation done by Patron ID = {request.RecipientId} Recently for {request.BookTitle} Book !!");
+                    _logger.LogInformation($"No overdue transaction found for {recipientEmail}.");
+                    return NotFound();
                 }
-            }
-            catch (ResourceNotFoundException ex)
-            {
-                _logger.LogError(ex, $"Resource not found: {ex.Message}");
-                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while sending reservation notification");
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+                _logger.LogError(ex, "An error occurred while sending the reminder notification.");
+                return StatusCode(500, "An error occurred while sending the reminder notification.");
             }
         }
     }

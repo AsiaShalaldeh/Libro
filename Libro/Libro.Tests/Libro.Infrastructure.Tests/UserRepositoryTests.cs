@@ -1,4 +1,5 @@
-﻿using Libro.Domain.Interfaces.IRepositories;
+﻿using AutoMapper;
+using Libro.Domain.Interfaces.IRepositories;
 using Libro.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +13,7 @@ namespace Libro.Tests.Libro.Infrastructure.Tests
         private readonly Mock<UserManager<IdentityUser>> _userManagerMock;
         private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
         private readonly Mock<ILogger<UserRepository>> _loggerMock;
+        private readonly Mock<IMapper> _mapper;
         private readonly IUserRepository _userRepository;
 
         public UserRepositoryTests()
@@ -19,11 +21,12 @@ namespace Libro.Tests.Libro.Infrastructure.Tests
             _userManagerMock = new Mock<UserManager<IdentityUser>>(Mock.Of<IUserStore<IdentityUser>>(), null, null, null, null, null, null, null, null);
             _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
             _loggerMock = new Mock<ILogger<UserRepository>>();
-
+            _mapper = new Mock<IMapper>();
             _userRepository = new UserRepository(
                 _userManagerMock.Object,
                 _httpContextAccessorMock.Object,
-                _loggerMock.Object
+                _loggerMock.Object,
+                _mapper.Object
             );
         }
 

@@ -59,6 +59,7 @@ The project is organized into the following four layers:
     <li>ORM: Entity Framework Core</li>
     <li>API Documentation: Postman</li>
     <li>Validations: FluentValidation</li>
+    <li>Unit Testing: xUnit, Moq, and in-memory database</li>
 </ul>
 
 <h3>Installation and Setup:</h3>

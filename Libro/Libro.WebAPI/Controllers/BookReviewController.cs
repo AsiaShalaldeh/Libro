@@ -66,6 +66,10 @@ namespace Libro.WebAPI.Controllers
                 _logger.LogWarning(ex, "Review not found. {Message}", ex.Message);
                 return NotFound(ex.Message);
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while updating the review. {Message}", ex.Message);
@@ -86,6 +90,10 @@ namespace Libro.WebAPI.Controllers
             {
                 _logger.LogWarning(ex, "Review not found. {Message}", ex.Message);
                 return NotFound(ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
             }
             catch (Exception ex)
             {
@@ -108,6 +116,10 @@ namespace Libro.WebAPI.Controllers
             {
                 _logger.LogWarning(ex, "Book not found. {Message}", ex.Message);
                 return NotFound(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

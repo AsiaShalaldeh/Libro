@@ -1,14 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Libro.Domain.Dtos
+﻿namespace Libro.Domain.Dtos
 {
     public class UserDto
     {
-        [Required]
-        public string UserName { get; set; } = String.Empty;
-
-        [Required]
-        public string Password { get; set; } = String.Empty;
-
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
     }
 }

@@ -11,7 +11,12 @@ namespace Libro.Application.Profiles
             CreateMap<Book, BookDto>()
             .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.Name))
             .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre.ToString()))
-            .ForMember(dest => dest.PublicationDate, opt => opt.MapFrom(src => src.PublicationDate.Date.ToString("yyyy-MM-dd")));
+            .ForMember(dest => dest.PublicationDate, opt =>
+            {
+                opt.Condition(src => src.PublicationDate.HasValue);
+                opt.MapFrom(src => src.PublicationDate.Value.ToString("yyyy-MM-dd"));
+            });
+
 
             CreateMap<BookRequest, Book>();
         }
