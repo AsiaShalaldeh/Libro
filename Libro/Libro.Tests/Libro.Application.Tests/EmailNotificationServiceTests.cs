@@ -4,28 +4,31 @@ using Libro.Application.Services;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
-using Libro.Domain.Interfaces.IServices;
 
 namespace Libro.Tests.Libro.Application.Tests
 {
     public class EmailNotificationServiceTests
     {
         private readonly Mock<IEmailSender> _emailSenderMock;
-        private readonly Mock<IPatronService> _patronServiceMock;
+        private readonly Mock<ITransactionRepository> _transactionRepositoryMock;
+        private readonly Mock<IPatronRepository> _patronRepositoryMock;
         private readonly EmailNotificationService _notificationService;
-        private readonly Mock<ILogger<EmailNotificationService>> loggerMock;
+        private readonly Mock<IBookQueueRepository> _bookQueueRepositoryMock;
+        private readonly Mock<ILogger<EmailNotificationService>> _loggerMock;
 
         public EmailNotificationServiceTests()
         {
             _emailSenderMock = new Mock<IEmailSender>();
-            _patronServiceMock = new Mock<IPatronService>();
-            loggerMock = new Mock<ILogger<EmailNotificationService>>();
+            _patronRepositoryMock = new Mock<IPatronRepository>();
+            _loggerMock = new Mock<ILogger<EmailNotificationService>>();
+            _transactionRepositoryMock = new Mock<ITransactionRepository>();
+            _bookQueueRepositoryMock = new Mock<IBookQueueRepository>();
             _notificationService = new EmailNotificationService(
                 _emailSenderMock.Object,
-                Mock.Of<IBookService>(),
-                _patronServiceMock.Object,
-                Mock.Of<ITransactionService>(),
-                Mock.Of<IBookQueueRepository>(),
+                Mock.Of<IBookRepository>(),
+                _patronRepositoryMock.Object,
+                _transactionRepositoryMock.Object,
+                _bookQueueRepositoryMock.Object,
                 Mock.Of<ILogger<EmailNotificationService>>());
         }
 
@@ -33,7 +36,6 @@ namespace Libro.Tests.Libro.Application.Tests
         public async Task SendOverdueNotification_WithOverdueTransactions_SendsEmails()
         {
             // Arrange
-            var transactionServiceMock = new Mock<ITransactionService>();
             var overdueTransactions = new List<Checkout>
             {
                 new Checkout
@@ -50,7 +52,7 @@ namespace Libro.Tests.Libro.Application.Tests
                 }
             };
 
-            transactionServiceMock.Setup(mock => mock.GetOverdueTransactionsAsync()).ReturnsAsync(overdueTransactions);
+            _transactionRepositoryMock.Setup(mock => mock.GetOverdueTransactionsAsync()).ReturnsAsync(overdueTransactions);
 
             // Act
             var result = await _notificationService.SendOverdueNotification();
@@ -65,9 +67,7 @@ namespace Libro.Tests.Libro.Application.Tests
         public async Task SendOverdueNotification_WithNoOverdueTransactions_ReturnsFalse()
         {
             // Arrange
-            var transactionServiceMock = new Mock<ITransactionService>();
-
-            transactionServiceMock.Setup(mock => mock.GetOverdueTransactionsAsync()).ReturnsAsync(new List<Checkout>());
+            _transactionRepositoryMock.Setup(mock => mock.GetOverdueTransactionsAsync()).ReturnsAsync(new List<Checkout>());
 
             // Act
             var result = await _notificationService.SendOverdueNotification();
@@ -82,9 +82,7 @@ namespace Libro.Tests.Libro.Application.Tests
         public async Task SendOverdueNotification_ThrowsException()
         {
             // Arrange
-            var transactionServiceMock = new Mock<ITransactionService>();
-
-            transactionServiceMock.Setup(mock => mock.GetOverdueTransactionsAsync()).ThrowsAsync(new Exception("Some error"));
+            _transactionRepositoryMock.Setup(mock => mock.GetOverdueTransactionsAsync()).ThrowsAsync(new Exception("Some error"));
 
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _notificationService.SendOverdueNotification());
@@ -94,9 +92,6 @@ namespace Libro.Tests.Libro.Application.Tests
         public async Task SendReservationNotification_ValidRecipientEmailAndBookTitle_SendsEmail()
         {
             // Arrange
-            var emailSenderMock = new Mock<IEmailSender>();
-            var patronServiceMock = new Mock<IPatronService>();
-
             // Create a test patron with a reservation for the book title
             var testPatronId = "test-patron-id";
             var testRecipientEmail = "test@example.com";
@@ -105,7 +100,7 @@ namespace Libro.Tests.Libro.Application.Tests
             // Configure the mock patron service to return the test patron
             var testPatron = new Patron { PatronId = testPatronId, Email = testRecipientEmail };
             testPatron.ReservedBooks = new List<Reservation> { new Reservation { Book = new Book { Title = testBookTitle } } };
-            patronServiceMock.Setup(mock => mock.GetPatronAsync(testPatronId))
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(testPatronId))
                 .ReturnsAsync(testPatron);
 
             // Act
@@ -113,7 +108,7 @@ namespace Libro.Tests.Libro.Application.Tests
 
             // Assert
             Assert.True(result);
-            emailSenderMock.Verify(mock =>
+            _emailSenderMock.Verify(mock =>
                 mock.SendEmailAsync(It.IsAny<Message>()), Times.Once);
         }
 
@@ -121,10 +116,6 @@ namespace Libro.Tests.Libro.Application.Tests
         public async Task SendReservationNotification_InvalidRecipientEmail_ThrowsResourceNotFoundException()
         {
             // Arrange
-            var emailSenderMock = new Mock<IEmailSender>();
-            var patronServiceMock = new Mock<IPatronService>();
-            var loggerMock = new Mock<ILogger<EmailNotificationService>>();
-
             var patronId = "patron1";
             var recipientEmail = "john@example.com";
             var bookTitle = "Book 1";
@@ -135,7 +126,7 @@ namespace Libro.Tests.Libro.Application.Tests
                 Email = "alice@example.com"
             };
 
-            patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync(patron);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync(patron);
 
             // Act & Assert
             await Assert.ThrowsAsync<ResourceNotFoundException>(() =>
@@ -146,15 +137,11 @@ namespace Libro.Tests.Libro.Application.Tests
         public async Task SendReservationNotification_InvalidPatronId_ThrowsResourceNotFoundException()
         {
             // Arrange
-            var emailSenderMock = new Mock<IEmailSender>();
-            var patronServiceMock = new Mock<IPatronService>();
-            var loggerMock = new Mock<ILogger<EmailNotificationService>>();
-
             var patronId = "patron1";
             var recipientEmail = "john@example.com";
             var bookTitle = "Book 1";
 
-            patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync((Patron)null);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync((Patron)null);
 
             // Act & Assert
             await Assert.ThrowsAsync<ResourceNotFoundException>(() =>
@@ -165,10 +152,6 @@ namespace Libro.Tests.Libro.Application.Tests
         public async Task SendReservationNotification_NoReservationForBookTitle_ReturnsFalse()
         {
             // Arrange
-            var emailSenderMock = new Mock<IEmailSender>();
-            var patronServiceMock = new Mock<IPatronService>();
-            var loggerMock = new Mock<ILogger<EmailNotificationService>>();
-
             var patronId = "patron1";
             var recipientEmail = "john@example.com";
             var bookTitle = "Book 1";
@@ -180,14 +163,14 @@ namespace Libro.Tests.Libro.Application.Tests
                 ReservedBooks = new List<Reservation>()
             };
 
-            patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync(patron);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync(patron);
 
             // Act
             var result = await _notificationService.SendReservationNotification(recipientEmail, bookTitle, patronId);
 
             // Assert
             Assert.False(result);
-            emailSenderMock.Verify(mock =>
+            _emailSenderMock.Verify(mock =>
                 mock.SendEmailAsync(It.IsAny<Message>()), Times.Never);
         }
 
@@ -195,15 +178,11 @@ namespace Libro.Tests.Libro.Application.Tests
         public async Task SendReservationNotification_ThrowsException()
         {
             // Arrange
-            var emailSenderMock = new Mock<IEmailSender>();
-            var patronServiceMock = new Mock<IPatronService>();
-            var loggerMock = new Mock<ILogger<EmailNotificationService>>();
-
             var patronId = "patron1";
             var recipientEmail = "john@example.com";
             var bookTitle = "Book 1";
 
-            patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ThrowsAsync(new Exception("Some error"));
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ThrowsAsync(new Exception("Some error"));
 
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(() =>
@@ -214,9 +193,6 @@ namespace Libro.Tests.Libro.Application.Tests
         public async Task AddPatronToNotificationQueue_ValidPatronIdAndBookId_EnqueuesPatron()
         {
             // Arrange
-            var bookQueueRepositoryMock = new Mock<IBookQueueRepository>();
-            var loggerMock = new Mock<ILogger<EmailNotificationService>>();
-
             var patronId = "patron1";
             var bookId = "book1";
 
@@ -224,7 +200,7 @@ namespace Libro.Tests.Libro.Application.Tests
             await _notificationService.AddPatronToNotificationQueue(patronId, bookId);
 
             // Assert
-            bookQueueRepositoryMock.Verify(mock =>
+            _bookQueueRepositoryMock.Verify(mock =>
                 mock.EnqueuePatronAsync(bookId, patronId), Times.Once);
         }
 
@@ -232,13 +208,10 @@ namespace Libro.Tests.Libro.Application.Tests
         public async Task AddPatronToNotificationQueue_ThrowsException()
         {
             // Arrange
-            var bookQueueRepositoryMock = new Mock<IBookQueueRepository>();
-            var loggerMock = new Mock<ILogger<EmailNotificationService>>();
-
             var patronId = "patron1";
             var bookId = "book1";
 
-            bookQueueRepositoryMock.Setup(mock => mock.EnqueuePatronAsync(bookId, patronId)).ThrowsAsync(new Exception("Some error"));
+            _bookQueueRepositoryMock.Setup(mock => mock.EnqueuePatronAsync(bookId, patronId)).ThrowsAsync(new Exception("Some error"));
 
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(() =>

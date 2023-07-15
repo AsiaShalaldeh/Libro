@@ -12,7 +12,6 @@ namespace Libro.Application.Profiles
 
             CreateMap<Review, ReviewDto>()
             .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book.Title));
-            //.ForMember(dest => dest.PatronName, opt => opt.MapFrom(src => src.Patron.Name));
         }
     }
 }

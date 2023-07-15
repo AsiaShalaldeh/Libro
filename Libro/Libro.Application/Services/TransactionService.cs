@@ -11,7 +11,6 @@ namespace Libro.Application.Services
 {
     public class TransactionService : ITransactionService
     {
-        private readonly IBookService _bookService;
         private readonly IBookRepository _bookRepository;
         private readonly ITransactionRepository _transactionRepository;
         private readonly ILoanPolicyService _loanPolicyService;
@@ -20,7 +19,6 @@ namespace Libro.Application.Services
         private readonly ILogger<TransactionService> _logger;
 
         public TransactionService(
-            IBookService bookService,
             ITransactionRepository transactionRepository,
             ILoanPolicyService loanPolicyService,
             IBookRepository bookRepository,
@@ -28,7 +26,6 @@ namespace Libro.Application.Services
             ILogger<TransactionService> logger,
             IPatronService patronService)
         {
-            _bookService = bookService;
             _bookRepository = bookRepository;
             _transactionRepository = transactionRepository;
             _loanPolicyService = loanPolicyService;
@@ -68,7 +65,7 @@ namespace Libro.Application.Services
                 {
                     foreach (var bookId in overdueBookIds)
                     {
-                        var book = await _bookService.GetBookByISBNAsync(bookId);
+                        var book = await _bookRepository.GetBookByISBNAsync(bookId);
                         if (book != null)
                         {
                             overdueBooks.Add(book);
@@ -110,7 +107,7 @@ namespace Libro.Application.Services
                 {
                     foreach (var bookId in borrowedBookIds)
                     {
-                        var book = await _bookService.GetBookByISBNAsync(bookId);
+                        var book = await _bookRepository.GetBookByISBNAsync(bookId);
                         if (book != null)
                         {
                             borrowedBooks.Add(book);
@@ -139,7 +136,7 @@ namespace Libro.Application.Services
                 if (string.IsNullOrEmpty(borrowedBookId))
                     return null;
 
-                var borrowedBook = await _bookService.GetBookByISBNAsync(borrowedBookId);
+                var borrowedBook = await _bookRepository.GetBookByISBNAsync(borrowedBookId);
                 return borrowedBook;
             }
             catch (Exception ex)
@@ -230,8 +227,7 @@ namespace Libro.Application.Services
                 checkout.ReturnDate = returnDate;
                 checkout.IsReturned = true;
 
-                var days = (returnDate - checkout.DueDate).Days;
-                var totalFees = CalculateTotalFees(days);
+                var totalFees = _loanPolicyService.CalculateTotalFees(checkout.CheckoutDate.Day, checkout.DueDate.Day, returnDate.Day);
                 checkout.TotalFee = totalFees;
 
                 await _transactionRepository.UpdateCheckoutAsync(checkout);
@@ -255,27 +251,6 @@ namespace Libro.Application.Services
                 _logger.LogError(ex, "An error occurred in TransactionService while returning a book.");
                 throw;
             }
-        }
-
-        private decimal CalculateTotalFees(int days)
-        {
-            decimal total = Math.Round(_loanPolicyService.GetLoanDuration() * _loanPolicyService.GetBorrowingFeePerDay(), 2);
-
-            if (days == 0)
-            {
-                return total;
-            }
-            else if (days > 0)
-            {
-                int lateDays = days - _loanPolicyService.GetLoanDuration();
-                return Math.Round(total + (_loanPolicyService.GetLateFeePerDay() * lateDays), 2);
-            }
-            else if (days < 0)
-            {
-                return Math.Round(days * _loanPolicyService.GetBorrowingFeePerDay(), 2);
-            }
-
-            return 0;
         }
     }
 }

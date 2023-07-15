@@ -4,30 +4,30 @@ using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Enums;
 using Libro.Domain.Exceptions;
-using Libro.Domain.Interfaces.IServices;
+using Libro.Domain.Interfaces.IRepositories;
 
 namespace Libro.Tests.Libro.Application.Tests
 {
     public class BookRecommendationServiceTests
     {
-        private readonly Mock<IBookService> _bookServiceMock;
-        private readonly Mock<IPatronService> _patronServiceMock;
-        private readonly Mock<ITransactionService> _transactionServiceMock;
+        private readonly Mock<IBookRepository> _bookRepositoryMock;
+        private readonly Mock<IPatronRepository> _patronRepositoryMock;
+        private readonly Mock<ITransactionRepository> _transactionRepositoryMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<ILogger<BookRecommendationService>> _loggerMock;
         private readonly BookRecommendationService _bookRecommendationService;
 
         public BookRecommendationServiceTests()
         {
-            _bookServiceMock = new Mock<IBookService>();
-            _patronServiceMock = new Mock<IPatronService>();
-            _transactionServiceMock = new Mock<ITransactionService>();
+            _bookRepositoryMock = new Mock<IBookRepository>();
+            _patronRepositoryMock = new Mock<IPatronRepository>();
+            _transactionRepositoryMock = new Mock<ITransactionRepository>();
             _mapperMock = new Mock<IMapper>();
             _loggerMock = new Mock<ILogger<BookRecommendationService>>();
             _bookRecommendationService = new BookRecommendationService(
-                _bookServiceMock.Object,
-                _patronServiceMock.Object,
-                _transactionServiceMock.Object,
+                _bookRepositoryMock.Object,
+                _patronRepositoryMock.Object,
+                _transactionRepositoryMock.Object,
                 _mapperMock.Object,
                 _loggerMock.Object
             );
@@ -40,7 +40,7 @@ namespace Libro.Tests.Libro.Application.Tests
             string patronId = "123";
 
             var patron = new Patron { PatronId = patronId };
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId))
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId))
                 .ReturnsAsync(patron);
 
             var patronCheckouts = new List<Checkout>
@@ -51,7 +51,7 @@ namespace Libro.Tests.Libro.Application.Tests
                 new Checkout { Book = new Book { Genre = Genre.Fantasy } },
                 new Checkout { Book = new Book { Genre = Genre.Mystery } }
             };
-            _transactionServiceMock.Setup(mock => mock.GetCheckoutTransactionsByPatron(patronId))
+            _transactionRepositoryMock.Setup(mock => mock.GetCheckoutTransactionsByPatronAsync(patronId))
                 .ReturnsAsync(patronCheckouts);
 
             var recommendedBooks = new List<Book>
@@ -60,7 +60,7 @@ namespace Libro.Tests.Libro.Application.Tests
                 new Book { Title = "Book 2", Genre = Genre.Drama },
                 new Book { Title = "Book 3", Genre = Genre.Romance }
             };
-            _bookServiceMock.Setup(mock => mock.GetBooksByGenres(It.IsAny<IEnumerable<Genre>>()))
+            _bookRepositoryMock.Setup(mock => mock.GetBooksByGenres(It.IsAny<IEnumerable<Genre>>()))
                 .ReturnsAsync(recommendedBooks);
 
             var expectedDto = new List<BookDto>
@@ -85,7 +85,7 @@ namespace Libro.Tests.Libro.Application.Tests
         {
             // Arrange
             string patronId = "123";
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId))
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId))
                 .ReturnsAsync((Patron)null);
 
             // Act and Assert
@@ -100,11 +100,11 @@ namespace Libro.Tests.Libro.Application.Tests
             // Arrange
             string patronId = "123";
             var patron = new Patron { PatronId = patronId };
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId))
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId))
                 .ReturnsAsync(patron);
 
             var patronCheckouts = new List<Checkout>();
-            _transactionServiceMock.Setup(mock => mock.GetCheckoutTransactionsByPatron(patronId))
+            _transactionRepositoryMock.Setup(mock => mock.GetCheckoutTransactionsByPatronAsync(patronId))
                 .ReturnsAsync(patronCheckouts);
 
             // Act

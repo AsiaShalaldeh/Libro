@@ -4,15 +4,14 @@ using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;
-using Libro.Domain.Interfaces.IServices;
 
 namespace Libro.Tests.Libro.Application.Tests
 {
     public class ReadingListServiceTests
     {
         private readonly Mock<IReadingListRepository> _readingListRepositoryMock;
-        private readonly Mock<IPatronService> _patronServiceMock;
-        private readonly Mock<IBookService> _bookServiceMock;
+        private readonly Mock<IPatronRepository> _patronRepositoryMock;
+        private readonly Mock<IBookRepository> _bookRepositoryMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<ILogger<ReadingListService>> _loggerMock;
         private readonly ReadingListService _readingListService;
@@ -20,16 +19,16 @@ namespace Libro.Tests.Libro.Application.Tests
         public ReadingListServiceTests()
         {
             _readingListRepositoryMock = new Mock<IReadingListRepository>();
-            _patronServiceMock = new Mock<IPatronService>();
-            _bookServiceMock = new Mock<IBookService>();
+            _patronRepositoryMock = new Mock<IPatronRepository>();
+            _bookRepositoryMock = new Mock<IBookRepository>();
             _mapperMock = new Mock<IMapper>();
             _loggerMock = new Mock<ILogger<ReadingListService>>();
 
             _readingListService = new ReadingListService(
                 _readingListRepositoryMock.Object,
-                _patronServiceMock.Object,
+                _patronRepositoryMock.Object,
+                _bookRepositoryMock.Object,
                 _mapperMock.Object,
-                _bookServiceMock.Object,
                 _loggerMock.Object);
         }
 
@@ -42,7 +41,7 @@ namespace Libro.Tests.Libro.Application.Tests
             var patron = new Patron();
             var readingList = new ReadingList();
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync(patron);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync(patron);
             _readingListRepositoryMock.Setup(mock => mock.GetReadingListByIdAsync(listId, patronId)).ReturnsAsync(readingList);
 
             // Act
@@ -50,7 +49,7 @@ namespace Libro.Tests.Libro.Application.Tests
 
             // Assert
             Assert.Equal(readingList, result);
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(listId, patronId), Times.Once);
         }
 
@@ -61,11 +60,11 @@ namespace Libro.Tests.Libro.Application.Tests
             int listId = 1;
             string patronId = "patron1";
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync((Patron)null);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync((Patron)null);
 
             // Act and Assert
             await Assert.ThrowsAsync<ResourceNotFoundException>(() => _readingListService.GetReadingListByIdAsync(listId, patronId));
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
         }
         [Fact]
@@ -76,7 +75,7 @@ namespace Libro.Tests.Libro.Application.Tests
             var patron = new Patron();
             var readingLists = new List<ReadingList> { new ReadingList(), new ReadingList() };
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync(patron);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync(patron);
             _readingListRepositoryMock.Setup(mock => mock.GetReadingListsByPatronIdAsync(patronId)).ReturnsAsync(readingLists);
 
             // Act
@@ -84,7 +83,7 @@ namespace Libro.Tests.Libro.Application.Tests
 
             // Assert
             Assert.Equal(readingLists, result);
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListsByPatronIdAsync(patronId), Times.Once);
         }
 
@@ -94,11 +93,11 @@ namespace Libro.Tests.Libro.Application.Tests
             // Arrange
             string patronId = "patron1";
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync((Patron)null);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync((Patron)null);
 
             // Act and Assert
             await Assert.ThrowsAsync<ResourceNotFoundException>(() => _readingListService.GetReadingListsByPatronIdAsync(patronId));
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListsByPatronIdAsync(It.IsAny<string>()), Times.Never);
         }
 
@@ -111,7 +110,7 @@ namespace Libro.Tests.Libro.Application.Tests
             var readingListDto = new ReadingListDto();
             var readingList = new ReadingList { ReadingListId = 1 };
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync(patron);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync(patron);
             _mapperMock.Setup(mock => mock.Map<ReadingList>(readingListDto)).Returns(readingList);
             _readingListRepositoryMock.Setup(mock => mock.CreateReadingListAsync(readingList)).ReturnsAsync(readingList);
             _mapperMock.Setup(mock => mock.Map<ReadingListDto>(readingList)).Returns(readingListDto);
@@ -121,7 +120,7 @@ namespace Libro.Tests.Libro.Application.Tests
 
             // Assert
             Assert.Equal(readingListDto, result);
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _mapperMock.Verify(mock => mock.Map<ReadingList>(readingListDto), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.CreateReadingListAsync(readingList), Times.Once);
             _mapperMock.Verify(mock => mock.Map<ReadingListDto>(readingList), Times.Once);
@@ -134,11 +133,11 @@ namespace Libro.Tests.Libro.Application.Tests
             string patronId = "patron1";
             var readingListDto = new ReadingListDto();
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync((Patron)null);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync((Patron)null);
 
             // Act and Assert
             await Assert.ThrowsAsync<ResourceNotFoundException>(() => _readingListService.CreateReadingListAsync(readingListDto, patronId));
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.CreateReadingListAsync(It.IsAny<ReadingList>()), Times.Never);
         }
 
@@ -150,14 +149,14 @@ namespace Libro.Tests.Libro.Application.Tests
             string patronId = "patron1";
             var readingList = new ReadingList();
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync(new Patron());
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync(new Patron());
             _readingListRepositoryMock.Setup(mock => mock.GetReadingListByIdAsync(listId, patronId)).ReturnsAsync(readingList);
 
             // Act
             await _readingListService.RemoveReadingListAsync(listId, patronId);
 
             // Assert
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(listId, patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.RemoveReadingListAsync(readingList), Times.Once);
         }
@@ -169,12 +168,12 @@ namespace Libro.Tests.Libro.Application.Tests
             int listId = 1;
             string patronId = "patron1";
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync((Patron)null);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync((Patron)null);
             _readingListRepositoryMock.Setup(mock => mock.GetReadingListByIdAsync(listId, patronId)).ReturnsAsync((ReadingList)null);
 
             // Act and Assert
             await Assert.ThrowsAsync<ResourceNotFoundException>(() => _readingListService.RemoveReadingListAsync(listId, patronId));
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(listId, patronId), Times.Never);
             _readingListRepositoryMock.Verify(mock => mock.RemoveReadingListAsync(It.IsAny<ReadingList>()), Times.Never);
         }
@@ -196,7 +195,7 @@ namespace Libro.Tests.Libro.Application.Tests
                 new BookDto { ISBN = "isbn2" }
             };
             var readingList = new ReadingList();
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync(new Patron());
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync(new Patron());
             _readingListRepositoryMock.Setup(mock => mock.GetReadingListByIdAsync(listId, patronId)).ReturnsAsync(readingList);
             _readingListRepositoryMock.Setup(mock => mock.GetBooksByReadingListAsync(readingList)).ReturnsAsync(books);
             _mapperMock.Setup(mock => mock.Map<IEnumerable<BookDto>>(books)).Returns(expectedBooks);
@@ -205,7 +204,7 @@ namespace Libro.Tests.Libro.Application.Tests
             IEnumerable<BookDto> result = await _readingListService.GetBooksByReadingListAsync(listId, patronId);
 
             // Assert
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(listId, patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.GetBooksByReadingListAsync(readingList), Times.Once);
             _mapperMock.Verify(mock => mock.Map<IEnumerable<BookDto>>(books), Times.Once);
@@ -220,11 +219,11 @@ namespace Libro.Tests.Libro.Application.Tests
             string patronId = "patron1";
 
             _readingListRepositoryMock.Setup(mock => mock.GetReadingListByIdAsync(listId, patronId)).ReturnsAsync((ReadingList)null);
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync((Patron)null);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync((Patron)null);
 
             // Act and Assert
             await Assert.ThrowsAsync<ResourceNotFoundException>(() => _readingListService.GetBooksByReadingListAsync(listId, patronId));
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(listId, patronId), Times.Never);
             _readingListRepositoryMock.Verify(mock => mock.GetBooksByReadingListAsync(It.IsAny<ReadingList>()), Times.Never);
         }
@@ -240,9 +239,9 @@ namespace Libro.Tests.Libro.Application.Tests
             var readingList = new ReadingList();
             var book = new Book { ISBN = "isbn1" };
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync(patron);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync(patron);
             _readingListRepositoryMock.Setup(mock => mock.GetReadingListByIdAsync(listId, patronId)).ReturnsAsync(readingList);
-            _bookServiceMock.Setup(mock => mock.GetBookByISBNAsync(bookId)).ReturnsAsync(book);
+            _bookRepositoryMock.Setup(mock => mock.GetBookByISBNAsync(bookId)).ReturnsAsync(book);
             _readingListRepositoryMock.Setup(mock => mock.AddBookToReadingListAsync(readingList, It.IsAny<BookList>())).Returns(Task.CompletedTask);
 
             // Act
@@ -251,7 +250,7 @@ namespace Libro.Tests.Libro.Application.Tests
             // Assert
             Assert.True(result);
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(listId, patronId), Times.Once);
-            _bookServiceMock.Verify(mock => mock.GetBookByISBNAsync(bookId), Times.Once);
+            _bookRepositoryMock.Verify(mock => mock.GetBookByISBNAsync(bookId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.AddBookToReadingListAsync(readingList, It.IsAny<BookList>()), Times.Once);
         }
 
@@ -265,14 +264,14 @@ namespace Libro.Tests.Libro.Application.Tests
             var patron = new Patron();
             var readingList = new ReadingList();
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync(patron);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync(patron);
             _readingListRepositoryMock.Setup(mock => mock.GetReadingListByIdAsync(listId, patronId)).ReturnsAsync(readingList);
-            _bookServiceMock.Setup(mock => mock.GetBookByISBNAsync(bookId)).ReturnsAsync((Book)null);
+            _bookRepositoryMock.Setup(mock => mock.GetBookByISBNAsync(bookId)).ReturnsAsync((Book)null);
 
             // Act and Assert
             await Assert.ThrowsAsync<ResourceNotFoundException>(() => _readingListService.AddBookToReadingListAsync(listId, patronId, bookId));
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(listId, patronId), Times.Once);
-            _bookServiceMock.Verify(mock => mock.GetBookByISBNAsync(bookId), Times.Once);
+            _bookRepositoryMock.Verify(mock => mock.GetBookByISBNAsync(bookId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.AddBookToReadingListAsync(readingList, It.IsAny<BookList>()), Times.Never);
         }
 
@@ -289,7 +288,7 @@ namespace Libro.Tests.Libro.Application.Tests
             // Act and Assert
             await Assert.ThrowsAsync<ResourceNotFoundException>(() => _readingListService.AddBookToReadingListAsync(listId, patronId, bookId));
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(listId, patronId), Times.Once);
-            _bookServiceMock.Verify(mock => mock.GetBookByISBNAsync(It.IsAny<string>()), Times.Never);
+            _bookRepositoryMock.Verify(mock => mock.GetBookByISBNAsync(It.IsAny<string>()), Times.Never);
             _readingListRepositoryMock.Verify(mock => mock.AddBookToReadingListAsync(It.IsAny<ReadingList>(), It.IsAny<BookList>()), Times.Never);
         }
 
@@ -310,17 +309,17 @@ namespace Libro.Tests.Libro.Application.Tests
             };
             var book = new Book();
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync(patron);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync(patron);
             _readingListRepositoryMock.Setup(mock => mock.GetReadingListByIdAsync(listId, patronId)).ReturnsAsync(readingList);
-            _bookServiceMock.Setup(mock => mock.GetBookByISBNAsync(bookId)).ReturnsAsync(book);
+            _bookRepositoryMock.Setup(mock => mock.GetBookByISBNAsync(bookId)).ReturnsAsync(book);
 
             // Act
             await _readingListService.RemoveBookFromReadingListAsync(listId, patronId, bookId);
 
             // Assert
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(listId, patronId), Times.Once);
-            _bookServiceMock.Verify(mock => mock.GetBookByISBNAsync(bookId), Times.Once);
+            _bookRepositoryMock.Verify(mock => mock.GetBookByISBNAsync(bookId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.RemoveBookFromReadingListAsync(readingList, bookId), Times.Once);
         }
 
@@ -332,14 +331,14 @@ namespace Libro.Tests.Libro.Application.Tests
             string patronId = "invalidPatronId";
             string bookId = "isbn1";
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync((Patron)null);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync((Patron)null);
 
             // Act and Assert
             await Assert.ThrowsAsync<ResourceNotFoundException>(() => _readingListService.RemoveBookFromReadingListAsync(listId, patronId, bookId));
 
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
-            _bookServiceMock.Verify(mock => mock.GetBookByISBNAsync(It.IsAny<string>()), Times.Never);
+            _bookRepositoryMock.Verify(mock => mock.GetBookByISBNAsync(It.IsAny<string>()), Times.Never);
             _readingListRepositoryMock.Verify(mock => mock.RemoveBookFromReadingListAsync(It.IsAny<ReadingList>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -352,15 +351,15 @@ namespace Libro.Tests.Libro.Application.Tests
             string bookId = "isbn1";
             var patron = new Patron();
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync(patron);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync(patron);
             _readingListRepositoryMock.Setup(mock => mock.GetReadingListByIdAsync(listId, patronId)).ReturnsAsync((ReadingList)null);
 
             // Act and Assert
             await Assert.ThrowsAsync<ResourceNotFoundException>(() => _readingListService.RemoveBookFromReadingListAsync(listId, patronId, bookId));
 
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(listId, patronId), Times.Once);
-            _bookServiceMock.Verify(mock => mock.GetBookByISBNAsync(It.IsAny<string>()), Times.Never);
+            _bookRepositoryMock.Verify(mock => mock.GetBookByISBNAsync(It.IsAny<string>()), Times.Never);
             _readingListRepositoryMock.Verify(mock => mock.RemoveBookFromReadingListAsync(It.IsAny<ReadingList>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -374,16 +373,16 @@ namespace Libro.Tests.Libro.Application.Tests
             var patron = new Patron();
             var readingList = new ReadingList { BookLists = new List<BookList>() };
 
-            _patronServiceMock.Setup(mock => mock.GetPatronAsync(patronId)).ReturnsAsync(patron);
+            _patronRepositoryMock.Setup(mock => mock.GetPatronByIdAsync(patronId)).ReturnsAsync(patron);
             _readingListRepositoryMock.Setup(mock => mock.GetReadingListByIdAsync(listId, patronId)).ReturnsAsync(readingList);
-            _bookServiceMock.Setup(mock => mock.GetBookByISBNAsync(bookId)).ReturnsAsync((Book)null);
+            _bookRepositoryMock.Setup(mock => mock.GetBookByISBNAsync(bookId)).ReturnsAsync((Book)null);
 
             // Act and Assert
             await Assert.ThrowsAsync<ResourceNotFoundException>(() => _readingListService.RemoveBookFromReadingListAsync(listId, patronId, bookId));
 
-            _patronServiceMock.Verify(mock => mock.GetPatronAsync(patronId), Times.Once);
+            _patronRepositoryMock.Verify(mock => mock.GetPatronByIdAsync(patronId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(listId, patronId), Times.Once);
-            _bookServiceMock.Verify(mock => mock.GetBookByISBNAsync(bookId), Times.Once);
+            _bookRepositoryMock.Verify(mock => mock.GetBookByISBNAsync(bookId), Times.Once);
             _readingListRepositoryMock.Verify(mock => mock.RemoveBookFromReadingListAsync(It.IsAny<ReadingList>(), It.IsAny<string>()), Times.Never);
         }
 

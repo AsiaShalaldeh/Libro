@@ -14,7 +14,7 @@ namespace Libro.Domain.Entities
         public DateTime CheckoutDate { get; set; }
         public DateTime DueDate { get; set; } 
         public bool IsReturned { get; set; }
-        public DateTime ReturnDate { get; set; }
-        public decimal TotalFee { get; set; }
+        public DateTime ReturnDate { get; set; } = DateTime.MinValue;
+        public decimal TotalFee { get; set; } = 0.0m;
     }
 }

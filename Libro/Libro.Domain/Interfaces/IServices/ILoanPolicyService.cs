@@ -10,5 +10,6 @@ namespace Libro.Domain.Interfaces.IServices
         decimal GetBorrowingFeePerDay();
         decimal GetLateFeePerDay();
         bool CanPatronCheckoutBook(Patron patron);
+        decimal CalculateTotalFees(int checkoutDay, int dueDay, int returnDay);
     }
 }

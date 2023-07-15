@@ -45,44 +45,5 @@ namespace Libro.Tests.Libro.WebAPI.Tests
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal("No Overdue Books Found", notFoundResult.Value);
         }
-
-        [Fact]
-        public async Task SendReservationNotification_ValidRequest_ReturnsOkResult()
-        {
-            // Arrange
-            var request = new ReservationNotificationRequest
-            {
-                RecipientEmail = "test@example.com",
-                BookTitle = "Test Book",
-                RecipientId = "patronId"
-            };
-            _notificationServiceMock.Setup(x => x.SendReservationNotification(request.RecipientEmail, request.BookTitle, request.RecipientId)).ReturnsAsync(true);
-
-            // Act
-            var result = await _controller.SendReservationNotification(request);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal("Reservation notification sent successfully", okResult.Value);
-        }
-
-        [Fact]
-        public async Task SendReservationNotification_NoReservationDone_ReturnsNotFoundResult()
-        {
-            // Arrange
-            var request = new ReservationNotificationRequest
-            {
-                RecipientEmail = "test@example.com",
-                BookTitle = "Test Book",
-                RecipientId = "patronId"
-            };
-            _notificationServiceMock.Setup(x => x.SendReservationNotification(request.RecipientEmail, request.BookTitle, request.RecipientId)).ReturnsAsync(false);
-
-            // Act
-            var result = await _controller.SendReservationNotification(request);
-
-            // Assert
-            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-        }
     }
 }

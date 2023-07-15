@@ -35,7 +35,7 @@ namespace Libro.Infrastructure.Repositories
             try
             {
                 return await _context.BookQueues
-                    .Where(q => q.BookId == bookId)
+                    .Where(q => q.BookId.Equals(bookId))
                     .OrderBy(q => q.QueuePosition)
                     .ToListAsync();
             }

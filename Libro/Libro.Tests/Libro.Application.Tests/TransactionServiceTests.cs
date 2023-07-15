@@ -11,7 +11,6 @@ namespace Libro.Tests.Libro.Application.Tests
 {
     public class TransactionServiceTests
     {
-        private readonly Mock<IBookService> _bookServiceMock;
         private readonly Mock<ITransactionRepository> _transactionRepositoryMock;
         private readonly Mock<ILoanPolicyService> _loanPolicyServiceMock;
         private readonly Mock<IBookRepository> _bookRepositoryMock;
@@ -22,7 +21,6 @@ namespace Libro.Tests.Libro.Application.Tests
 
         public TransactionServiceTests()
         {
-            _bookServiceMock = new Mock<IBookService>();
             _transactionRepositoryMock = new Mock<ITransactionRepository>();
             _loanPolicyServiceMock = new Mock<ILoanPolicyService>();
             _bookRepositoryMock = new Mock<IBookRepository>();
@@ -31,7 +29,6 @@ namespace Libro.Tests.Libro.Application.Tests
             _patronServiceMock = new Mock<IPatronService>();
 
             _transactionService = new TransactionService(
-                _bookServiceMock.Object,
                 _transactionRepositoryMock.Object,
                 _loanPolicyServiceMock.Object,
                 _bookRepositoryMock.Object,
@@ -92,7 +89,7 @@ namespace Libro.Tests.Libro.Application.Tests
             _transactionRepositoryMock.Setup(repo => repo.GetOverdueBookIdsAsync())
                 .ReturnsAsync(overdueBookIds);
 
-            _bookServiceMock.Setup(service => service.GetBookByISBNAsync(It.IsAny<string>()))
+            _bookRepositoryMock.Setup(service => service.GetBookByISBNAsync(It.IsAny<string>()))
                 .ReturnsAsync((string isbn) => expectedOverdueBooks.FirstOrDefault(book => book.ISBN == isbn));
 
             // Act
@@ -169,7 +166,7 @@ namespace Libro.Tests.Libro.Application.Tests
             _transactionRepositoryMock.Setup(repo => repo.GetBorrowedBookIdsAsync())
                 .ReturnsAsync(borrowedBookIds);
 
-            _bookServiceMock.Setup(service => service.GetBookByISBNAsync(It.IsAny<string>()))
+            _bookRepositoryMock.Setup(service => service.GetBookByISBNAsync(It.IsAny<string>()))
                 .ReturnsAsync((string isbn) => expectedBorrowedBooks.FirstOrDefault(book => book.ISBN == isbn));
 
             // Act
@@ -207,7 +204,7 @@ namespace Libro.Tests.Libro.Application.Tests
             _transactionRepositoryMock.Setup(repo => repo.GetBorrowedBookByIdAsync(isbn))
                 .ReturnsAsync(borrowedBookId);
 
-            _bookServiceMock.Setup(service => service.GetBookByISBNAsync(borrowedBookId))
+            _bookRepositoryMock.Setup(service => service.GetBookByISBNAsync(borrowedBookId))
                 .ReturnsAsync(expectedBorrowedBook);
 
             // Act
@@ -307,7 +304,7 @@ namespace Libro.Tests.Libro.Application.Tests
                 TotalFee = expectedReturn.TotalFee
             };
 
-            _bookServiceMock.Setup(service => service.GetBookByISBNAsync(book.ISBN))
+            _bookRepositoryMock.Setup(service => service.GetBookByISBNAsync(book.ISBN))
                 .ReturnsAsync(book);
 
             _patronServiceMock.Setup(service => service.GetPatronAsync(patron.PatronId))

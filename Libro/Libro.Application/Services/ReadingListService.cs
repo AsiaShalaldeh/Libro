@@ -11,22 +11,22 @@ namespace Libro.Application.Services
     public class ReadingListService : IReadingListService
     {
         private readonly IReadingListRepository _readingListRepository;
-        private readonly IPatronService _patronService;
-        private readonly IBookService _bookService;
+        private readonly IPatronRepository _patronRepository;
+        private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<ReadingListService> _logger;
 
         public ReadingListService(
             IReadingListRepository readingListRepository,
-            IPatronService patronService,
+            IPatronRepository patronRepository,
+            IBookRepository bookRepository,
             IMapper mapper,
-            IBookService bookService,
             ILogger<ReadingListService> logger)
         {
             _readingListRepository = readingListRepository;
-            _patronService = patronService;
+            _patronRepository = patronRepository;
+            _bookRepository = bookRepository;
             _mapper = mapper;
-            _bookService = bookService;
             _logger = logger;
         }
 
@@ -35,7 +35,7 @@ namespace Libro.Application.Services
             try
             {
                 // this code should be deleted from here
-                var patron = await _patronService.GetPatronAsync(patronId);
+                var patron = await _patronRepository.GetPatronByIdAsync(patronId);
                 if (patron == null)
                 {
                     throw new ResourceNotFoundException("Patron", "ID", patronId);
@@ -74,7 +74,7 @@ namespace Libro.Application.Services
         {
             try
             {
-                var patron = await _patronService.GetPatronAsync(patronId);
+                var patron = await _patronRepository.GetPatronByIdAsync(patronId);
                 if (patron == null)
                 {
                     throw new ResourceNotFoundException("Patron", "ID", patronId);
@@ -94,13 +94,15 @@ namespace Libro.Application.Services
         {
             try
             {
-                var patron = await _patronService.GetPatronAsync(patronId);
+                var patron = await _patronRepository.GetPatronByIdAsync(patronId);
                 if (patron == null)
                 {
-                    throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
+                    throw new ResourceNotFoundException("Patron", "ID", patronId);
                 }
                 readingListDto.PatronId = patronId;
-                // check if there is a reading list with the same name for that patron
+
+                // Missing: check if there is a reading list with the same name for that patron
+
                 var readingList = _mapper.Map<ReadingList>(readingListDto);
 
                 var createdList = await _readingListRepository.CreateReadingListAsync(readingList);
@@ -117,7 +119,7 @@ namespace Libro.Application.Services
         {
             try
             {
-                var patron = await _patronService.GetPatronAsync(patronId);
+                var patron = await _patronRepository.GetPatronByIdAsync(patronId);
                 if (patron == null)
                 {
                     throw new ResourceNotFoundException("Patron", "ID", patronId);
@@ -142,7 +144,7 @@ namespace Libro.Application.Services
         {
             try
             {
-                var patron = await _patronService.GetPatronAsync(patronId);
+                var patron = await _patronRepository.GetPatronByIdAsync(patronId);
                 if (patron == null)
                 {
                     throw new ResourceNotFoundException("Patron", "ID", patronId);
@@ -167,13 +169,13 @@ namespace Libro.Application.Services
         {
             try
             {
-                var patron = await _patronService.GetPatronAsync(patronId);
+                var patron = await _patronRepository.GetPatronByIdAsync(patronId);
                 if (patron == null)
                 {
                     throw new ResourceNotFoundException("Patron", "ID", patronId);
                 }
                 ReadingList readingList = await _readingListRepository.GetReadingListByIdAsync(listId, patronId);
-                Book book = await _bookService.GetBookByISBNAsync(bookId);
+                Book book = await _bookRepository.GetBookByISBNAsync(bookId);
                 if (book == null)
                 {
                     throw new ResourceNotFoundException("Book", "ISBN", bookId);
@@ -184,9 +186,9 @@ namespace Libro.Application.Services
                 }
                 if (readingList.BookLists == null)
                 {
-                    readingList.BookLists = new List<BookList>(); // Initialize the BookLists property if null
+                    readingList.BookLists = new List<BookList>(); 
                 }
-                bool bookExists = readingList.BookLists.Any(bl => bl.BookId == bookId);
+                bool bookExists = readingList.BookLists.Any(bl => bl.BookId.Equals(bookId));
                 if (bookExists)
                 {
                     return false;
@@ -206,7 +208,7 @@ namespace Libro.Application.Services
         {
             try
             {
-                var patron = await _patronService.GetPatronAsync(patronId);
+                var patron = await _patronRepository.GetPatronByIdAsync(patronId);
                 if (patron == null)
                 {
                     throw new ResourceNotFoundException("Patron", "ID", patronId);
@@ -216,8 +218,8 @@ namespace Libro.Application.Services
                 {
                     throw new ResourceNotFoundException("Reading List", "ID", listId.ToString());
                 }
-                Book book = await _bookService.GetBookByISBNAsync(bookId);
-                if (book == null || readingList.BookLists == null || !readingList.BookLists.Any(bl => bl.BookId == bookId))
+                Book book = await _bookRepository.GetBookByISBNAsync(bookId);
+                if (book == null || readingList.BookLists == null || !readingList.BookLists.Any(bl => bl.BookId.Equals(bookId)))
                 {
                     throw new ResourceNotFoundException("Book", "ISBN", bookId);
                 }

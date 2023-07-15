@@ -8,6 +8,8 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Models;
+using Libro.Domain.Interfaces.IRepositories;
+using Libro.Domain.Entities;
 
 namespace Libro.Application.Services
 {
@@ -15,21 +17,21 @@ namespace Libro.Application.Services
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IPatronService _patronService;
-        private readonly ILibrarianService _librarianService;
+        private readonly IPatronRepository _patronRepository;
+        private readonly ILibrarianRepository _librarianRepository;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthenticationService> _logger;
 
         public AuthenticationService(IConfiguration configuration, UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager, IPatronService patronService,
-            ILibrarianService librarianService, ILogger<AuthenticationService> logger)
+            RoleManager<IdentityRole> roleManager, ILogger<AuthenticationService> logger,
+            IPatronRepository patronRepository, ILibrarianRepository librarianRepository)
         {
             _configuration = configuration;
             _userManager = userManager;
             _roleManager = roleManager;
-            _patronService = patronService;
-            _librarianService = librarianService;
             _logger = logger;
+            _librarianRepository = librarianRepository;
+            _patronRepository = patronRepository;
         }
         public async Task<Response> Register(string username, string email, string password)
         {
@@ -166,7 +168,7 @@ namespace Libro.Application.Services
                 var user = await _userManager.FindByIdAsync(userId);
                 if (user == null)
                 {
-                    throw new ResourceNotFoundException("User", "ID", userId.ToString());
+                    throw new ResourceNotFoundException("User", "ID", userId);
                 }
 
                 var roleExists = await _roleManager.RoleExistsAsync(role);
@@ -182,11 +184,22 @@ namespace Libro.Application.Services
                 }
                 if (role.Equals("Patron"))
                 {
-                    await _patronService.AddPatronAsync(userId, user.UserName, user.Email);
+                    Patron patron = new Patron()
+                    {
+                        PatronId = userId,
+                        Name = user.UserName,
+                        Email = user.Email,
+                    };
+                    await _patronRepository.AddPatronAsync(patron);
                 }
                 if (role.Equals("Librarian"))
                 {
-                    await _librarianService.AddLibrarianAsync(userId, user.UserName);
+                    Librarian librarian = new Librarian()
+                    {
+                        LibrarianId = userId,
+                        Name = user.UserName
+                    };
+                    await _librarianRepository.AddLibrarianAsync(librarian);
                 }
                 return new Response { Status = "Success", Message = "Role assigned successfully" };
             }

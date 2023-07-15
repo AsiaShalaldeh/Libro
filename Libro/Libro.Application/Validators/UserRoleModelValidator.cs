@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Libro.Domain.Enums;
 using Libro.Domain.Models;
 
 namespace Libro.Application.Validators
@@ -12,7 +13,9 @@ namespace Libro.Application.Validators
 
             RuleFor(x => x.Role)
                 .NotEmpty().WithMessage("Role is required.")
-                .Must(role => role == "Patron" || role == "Admin" || role == "Librarian")
+                .Must(role => role.Equals(UserRole.Patron.ToString())
+                || role.Equals(UserRole.Administrator.ToString())
+                || role.Equals(UserRole.Librarian.ToString()))
                 .WithMessage("Role must be either 'Patron', 'Admin', or 'Librarian'.");
         }
     }

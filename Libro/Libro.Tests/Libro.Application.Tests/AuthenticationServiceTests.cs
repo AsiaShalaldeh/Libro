@@ -1,5 +1,5 @@
 ﻿using Libro.Application.Services;
-using Libro.Domain.Interfaces.IServices;
+using Libro.Domain.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -15,8 +15,8 @@ namespace Libro.Tests.Libro.Application.Tests
     {
         private readonly Mock<UserManager<IdentityUser>> _userManagerMock;
         private readonly Mock<RoleManager<IdentityRole>> _roleManagerMock;
-        private readonly Mock<IPatronService> _patronServiceMock;
-        private readonly Mock<ILibrarianService> _librarianServiceMock;
+        private readonly Mock<IPatronRepository> _patronRepositoryMock;
+        private readonly Mock<ILibrarianRepository> _librarianRepositoryMock;
         private readonly Mock<IConfiguration> _configurationMock;
         private readonly Mock<ILogger<AuthenticationService>> _loggerMock;
         private readonly AuthenticationService _authenticationService;
@@ -27,8 +27,8 @@ namespace Libro.Tests.Libro.Application.Tests
                 Mock.Of<IUserStore<IdentityUser>>(), null, null, null, null, null, null, null, null);
             _roleManagerMock = new Mock<RoleManager<IdentityRole>>(
                 Mock.Of<IRoleStore<IdentityRole>>(), null, null, null, null);
-            _patronServiceMock = new Mock<IPatronService>();
-            _librarianServiceMock = new Mock<ILibrarianService>();
+            _patronRepositoryMock = new Mock<IPatronRepository>();
+            _librarianRepositoryMock = new Mock<ILibrarianRepository>();
             _configurationMock = new Mock<IConfiguration>();
             _loggerMock = new Mock<ILogger<AuthenticationService>>();
 
@@ -36,9 +36,9 @@ namespace Libro.Tests.Libro.Application.Tests
                 _configurationMock.Object,
                 _userManagerMock.Object,
                 _roleManagerMock.Object,
-                _patronServiceMock.Object,
-                _librarianServiceMock.Object,
-                _loggerMock.Object);
+                _loggerMock.Object,
+                _patronRepositoryMock.Object,
+                _librarianRepositoryMock.Object);
         }
 
         [Fact]

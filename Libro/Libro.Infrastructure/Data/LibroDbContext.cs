@@ -18,12 +18,6 @@ namespace Libro.Infrastructure.Data
         {
             _configuration = configuration;
         }
-
-        //public LibroDbContext(DbContextOptions<LibroDbContext> options)
-        //    : base(options)
-        //{
-        //}
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

@@ -53,7 +53,6 @@ namespace Libro.Infrastructure.Repositories
             {
                 // return message if Email is empty
                 // Email should be uniqe in add and update
-                // ReadingList should starts couting from 1 for each patron
                 _context.Patrons.AddAsync(patron);
                 await _context.SaveChangesAsync();
             }

@@ -126,6 +126,7 @@ namespace Libro.WebAPI.Controllers
 
                 // remove the patron from the queue
                 await _notificationService.RemovePatronFromNotificationQueue(ISBN);
+                await _notificationService.SendCheckoutNotification(patron.Email, book.Title, patron.PatronId);
                 _logger.LogInformation("Book checked out successfully. Book ISBN: {ISBN}, Patron ID: {PatronID}", ISBN, patron.PatronId);
 
                 return Ok(transaction);
@@ -173,9 +174,10 @@ namespace Libro.WebAPI.Controllers
                 }
                 var transaction = await _transactionService.ReturnBookAsync(book, patron);
 
+                await _notificationService.SendReturnNotification(patron.Email, book.Title, patron.PatronId);
                 // Notify the first patron in the queue if there is any
                 await _notificationService.ProcessNotificationQueue(book.ISBN);
-
+                
                 _logger.LogInformation("Book returned successfully. Book ISBN: {ISBN}, Patron ID: {PatronID}", ISBN, patron.PatronId);
 
                 return Ok(transaction);

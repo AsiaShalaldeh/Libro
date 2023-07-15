@@ -3,6 +3,7 @@ using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Enums;
 using Libro.Domain.Exceptions;
+using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.Extensions.Logging;
 
@@ -10,18 +11,18 @@ namespace Libro.Application.Services
 {
     public class BookRecommendationService : IBookRecommendationService
     {
-        private readonly IBookService _bookService;
-        private readonly IPatronService _patronService;
-        private readonly ITransactionService _transactionService;
+        private readonly IBookRepository _bookRepository;
+        private readonly IPatronRepository _patronRepository;
+        private readonly ITransactionRepository _transactionRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<BookRecommendationService> _logger;
 
-        public BookRecommendationService(IBookService bookService, IPatronService patronService,
-            ITransactionService transactionService, IMapper mapper, ILogger<BookRecommendationService> logger)
+        public BookRecommendationService(IBookRepository bookRepository, IPatronRepository patronRepository,
+            ITransactionRepository transactionRepository, IMapper mapper, ILogger<BookRecommendationService> logger)
         {
-            _bookService = bookService;
-            _patronService = patronService;
-            _transactionService = transactionService;
+            _bookRepository = bookRepository;
+            _patronRepository = patronRepository;
+            _transactionRepository = transactionRepository;
             _mapper = mapper;
             _logger = logger;
         }
@@ -30,13 +31,13 @@ namespace Libro.Application.Services
         {
             try
             {
-                Patron patron = await _patronService.GetPatronAsync(patronId);
+                Patron patron = await _patronRepository.GetPatronByIdAsync(patronId);
 
                 if (patron != null)
                 {
                     // Get the top 3 genres of books previously borrowed by the patron
-                    var patronTransactions = await _transactionService.GetCheckoutTransactionsByPatron(patronId);
-                    if (patronTransactions.Any())
+                    var patronTransactions = await _transactionRepository.GetCheckoutTransactionsByPatronAsync(patronId);
+                    if (patronTransactions != null && patronTransactions.Any())
                     {
                         var topGenres = patronTransactions
                             .GroupBy(t => t.Book.Genre)
@@ -47,7 +48,7 @@ namespace Libro.Application.Services
                         if (!topGenres.Any())
                             topGenres = new List<Genre>() { Genre.Fantasy, Genre.Drama, Genre.Romance };
 
-                        IEnumerable<Book> recommendedBooks = await _bookService.GetBooksByGenres(topGenres);
+                        IEnumerable<Book> recommendedBooks = await _bookRepository.GetBooksByGenres(topGenres);
                         return _mapper.Map<IEnumerable<BookDto>>(recommendedBooks);
                     }
                     else
@@ -57,7 +58,7 @@ namespace Libro.Application.Services
                 }
                 else
                 {
-                    throw new ResourceNotFoundException("Patron", "ID", patronId.ToString());
+                    throw new ResourceNotFoundException("Patron", "ID", patronId);
                 }
             }
             catch (Exception ex)

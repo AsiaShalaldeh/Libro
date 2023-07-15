@@ -98,14 +98,27 @@ namespace Libro.Application.Services
             {
                 return false;
             }
-
-            // Check if the patron has any outstanding fees
-            //if (patron.OutstandingFees > 0)
-            //{
-            //    return false;
-            //}
             return true;
         }
+        public decimal CalculateTotalFees(int checkoutDay, int dueDay, int returnDay)
+        {
+            var days = returnDay - dueDay;
+            decimal total = Math.Round(GetLoanDuration() * GetBorrowingFeePerDay(), 2);
 
+            if (days == 0)
+            {
+                return total;
+            }
+            else if (days > 0)
+            {
+                return Math.Round(total + (GetLateFeePerDay() * days), 2);
+            }
+            else if (days < 0)
+            {
+                days = returnDay - checkoutDay;
+                return Math.Round((days + 1) * GetBorrowingFeePerDay(), 2);
+            }
+            return 0;
+        }
     }
 }

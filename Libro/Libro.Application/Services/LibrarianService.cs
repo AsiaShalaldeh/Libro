@@ -76,7 +76,7 @@ namespace Libro.Application.Services
                 Librarian existingLibrarian = await _librarianRepository.GetLibrarianByIdAsync(librarianId);
                 if (existingLibrarian == null)
                 {
-                    throw new ResourceNotFoundException("Librarian", "ID", librarianId.ToString());
+                    throw new ResourceNotFoundException("Librarian", "ID", librarianId);
                 }
                 existingLibrarian.Name = librarian.Name;
                 await _userRepository.UpdateUserAsync(librarianId, librarian.Name, "");
@@ -96,7 +96,7 @@ namespace Libro.Application.Services
                 Librarian existingLibrarian = await _librarianRepository.GetLibrarianByIdAsync(librarianId);
                 if (existingLibrarian == null)
                 {
-                    throw new ResourceNotFoundException("Librarian", "ID", librarianId.ToString());
+                    throw new ResourceNotFoundException("Librarian", "ID", librarianId);
                 }
 
                 await _librarianRepository.DeleteLibrarianAsync(existingLibrarian);

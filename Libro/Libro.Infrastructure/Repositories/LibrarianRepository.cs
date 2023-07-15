@@ -4,8 +4,6 @@ using Libro.Domain.Interfaces.IRepositories;
 using Libro.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
 
 namespace Libro.Infrastructure.Repositories
 {

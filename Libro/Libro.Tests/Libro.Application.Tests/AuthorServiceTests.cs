@@ -43,9 +43,6 @@ namespace Libro.Tests.Libro.Application.Tests
             _authorRepositoryMock.Setup(repo => repo.GetAllAuthorsAsync(pageNumber, pageSize))
                 .ReturnsAsync(paginatedResult);
 
-            //_mapperMock.Setup(m => m.Map<IEnumerable<Author>, List<Author>>(It.IsAny<IEnumerable<Author>>()))
-            //        .Returns((IEnumerable<Author> Items) => Items);
-
             // Act
             var result = await _authorService.GetAllAuthorsAsync(pageNumber, pageSize);
 
