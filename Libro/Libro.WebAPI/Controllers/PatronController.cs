@@ -4,6 +4,7 @@ using Libro.Application.Validators;
 using Libro.Domain.Dtos;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
+using Libro.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -24,7 +25,15 @@ namespace Libro.WebAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get a patron's profile by ID.
+        /// </summary>
+        /// <param name="patronId">The ID of the patron.</param>
+        /// <returns>The patron's profile.</returns>
         [HttpGet("{patronId}")]
+        [ProducesResponseType(typeof(PatronDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetPatronProfile(string patronId)
         {
             try
@@ -51,8 +60,14 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get all patrons.
+        /// </summary>
+        /// <returns>A list of all patrons.</returns>
         [HttpGet]
         [Authorize(Roles = "Librarian, Administrator")]
+        [ProducesResponseType(typeof(List<PatronDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult<List<PatronDto>>> GetAllPatrons()
         {
             try
@@ -68,8 +83,18 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update a patron's profile.
+        /// </summary>
+        /// <param name="patronId">The ID of the patron.</param>
+        /// <param name="patronDto">The updated patron profile data.</param>
+        /// <returns>The updated patron profile.</returns>
         [HttpPut("{patronId}")]
         [Authorize(Roles = "Librarian, Administrator")]
+        [ProducesResponseType(typeof(PatronDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> UpdatePatronProfile(string patronId, [FromBody] PatronDto patronDto)
         {
             try
@@ -100,7 +125,16 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get a patron's borrowing history.
+        /// </summary>
+        /// <param name="patronId">The ID of the patron.</param>
+        /// <returns>The patron's borrowing history.</returns>
         [HttpGet("{patronId}/borrowing-history")]
+        [ProducesResponseType(typeof(TransactionResponseModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetBorrowingHistory(string patronId)
         {
             try

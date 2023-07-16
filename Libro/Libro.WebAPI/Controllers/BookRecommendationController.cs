@@ -3,7 +3,9 @@ using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Libro.WebAPI.Controllers
 {
@@ -22,7 +24,15 @@ namespace Libro.WebAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get recommended books for a patron.
+        /// </summary>
+        /// <param name="patronId">The ID of the patron.</param>
+        /// <returns>List of recommended books.</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Book>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetRecommendedBooks(string patronId)
         {
             try
@@ -47,7 +57,5 @@ namespace Libro.WebAPI.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
-
     }
-
 }

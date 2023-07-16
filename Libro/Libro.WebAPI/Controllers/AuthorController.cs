@@ -2,11 +2,14 @@
 using FluentValidation;
 using Libro.Application.Validators;
 using Libro.Domain.Dtos;
+using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Libro.WebAPI.Controllers
 {
@@ -26,7 +29,15 @@ namespace Libro.WebAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get all authors.
+        /// </summary>
+        /// <param name="pageNumber">Page number (optional).</param>
+        /// <param name="pageSize">Page size (optional).</param>
+        /// <returns>List of authors.</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Author>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetAllAuthors([FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 10)
         {
@@ -47,7 +58,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get an author by ID.
+        /// </summary>
+        /// <param name="authorId">Author ID.</param>
+        /// <returns>Author details.</returns>
         [HttpGet("{authorId}")]
+        [ProducesResponseType(typeof(AuthorResponseDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetAuthorById(int authorId)
         {
             try
@@ -80,7 +99,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Add a new author.
+        /// </summary>
+        /// <param name="authorDto">Author data.</param>
+        /// <returns>Created author details.</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(AuthorDto), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> AddAuthor([FromBody] AuthorDto authorDto)
         {
             try
@@ -108,7 +135,17 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update an existing author.
+        /// </summary>
+        /// <param name="authorId">Author ID.</param>
+        /// <param name="authorDto">Updated author data.</param>
+        /// <returns>No content.</returns>
         [HttpPut("{authorId}")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> UpdateAuthor(int authorId, AuthorDto authorDto)
         {
             try
@@ -141,7 +178,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete an author.
+        /// </summary>
+        /// <param name="authorId">Author ID.</param>
+        /// <returns>No content.</returns>
         [HttpDelete("{authorId}")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> DeleteAuthor(int authorId)
         {
             try

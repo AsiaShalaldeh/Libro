@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Libro.Application.Validators;
+using Libro.Domain.Common;
 using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
@@ -28,7 +29,15 @@ namespace Libro.WebAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get a book by its ISBN.
+        /// </summary>
+        /// <param name="ISBN">The ISBN of the book.</param>
+        /// <returns>The book details.</returns>
         [HttpGet("{ISBN}")]
+        [ProducesResponseType(typeof(BookDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetBookByISBN(string ISBN)
         {
             try
@@ -59,7 +68,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get all books.
+        /// </summary>
+        /// <param name="pageNumber">Page number (optional).</param>
+        /// <param name="pageSize">Page size (optional).</param>
+        /// <returns>List of books.</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<BookDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetAllBooks([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
@@ -79,7 +96,20 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Search books based on the specified criteria.
+        /// </summary>
+        /// <param name="title">Title search term (optional).</param>
+        /// <param name="author">Author search term (optional).</param>
+        /// <param name="genre">Genre search term (optional).</param>
+        /// <param name="pageNumber">Page number (optional).</param>
+        /// <param name="pageSize">Page size (optional).</param>
+        /// <returns>List of matched books.</returns>
         [HttpGet("search")]
+        [ProducesResponseType(typeof(PaginatedResult<BookDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> SearchBooks([FromQuery] string? title = null, [FromQuery] string? author = null, [FromQuery] string? genre = null, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
@@ -113,8 +143,17 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Add a new book.
+        /// </summary>
+        /// <param name="bookDto">The book data to be added.</param>
+        /// <returns>The created book details.</returns>
         [HttpPost]
         [Authorize(Roles = "Librarian, Administrator")]
+        [ProducesResponseType(typeof(BookDto), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> AddBook([FromBody] BookRequest bookDto)
         {
             try
@@ -154,8 +193,18 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update an existing book.
+        /// </summary>
+        /// <param name="ISBN">The ISBN of the book to be updated.</param>
+        /// <param name="bookDto">The updated book data.</param>
+        /// <returns>No content.</returns>
         [HttpPut("{ISBN}")]
         [Authorize(Roles = "Librarian, Administrator")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> UpdateBook(string ISBN, [FromBody] BookRequest bookDto)
         {
             try
@@ -194,8 +243,16 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Remove a book by its ISBN.
+        /// </summary>
+        /// <param name="ISBN">The ISBN of the book to be removed.</param>
+        /// <returns>No content.</returns>
         [HttpDelete("{ISBN}")]
         [Authorize(Roles = "Librarian, Administrator")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> RemoveBook(string ISBN)
         {
             try
@@ -220,5 +277,4 @@ namespace Libro.WebAPI.Controllers
             }
         }
     }
-
 }

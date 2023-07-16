@@ -57,7 +57,7 @@ The project is organized into the following four layers:
     <li>Database: SQL Server</li>
     <li>Authentication: JWT (JSON Web Tokens)</li>
     <li>ORM: Entity Framework Core</li>
-    <li>API Documentation: Postman</li>
+    <li>API Documentation: Swagger and OpenAPI</li>
     <li>Validations: FluentValidation</li>
     <li>Unit Testing: xUnit, Moq, and in-memory database</li>
 </ul>
@@ -72,7 +72,17 @@ The project is organized into the following four layers:
 </ul>
 
 <h3>API Documentation:</h3>
-The API documentation for Libro is available using Postman, a popular API development and testing tool. With Postman, you can explore and interact with the Libro APIs directly from your browser. The documentation provides details about each API endpoint, the required request parameters, sample request/response payloads, and more.
+The API documentation for Libro is available using Swagger and OpenAPI, industry-standard tools for documenting and exploring APIs. With Swagger UI, you can interactively explore the API endpoints, send requests, and view the responses directly from your browser. The documentation provides details about each API endpoint, including the required request parameters, sample request/response payloads, and more.
+
+To access the API documentation, follow these steps:
+
+1. Start the Libro API application.
+2. Open your browser and navigate to the Swagger UI endpoint: `https://localhost:7283/swagger`.
+3. You will see the Swagger UI interface with a list of available endpoints and detailed documentation for each endpoint.
+
+Use the Swagger UI to explore the Libro API and test the different functionalities it offers.
+
+In addition to the Swagger documentation, a Postman collection is also available for the Libro API. The Postman collection allows you to import a pre-configured set of API requests into Postman, making it easy to test and interact with the API. Import the collection into Postman to quickly access and execute the API requests.
 
 <h3>Contributing:</h3>
 

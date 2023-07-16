@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Libro.WebAPI</name>
+    </assembly>
+    <members>
+        <member name="M:Libro.WebAPI.Controllers.AuthorController.GetAllAuthors(System.Int32,System.Int32)">
+            <summary>
+            Get all authors.
+            </summary>
+            <param name="pageNumber">Page number (optional).</param>
+            <param name="pageSize">Page size (optional).</param>
+            <returns>List of authors.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.AuthorController.GetAuthorById(System.Int32)">
+            <summary>
+            Get an author by ID.
+            </summary>
+            <param name="authorId">Author ID.</param>
+            <returns>Author details.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.AuthorController.AddAuthor(Libro.Domain.Dtos.AuthorDto)">
+            <summary>
+            Add a new author.
+            </summary>
+            <param name="authorDto">Author data.</param>
+            <returns>Created author details.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.AuthorController.UpdateAuthor(System.Int32,Libro.Domain.Dtos.AuthorDto)">
+            <summary>
+            Update an existing author.
+            </summary>
+            <param name="authorId">Author ID.</param>
+            <param name="authorDto">Updated author data.</param>
+            <returns>No content.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.AuthorController.DeleteAuthor(System.Int32)">
+            <summary>
+            Delete an author.
+            </summary>
+            <param name="authorId">Author ID.</param>
+            <returns>No content.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.BookController.GetBookByISBN(System.String)">
+            <summary>
+            Get a book by its ISBN.
+            </summary>
+            <param name="ISBN">The ISBN of the book.</param>
+            <returns>The book details.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.BookController.GetAllBooks(System.Int32,System.Int32)">
+            <summary>
+            Get all books.
+            </summary>
+            <param name="pageNumber">Page number (optional).</param>
+            <param name="pageSize">Page size (optional).</param>
+            <returns>List of books.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.BookController.SearchBooks(System.String,System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Search books based on the specified criteria.
+            </summary>
+            <param name="title">Title search term (optional).</param>
+            <param name="author">Author search term (optional).</param>
+            <param name="genre">Genre search term (optional).</param>
+            <param name="pageNumber">Page number (optional).</param>
+            <param name="pageSize">Page size (optional).</param>
+            <returns>List of matched books.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.BookController.AddBook(Libro.Domain.Dtos.BookRequest)">
+            <summary>
+            Add a new book.
+            </summary>
+            <param name="bookDto">The book data to be added.</param>
+            <returns>The created book details.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.BookController.UpdateBook(System.String,Libro.Domain.Dtos.BookRequest)">
+            <summary>
+            Update an existing book.
+            </summary>
+            <param name="ISBN">The ISBN of the book to be updated.</param>
+            <param name="bookDto">The updated book data.</param>
+            <returns>No content.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.BookController.RemoveBook(System.String)">
+            <summary>
+            Remove a book by its ISBN.
+            </summary>
+            <param name="ISBN">The ISBN of the book to be removed.</param>
+            <returns>No content.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.BookRecommendationController.GetRecommendedBooks(System.String)">
+            <summary>
+            Get recommended books for a patron.
+            </summary>
+            <param name="patronId">The ID of the patron.</param>
+            <returns>List of recommended books.</returns>
+        </member>
+    </members>
+</doc>

@@ -38,8 +38,16 @@ namespace Libro.WebAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Reserve a book for the current patron.
+        /// </summary>
+        /// <param name="ISBN">The ISBN of the book to reserve.</param>
+        /// <returns>The reserved book transaction details.</returns>
         [HttpPost("{ISBN}/reserve")]
         [Authorize(Roles = "Patron")]
+        [ProducesResponseType(typeof(BookTransactionDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> ReserveBook(string ISBN)
         {
             try
@@ -84,8 +92,17 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Checkout a book for a patron by a librarian.
+        /// </summary>
+        /// <param name="ISBN">The ISBN of the book to checkout.</param>
+        /// <param name="bookCheckout">The book checkout data.</param>
+        /// <returns>The checked out book transaction details.</returns>
         [HttpPost("{ISBN}/checkout")]
         [Authorize(Roles = "Librarian")]
+        [ProducesResponseType(typeof(BookTransactionDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> CheckoutBook(string ISBN, [FromBody] BookTransactionDto bookCheckout)
         {
             try
@@ -148,8 +165,17 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Return a book by a patron.
+        /// </summary>
+        /// <param name="ISBN">The ISBN of the book to return.</param>
+        /// <param name="bookReturn">The book return data.</param>
+        /// <returns>The returned book transaction details.</returns>
         [HttpPost("{ISBN}/accept-return")]
         [Authorize(Roles = "Librarian")]
+        [ProducesResponseType(typeof(BookTransactionDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> ReturnBook(string ISBN, [FromBody] BookTransactionDto bookReturn)
         {
             try
@@ -177,7 +203,7 @@ namespace Libro.WebAPI.Controllers
                 await _notificationService.SendReturnNotification(patron.Email, book.Title, patron.PatronId);
                 // Notify the first patron in the queue if there is any
                 await _notificationService.ProcessNotificationQueue(book.ISBN);
-                
+
                 _logger.LogInformation("Book returned successfully. Book ISBN: {ISBN}, Patron ID: {PatronID}", ISBN, patron.PatronId);
 
                 return Ok(transaction);
@@ -204,8 +230,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get a list of overdue books.
+        /// </summary>
+        /// <returns>List of overdue books.</returns>
         [HttpGet("borrowed-books/overdue")]
         [Authorize(Roles = "Librarian")]
+        [ProducesResponseType(typeof(IEnumerable<BookDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetOverdueBooks()
         {
             try
@@ -228,8 +261,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get a list of borrowed books.
+        /// </summary>
+        /// <returns>List of borrowed books.</returns>
         [HttpGet("borrowed-books")]
         [Authorize(Roles = "Librarian")]
+        [ProducesResponseType(typeof(IEnumerable<BookDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetBorrowedBooks()
         {
             try
@@ -252,8 +292,16 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get a borrowed book by its ISBN.
+        /// </summary>
+        /// <param name="ISBN">The ISBN of the book.</param>
+        /// <returns>The borrowed book details.</returns>
         [HttpGet("borrowed-books/{ISBN}")]
         [Authorize(Roles = "Librarian")]
+        [ProducesResponseType(typeof(BookDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetBorrowedBookById(string ISBN)
         {
             try

@@ -6,7 +6,9 @@ using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Libro.WebAPI.Controllers
 {
@@ -24,7 +26,15 @@ namespace Libro.WebAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get all librarians with pagination.
+        /// </summary>
+        /// <param name="pageNumber">The page number.</param>
+        /// <param name="pageSize">The page size.</param>
+        /// <returns>List of librarians.</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Librarian>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetAllLibrarians([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
@@ -40,7 +50,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get a librarian by ID.
+        /// </summary>
+        /// <param name="librarianId">The ID of the librarian.</param>
+        /// <returns>The librarian details.</returns>
         [HttpGet("{librarianId}")]
+        [ProducesResponseType(typeof(Librarian), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetLibrarianById(string librarianId)
         {
             try
@@ -65,7 +83,17 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update a librarian.
+        /// </summary>
+        /// <param name="librarianId">The ID of the librarian to update.</param>
+        /// <param name="librarianDto">The updated librarian data.</param>
+        /// <returns>The updated librarian details.</returns>
         [HttpPut("{librarianId}")]
+        [ProducesResponseType(typeof(Librarian), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> UpdateLibrarian(string librarianId, [FromBody] LibrarianDto librarianDto)
         {
             try
@@ -93,7 +121,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete a librarian.
+        /// </summary>
+        /// <param name="librarianId">The ID of the librarian to delete.</param>
+        /// <returns>No content.</returns>
         [HttpDelete("{librarianId}")]
+        [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> DeleteLibrarian(string librarianId)
         {
             try

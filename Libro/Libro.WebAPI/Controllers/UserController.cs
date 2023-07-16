@@ -27,7 +27,15 @@ namespace Libro.WebAPI.Controllers
             _userRepository = userRepository;
         }
 
+        /// <summary>
+        /// Register a new user.
+        /// </summary>
+        /// <param name="registerModel">The registration data.</param>
+        /// <returns>The registration response.</returns>
         [HttpPost("register")]
+        [ProducesResponseType(typeof(Response), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Response), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Register([FromBody] RegisterModel registerModel)
         {
             try
@@ -69,7 +77,16 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Authenticate user and generate an access token.
+        /// </summary>
+        /// <param name="loginModel">The login credentials.</param>
+        /// <returns>The access token.</returns>
         [HttpPost("login")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
         {
             try
@@ -98,8 +115,17 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Assign a role to a user.
+        /// </summary>
+        /// <param name="request">The role assignment data.</param>
+        /// <returns>The assignment response.</returns>
         [HttpPost("assign-role")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Administrator")]
+        [ProducesResponseType(typeof(Response), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Response), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> AssignRoleToUser(UserRoleModel request)
         {
             try
@@ -133,8 +159,14 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get all users.
+        /// </summary>
+        /// <returns>A list of users.</returns>
         [HttpGet]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Administrator, Librarian")]
+        [ProducesResponseType(typeof(List<UserDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult<List<UserDto>>> GetAllUsers()
         {
             try

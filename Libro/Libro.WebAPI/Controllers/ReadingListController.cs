@@ -5,7 +5,9 @@ using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Libro.WebAPI.Controllers
 {
@@ -28,7 +30,15 @@ namespace Libro.WebAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Create a new reading list.
+        /// </summary>
+        /// <param name="readingListDto">The reading list data.</param>
+        /// <returns>The created reading list.</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(ReadingListDto), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> CreateReadingList([FromBody] ReadingListDto readingListDto)
         {
             try
@@ -50,7 +60,14 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get all reading lists for the current patron.
+        /// </summary>
+        /// <returns>A list of reading lists.</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(List<ReadingListDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetReadingListsByPatronId()
         {
             try
@@ -73,7 +90,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get a reading list by ID.
+        /// </summary>
+        /// <param name="listId">The ID of the reading list.</param>
+        /// <returns>The reading list.</returns>
         [HttpGet("{listId}", Name = "GetReadingList")]
+        [ProducesResponseType(typeof(ReadingListDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetReadingListById(int listId)
         {
             try
@@ -96,7 +121,17 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Add a book to a reading list.
+        /// </summary>
+        /// <param name="listId">The ID of the reading list.</param>
+        /// <param name="ISBN">The ISBN of the book.</param>
+        /// <returns>No content.</returns>
         [HttpPost("{listId}/books/{ISBN}/add")]
+        [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> AddBookToReadingList(int listId, string ISBN)
         {
             try
@@ -123,7 +158,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get all books in a reading list.
+        /// </summary>
+        /// <param name="listId">The ID of the reading list.</param>
+        /// <returns>A list of books.</returns>
         [HttpGet("{listId}/books")]
+        [ProducesResponseType(typeof(List<BookDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetBooksOfReadingList(int listId)
         {
             try
@@ -145,7 +188,16 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Remove a book from a reading list.
+        /// </summary>
+        /// <param name="listId">The ID of the reading list.</param>
+        /// <param name="ISBN">The ISBN of the book.</param>
+        /// <returns>No content.</returns>
         [HttpDelete("{listId}/books/{ISBN}/remove")]
+        [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> RemoveBookFromReadingList(int listId, string ISBN)
         {
             try
@@ -167,7 +219,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Remove a reading list.
+        /// </summary>
+        /// <param name="listId">The ID of the reading list.</param>
+        /// <returns>No content.</returns>
         [HttpDelete("{listId}")]
+        [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> RemoveReadingList(int listId)
         {
             try

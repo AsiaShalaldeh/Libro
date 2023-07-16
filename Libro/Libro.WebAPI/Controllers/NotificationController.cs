@@ -5,6 +5,7 @@ using Libro.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Libro.WebAPI.Controllers
 {
@@ -22,7 +23,14 @@ namespace Libro.WebAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Send overdue notifications for books.
+        /// </summary>
+        /// <returns>A response indicating the success of the operation.</returns>
         [HttpPost("overdue-books/send")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> SendOverdueNotification()
         {
             try
@@ -46,7 +54,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Send a reminder notification.
+        /// </summary>
+        /// <param name="request">The reminder notification request data.</param>
+        /// <returns>A response indicating the success of the operation.</returns>
         [HttpPost("reminder/send")]
+        [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(void), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> SendReminderNotification([FromBody] ReminderNotificationModel request)
         {
             try
@@ -72,7 +88,7 @@ namespace Libro.WebAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while sending the reminder notification.");
-                return StatusCode(500, "An error occurred while sending the reminder notification.");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while sending the reminder notification.");
             }
         }
     }

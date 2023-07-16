@@ -46,11 +46,13 @@ namespace Libro.Infrastructure.Repositories
 
                 if (!string.IsNullOrEmpty(title))
                 {
+                    title = title.Trim();
                     query = query.Where(b => b.Title.Contains(title));
                 }
 
                 if (!string.IsNullOrEmpty(author))
                 {
+                    author = author.Trim();
                     query = query.Where(b => b.Author.Name.Contains(author));
                 }
 

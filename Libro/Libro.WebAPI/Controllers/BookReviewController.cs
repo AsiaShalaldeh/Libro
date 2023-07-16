@@ -5,7 +5,10 @@ using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Libro.WebAPI.Controllers
 {
@@ -25,7 +28,16 @@ namespace Libro.WebAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get a review by its ID for a specific book.
+        /// </summary>
+        /// <param name="ISBN">The ISBN of the book.</param>
+        /// <param name="reviewId">The ID of the review.</param>
+        /// <returns>The review details.</returns>
         [HttpGet("{reviewId}")]
+        [ProducesResponseType(typeof(ReviewDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetReview(string ISBN, int reviewId)
         {
             try
@@ -51,7 +63,18 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Update a review for a specific book.
+        /// </summary>
+        /// <param name="ISBN">The ISBN of the book.</param>
+        /// <param name="reviewId">The ID of the review.</param>
+        /// <param name="reviewDto">The updated review data.</param>
+        /// <returns>The updated review details.</returns>
         [HttpPut("{reviewId}")]
+        [ProducesResponseType(typeof(ReviewDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> UpdateReview(string ISBN, int reviewId, ReviewDto reviewDto)
         {
             try
@@ -77,7 +100,17 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete a review for a specific book.
+        /// </summary>
+        /// <param name="ISBN">The ISBN of the book.</param>
+        /// <param name="reviewId">The ID of the review.</param>
+        /// <returns>No content.</returns>
         [HttpDelete("{reviewId}")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> DeleteReview(string ISBN, int reviewId)
         {
             try
@@ -102,7 +135,17 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Add a new review for a specific book.
+        /// </summary>
+        /// <param name="ISBN">The ISBN of the book.</param>
+        /// <param name="reviewDto">The review data to be added.</param>
+        /// <returns>The added review details.</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(ReviewDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> AddReview(string ISBN, [FromBody] ReviewDto reviewDto)
         {
             try
@@ -128,7 +171,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get all reviews for a specific book.
+        /// </summary>
+        /// <param name="ISBN">The ISBN of the book.</param>
+        /// <returns>List of reviews.</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<ReviewDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetReviewsByBookISBN(string ISBN)
         {
             try
@@ -155,7 +206,15 @@ namespace Libro.WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get the average rating for a specific book.
+        /// </summary>
+        /// <param name="ISBN">The ISBN of the book.</param>
+        /// <returns>The average rating.</returns>
         [HttpGet("average-rating")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetAverageRatingByBookId(string ISBN)
         {
             try
