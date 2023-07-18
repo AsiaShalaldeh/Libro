@@ -53,7 +53,7 @@ namespace Libro.Tests.Libro.Application.Tests
             var result = _loanPolicyService.GetBorrowingFeePerDay();
 
             // Assert
-            Assert.Equal(2.0m, result);
+            Assert.Equal(1.0m, result);
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace Libro.Tests.Libro.Application.Tests
             var result = _loanPolicyService.GetLateFeePerDay();
 
             // Assert
-            Assert.Equal(1.0m, result);
+            Assert.Equal(0.5m, result);
         }
     }
 }

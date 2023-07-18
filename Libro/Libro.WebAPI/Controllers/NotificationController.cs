@@ -19,8 +19,8 @@ namespace Libro.WebAPI.Controllers
 
         public NotificationController(INotificationService notificationService, ILogger<NotificationController> logger)
         {
-            _notificationService = notificationService;
-            _logger = logger;
+            _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>

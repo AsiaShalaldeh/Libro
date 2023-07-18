@@ -6,6 +6,7 @@ using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
+using Libro.WebAPI.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -24,9 +25,9 @@ namespace Libro.WebAPI.Controllers
         public BookController(IBookService bookService, IMapper mapper,
             ILogger<BookController> logger)
         {
-            _bookService = bookService;
-            _mapper = mapper;
-            _logger = logger;
+            _bookService = bookService ?? throw new ArgumentNullException(nameof(bookService));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -87,6 +88,7 @@ namespace Libro.WebAPI.Controllers
 
                 _logger.LogInformation("Retrieved all books. Page number: {PageNumber}, Page size: {PageSize}", pageNumber, pageSize);
 
+                PaginationHelper.SetPaginationHeaders(Response, response.TotalCount, pageNumber, pageSize);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -110,14 +112,16 @@ namespace Libro.WebAPI.Controllers
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> SearchBooks([FromQuery] string? title = null, [FromQuery] string? author = null, [FromQuery] string? genre = null, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> SearchBooks([FromQuery] string? title = null,
+            [FromQuery] string? author = null, [FromQuery] string? genre = null,
+            [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
                 _logger.LogInformation("Searching books. Title: {Title}, Author: {Author}, Genre: {Genre}, Page number: {PageNumber}, Page size: {PageSize}", title, author, genre, pageNumber, pageSize);
 
                 if (title == null && author == null && genre == null)
-                    return BadRequest("You should provide any search term !!");
+                    return RedirectToAction(nameof(GetAllBooks), new { pageNumber, pageSize });
 
                 var paginatedBooks = await _bookService.SearchBooksAsync(title, author, genre, pageNumber, pageSize);
 

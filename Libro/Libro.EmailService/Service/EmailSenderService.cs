@@ -1,9 +1,8 @@
-﻿using Infrastructure.EmailService.Model;
-using Infrastructure.EmailService.Interface;
+﻿using EmailService.Model;
+using EmailService.Interface;
 using MailKit.Net.Smtp;
 using MimeKit;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace EmailService.Service
 {

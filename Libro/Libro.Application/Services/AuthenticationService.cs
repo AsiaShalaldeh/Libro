@@ -109,7 +109,7 @@ namespace Libro.Application.Services
             }
         }
 
-        private async Task<string> GenerateAuthToken(IdentityUser user)
+        public async Task<string> GenerateAuthToken(IdentityUser user)
         {
             try
             {

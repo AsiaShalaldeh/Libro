@@ -5,6 +5,7 @@ using Libro.Domain.Dtos;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Libro.Domain.Models;
+using Libro.WebAPI.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -14,15 +15,15 @@ namespace Libro.WebAPI.Controllers
     [ApiController]
     [Route("api/patrons")]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    public class PatronController : Controller
+    public class PatronController : ControllerBase
     {
         private readonly IPatronService _patronService;
         private readonly ILogger<PatronController> _logger;
 
         public PatronController(IPatronService patronService, IMapper mapper, ILogger<PatronController> logger)
         {
-            _patronService = patronService;
-            _logger = logger;
+            _patronService = patronService ?? throw new ArgumentNullException(nameof(patronService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -68,12 +69,14 @@ namespace Libro.WebAPI.Controllers
         [Authorize(Roles = "Librarian, Administrator")]
         [ProducesResponseType(typeof(List<PatronDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
-        public async Task<ActionResult<List<PatronDto>>> GetAllPatrons()
+        public async Task<ActionResult<List<PatronDto>>> GetAllPatrons([FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
         {
             try
             {
-                var patrons = await _patronService.GetAllPatrons();
+                var patrons = await _patronService.GetAllPatrons(pageNumber, pageSize);
                 _logger.LogInformation("Retrieved all patrons successfully.");
+                PaginationHelper.SetPaginationHeaders(Response, patrons.TotalCount, pageNumber, pageSize);
                 return Ok(patrons);
             }
             catch (Exception ex)
@@ -148,7 +151,7 @@ namespace Libro.WebAPI.Controllers
             catch (ResourceNotFoundException ex)
             {
                 _logger.LogWarning(ex, "Resource not found: {ErrorMessage}", ex.Message);
-                return BadRequest(ex.Message);
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {

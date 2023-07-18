@@ -132,7 +132,6 @@ namespace Libro.Tests.Libro.Application.Tests
 
             // Assert
             Assert.NotNull(result);
-            //Assert.Equal(patron.CheckedoutBooks, result);
         }
 
         [Fact]

@@ -5,9 +5,7 @@ using Libro.Domain.Interfaces.IRepositories;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Libro.WebAPI.Controllers
 {
@@ -24,10 +22,10 @@ namespace Libro.WebAPI.Controllers
         public ReadingListController(IReadingListService readingListService, IMapper mapper,
             ILogger<ReadingListController> logger, IUserRepository userRepository)
         {
-            _readingListService = readingListService;
-            _userRepository = userRepository;
-            _mapper = mapper;
-            _logger = logger;
+            _readingListService = readingListService ?? throw new ArgumentNullException(nameof(readingListService));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>

@@ -287,7 +287,7 @@ namespace Libro.Tests.Libro.Application.Tests
 
             // Act and Assert
             await Assert.ThrowsAsync<ResourceNotFoundException>(() => _readingListService.AddBookToReadingListAsync(listId, patronId, bookId));
-            _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(listId, patronId), Times.Once);
+            _readingListRepositoryMock.Verify(mock => mock.GetReadingListByIdAsync(listId, patronId), Times.Never);
             _bookRepositoryMock.Verify(mock => mock.GetBookByISBNAsync(It.IsAny<string>()), Times.Never);
             _readingListRepositoryMock.Verify(mock => mock.AddBookToReadingListAsync(It.IsAny<ReadingList>(), It.IsAny<BookList>()), Times.Never);
         }

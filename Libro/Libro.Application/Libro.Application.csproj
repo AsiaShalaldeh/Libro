@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Libro.Domain\Libro.Domain.csproj" />
-    <ProjectReference Include="..\Libro.Infrastructure\Libro.Infrastructure.csproj" />
+    <ProjectReference Include="..\Libro.EmailService\Libro.EmailService.csproj" />
   </ItemGroup>
 
 </Project>

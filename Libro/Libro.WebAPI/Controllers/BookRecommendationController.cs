@@ -12,7 +12,7 @@ namespace Libro.WebAPI.Controllers
     [ApiController]
     [Route("api/patrons/{patronId}/recommendations")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Patron")]
-    public class BookRecommendationController : Controller
+    public class BookRecommendationController : ControllerBase
     {
         private readonly IBookRecommendationService _recommendationService;
         private readonly ILogger<BookRecommendationController> _logger;
@@ -20,8 +20,8 @@ namespace Libro.WebAPI.Controllers
         public BookRecommendationController(IBookRecommendationService recommendationService,
             ILogger<BookRecommendationController> logger)
         {
-            _recommendationService = recommendationService;
-            _logger = logger;
+            _recommendationService = recommendationService ?? throw new ArgumentNullException(nameof(recommendationService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>

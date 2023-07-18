@@ -29,9 +29,9 @@ namespace Libro.Application.Services
             {
                 var paginatedResult = await _authorRepository.GetAllAuthorsAsync(pageNumber, pageSize);
 
-                var authorDtos = _mapper.Map<IEnumerable<Author>>(paginatedResult.Items);
+                //var authorDtos = _mapper.Map<IEnumerable<Author>>(paginatedResult.Items);
 
-                return new PaginatedResult<Author>(authorDtos, paginatedResult.TotalCount, pageNumber, pageSize);
+                return new PaginatedResult<Author>(paginatedResult.Items, paginatedResult.TotalCount, pageNumber, pageSize);
             }
             catch (Exception ex)
             {

@@ -1,5 +1,5 @@
-﻿using Infrastructure.EmailService.Interface;
-using Infrastructure.EmailService.Model;
+﻿using EmailService.Interface;
+using EmailService.Model;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IRepositories;

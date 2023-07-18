@@ -5,7 +5,6 @@ using Libro.Domain.Entities;
 using Libro.Domain.Interfaces.IServices;
 using Libro.WebAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using System.Net;
 
 namespace Libro.Tests.Libro.WebAPI.Tests

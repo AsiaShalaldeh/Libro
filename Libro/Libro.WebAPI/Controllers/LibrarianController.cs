@@ -4,11 +4,10 @@ using Libro.Domain.Dtos;
 using Libro.Domain.Entities;
 using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
+using Libro.WebAPI.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Libro.WebAPI.Controllers
 {
@@ -22,8 +21,8 @@ namespace Libro.WebAPI.Controllers
 
         public LibrarianController(ILibrarianService librarianService, ILogger<LibrarianController> logger)
         {
-            _librarianService = librarianService;
-            _logger = logger;
+            _librarianService = librarianService ?? throw new ArgumentNullException(nameof(librarianService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -41,6 +40,7 @@ namespace Libro.WebAPI.Controllers
             {
                 var response = await _librarianService.GetAllLibrariansAsync(pageNumber, pageSize);
                 _logger.LogInformation("Retrieved all librarians successfully");
+                PaginationHelper.SetPaginationHeaders(Response, response.TotalCount, pageNumber, pageSize);
                 return Ok(response);
             }
             catch (Exception ex)

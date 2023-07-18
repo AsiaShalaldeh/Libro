@@ -1,8 +1,7 @@
 ﻿using EmailService.Service;
-using Infrastructure.EmailService.Interface;
-using Infrastructure.EmailService.Model;
+using EmailService.Interface;
+using EmailService.Model;
 using Microsoft.Extensions.Configuration;
-using MimeKit;
 
 namespace Libro.Tests.Libro.Infrastructure.Tests
 {
@@ -16,7 +15,7 @@ namespace Libro.Tests.Libro.Infrastructure.Tests
         {
             _loggerMock = new Mock<ILogger<EmailSenderService>>();
             _configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.Development.json")
                 .Build();
 
             var emailConfig = _configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();

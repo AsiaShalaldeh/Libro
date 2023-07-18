@@ -15,7 +15,7 @@ namespace Libro.WebAPI.Controllers
     [ApiController]
     [Route("api/books/{ISBN}/reviews")]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Patron")]
-    public class ReviewController : Controller
+    public class ReviewController : ControllerBase
     {
         private readonly IReviewService _reviewService;
         private readonly IMapper _mapper;
@@ -23,9 +23,9 @@ namespace Libro.WebAPI.Controllers
 
         public ReviewController(IReviewService reviewService, IMapper mapper, ILogger<ReviewController> logger)
         {
-            _reviewService = reviewService;
-            _mapper = mapper;
-            _logger = logger;
+            _reviewService = reviewService ?? throw new ArgumentNullException(nameof(reviewService));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized(ex.Message);
+                return Forbid(ex.Message);
             }
             catch (Exception ex)
             {
@@ -126,7 +126,7 @@ namespace Libro.WebAPI.Controllers
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized(ex.Message);
+                return Forbid(ex.Message);
             }
             catch (Exception ex)
             {

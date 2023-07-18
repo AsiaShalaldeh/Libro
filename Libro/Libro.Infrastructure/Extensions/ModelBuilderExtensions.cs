@@ -280,7 +280,7 @@ namespace Libro.Infrastructure.Extensions
                 new IdentityUserRole<string> { UserId = librarianUser.Id, RoleId = librarianRoleId },
                 new IdentityUserRole<string> { UserId = patronUser.Id, RoleId = patronRoleId }
             );
-
-        } // I may the logic of adding Admin Role for the first user 
+        } 
+        // I may the logic of adding Admin Role for the first user 
     }
 }

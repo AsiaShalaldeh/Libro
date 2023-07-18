@@ -81,8 +81,8 @@ namespace Libro.Tests.Libro.Application.Tests
             string ISBN = "1234567890";
             var book = new Book();
             int reviewId = 1;
-            var existingReview = new Review();
-            var reviewDto = new ReviewDto { Rating = 5, Comment = "Great book!" };
+            var existingReview = new Review() { Rating = 5, Comment = "Great book!" };
+            var reviewDto = new ReviewDto { Rating = 4, Comment = "Good book!" };
             var updatedReview = new Review { Rating = reviewDto.Rating, Comment = reviewDto.Comment };
 
             _bookRepositoryMock.Setup(mock => mock.GetBookByISBNAsync(ISBN)).ReturnsAsync(book);

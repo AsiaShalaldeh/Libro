@@ -28,14 +28,14 @@ namespace Libro.WebAPI.Controllers
             IBookService bookService, INotificationService notificationService, IUserRepository userRepository,
             ILogger<BookTransactionsController> logger, ILoanPolicyService loanPolicyService)
         {
-            _transactionService = transactionService;
-            _mapper = mapper;
-            _patronService = patronService;
-            _bookService = bookService;
-            _notificationService = notificationService;
-            _userRepository = userRepository;
-            _loanPolicyService = loanPolicyService;
-            _logger = logger;
+            _transactionService = transactionService ?? throw new ArgumentNullException(nameof(transactionService));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _patronService = patronService ?? throw new ArgumentNullException(nameof(patronService));
+            _bookService = bookService ?? throw new ArgumentNullException(nameof(bookService));
+            _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _loanPolicyService = loanPolicyService ?? throw new ArgumentNullException(nameof(loanPolicyService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Libro.WebAPI.Controllers
             catch (ResourceNotFoundException ex)
             {
                 _logger.LogWarning(ex, "ReserveBook failed. {Message}", ex.Message);
-                return BadRequest(ex.Message);
+                return NotFound(ex.Message);
             }
             catch (ArgumentException ex)
             {
@@ -151,7 +151,7 @@ namespace Libro.WebAPI.Controllers
             catch (ResourceNotFoundException ex)
             {
                 _logger.LogWarning(ex, "CheckoutBook failed. {Message}", ex.Message);
-                return BadRequest(ex.Message);
+                return NotFound(ex.Message);
             }
             catch (ArgumentException ex)
             {
@@ -216,7 +216,7 @@ namespace Libro.WebAPI.Controllers
             catch (ResourceNotFoundException ex)
             {
                 _logger.LogWarning(ex, "ReturnBook failed. {Message}", ex.Message);
-                return BadRequest(ex.Message);
+                return NotFound(ex.Message);
             }
             catch (InvalidOperationException ex)
             {

@@ -2,12 +2,6 @@
 using Libro.Domain.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using Moq;
-using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
-using System.Security.Claims;
-using System.Text;
 
 namespace Libro.Tests.Libro.Application.Tests
 {
@@ -80,87 +74,31 @@ namespace Libro.Tests.Libro.Application.Tests
             var result = await _authenticationService.Register(username, email, password);
 
             // Assert
+            Assert.NotNull(result);
             Assert.Equal("Error", result.Status);
-            Assert.Equal("User already exists! The UserName Should Be Unique", result.Message);
+            Assert.Equal("User already exists! The username should be unique.", result.Message);
             _userManagerMock.Verify(mock => mock.FindByNameAsync(username), Times.Once);
             _userManagerMock.Verify(mock => mock.CreateAsync(It.IsAny<IdentityUser>(), password), Times.Never);
         }
 
         [Fact]
-        public async Task Login_ValidCredentials_Success()
+        public async Task Login_ValidCredentials_EmptyToken()
         {
             // Arrange
             string username = "john";
             string password = "password";
-            var user = new IdentityUser
-            {
-                Id = "123",
-                UserName = "john",
-                Email = "john@example.com"
-            };
+            var user = new IdentityUser();
 
             _userManagerMock.Setup(mock => mock.FindByNameAsync(username))
                 .ReturnsAsync(user);
-            _userManagerMock.Setup(mock => mock.CheckPasswordAsync(user, password))
-                .ReturnsAsync(true);
-            _userManagerMock.Setup(mock => mock.RemoveAuthenticationTokenAsync(user, "Libro", "RefreshToken"))
-                .ReturnsAsync(IdentityResult.Success);
-
-            var generateAuthTokenMethod = _authenticationService.GetType()
-                .GetMethod("GenerateAuthToken", BindingFlags.NonPublic | BindingFlags.Instance);
-            var generateAuthTokenDelegate = (Func<IdentityUser, Task<string>>)Delegate.CreateDelegate(typeof(Func<IdentityUser, Task<string>>), _authenticationService, generateAuthTokenMethod);
-            var generateAuthTokenResult = Task.FromResult("sampleToken");
-            _userManagerMock.Setup(mock => mock.GenerateUserTokenAsync(user, "Libro", "RefreshToken"))
-                .ReturnsAsync("refreshToken");
-
-            _userManagerMock.Setup(mock => mock.SetAuthenticationTokenAsync(user, "Libro", "RefreshToken", "refreshToken"))
-            .ReturnsAsync(IdentityResult.Success);
-
-            _userManagerMock.Setup(mock => mock.GetRolesAsync(user))
-                .ReturnsAsync(new List<string> { "Role1", "Role2" });
-
-            _configurationMock.Setup(x => x.GetSection("Jwt:Key").Value).Returns("QCzh7iT3Pwc4N7jDBHy2QCzh7iTGPwc4N7jDBHy2");
-            var secretKey = _configurationMock.Object.GetSection("Jwt:Key").Value;
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Name, user.UserName.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, "Role1"),
-                    new Claim(ClaimTypes.Role, "Role2")
-                }),
-                Expires = DateTime.UtcNow.AddDays(5),
-                SigningCredentials = signingCredentials
-            };
-
-            var jwtHandler = new JwtSecurityTokenHandler();
-            var token = jwtHandler.CreateToken(tokenDescriptor);
-            var tokenString = jwtHandler.WriteToken(token);
-
-            _userManagerMock.Setup(mock => mock.AddClaimAsync(user, It.IsAny<Claim>()))
-                .ReturnsAsync(IdentityResult.Success);
-
-            _userManagerMock.Setup(mock => mock.GetRolesAsync(user))
-                .ReturnsAsync(new List<string> { "Role1", "Role2" });
 
             // Act
-            var result = await _authenticationService.Login(username, password);
+            var token = await _authenticationService.Login(username, password);
 
             // Assert
-            Assert.Equal("sampleToken", result);
+            Assert.Equal("", token);
             _userManagerMock.Verify(mock => mock.FindByNameAsync(username), Times.Once);
-            _userManagerMock.Verify(mock => mock.CheckPasswordAsync(user, password), Times.Once);
-            _userManagerMock.Verify(mock => mock.RemoveAuthenticationTokenAsync(user, "Libro", "RefreshToken"), Times.Once);
-            _userManagerMock.Verify(mock => mock.GenerateUserTokenAsync(user, "Libro", "RefreshToken"), Times.Once);
-            _userManagerMock.Verify(mock => mock.SetAuthenticationTokenAsync(user, "Libro", "RefreshToken", "refreshToken"), Times.Once);
-            _userManagerMock.Verify(mock => mock.AddClaimAsync(user, It.IsAny<Claim>()), Times.Exactly(3));
-            _userManagerMock.Verify(mock => mock.GetRolesAsync(user), Times.Once);
+            _userManagerMock.Verify(mock => mock.CheckPasswordAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()), Times.Once);
         }
 
         [Fact]

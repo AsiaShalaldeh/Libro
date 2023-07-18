@@ -13,7 +13,7 @@ namespace Libro.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/users")]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IUserRepository _userRepository;
@@ -22,9 +22,9 @@ namespace Libro.WebAPI.Controllers
         public UserController(IAuthenticationService authenticationService,
             ILogger<UserController> logger, IUserRepository userRepository)
         {
-            _authenticationService = authenticationService;
-            _logger = logger;
-            _userRepository = userRepository;
+            _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
         /// <summary>

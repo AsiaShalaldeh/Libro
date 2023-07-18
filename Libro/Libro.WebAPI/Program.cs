@@ -1,5 +1,5 @@
-using Infrastructure.EmailService.Interface;
-using Infrastructure.EmailService.Model;
+using EmailService.Interface;
+using EmailService.Model;
 using EmailService.Service;
 using Libro.Application.Services;
 using Libro.Domain.Interfaces.IRepositories;
@@ -15,6 +15,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Reflection;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +47,35 @@ builder.Services.AddSwaggerGen(setupAction =>
 {
     setupAction.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory,
         $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+
+    // Define the security scheme
+    setupAction.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme.",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+    // Define the security requirement
+    setupAction.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new List<string>()
+                {
+                    "Administrator",
+                    "Librarian",
+                    "Patron"
+                }
+            }
+        });
 });
 
 // Authentication

@@ -323,7 +323,7 @@ namespace Libro.Tests.Libro.Application.Tests
             var transactionResponseModel = await _transactionService.ReturnBookAsync(book, patron);
 
             // Assert
-            Assert.Equal(expectedTransactionResponseModel, transactionResponseModel); // Failed
+            Assert.Equal(expectedTransactionResponseModel, transactionResponseModel); 
         }
 
     }

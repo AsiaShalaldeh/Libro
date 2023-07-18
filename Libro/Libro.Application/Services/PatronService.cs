@@ -6,6 +6,7 @@ using Libro.Domain.Interfaces.IServices;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using Libro.Domain.Models;
+using Libro.Domain.Common;
 
 namespace Libro.Application.Services
 {
@@ -24,13 +25,13 @@ namespace Libro.Application.Services
             _logger = logger;
             _mapper = mapper;
         }
-        public async Task<List<PatronDto>> GetAllPatrons()
+        public async Task<PaginatedResult<PatronDto>> GetAllPatrons(int pageNumber, int pageSize)
         {
             try
             {
                 var patrons = await _patronRepository.GetAllPatrons();
                 var patronDtos = _mapper.Map<List<PatronDto>>(patrons);
-                return patronDtos;
+                return new PaginatedResult<PatronDto>(patronDtos, patronDtos.Count, pageNumber, pageSize);
             }
             catch (Exception ex)
             {

@@ -1,6 +1,6 @@
-﻿using Infrastructure.EmailService.Model;
+﻿using EmailService.Model;
 
-namespace Infrastructure.EmailService.Interface
+namespace EmailService.Interface
 {
     public interface IEmailSender
     {

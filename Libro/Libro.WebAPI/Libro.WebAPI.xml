@@ -96,5 +96,242 @@
             <param name="patronId">The ID of the patron.</param>
             <returns>List of recommended books.</returns>
         </member>
+        <member name="M:Libro.WebAPI.Controllers.ReviewController.GetReview(System.String,System.Int32)">
+            <summary>
+            Get a review by its ID for a specific book.
+            </summary>
+            <param name="ISBN">The ISBN of the book.</param>
+            <param name="reviewId">The ID of the review.</param>
+            <returns>The review details.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.ReviewController.UpdateReview(System.String,System.Int32,Libro.Domain.Dtos.ReviewDto)">
+            <summary>
+            Update a review for a specific book.
+            </summary>
+            <param name="ISBN">The ISBN of the book.</param>
+            <param name="reviewId">The ID of the review.</param>
+            <param name="reviewDto">The updated review data.</param>
+            <returns>The updated review details.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.ReviewController.DeleteReview(System.String,System.Int32)">
+            <summary>
+            Delete a review for a specific book.
+            </summary>
+            <param name="ISBN">The ISBN of the book.</param>
+            <param name="reviewId">The ID of the review.</param>
+            <returns>No content.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.ReviewController.AddReview(System.String,Libro.Domain.Dtos.ReviewDto)">
+            <summary>
+            Add a new review for a specific book.
+            </summary>
+            <param name="ISBN">The ISBN of the book.</param>
+            <param name="reviewDto">The review data to be added.</param>
+            <returns>The added review details.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.ReviewController.GetReviewsByBookISBN(System.String)">
+            <summary>
+            Get all reviews for a specific book.
+            </summary>
+            <param name="ISBN">The ISBN of the book.</param>
+            <returns>List of reviews.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.ReviewController.GetAverageRatingByBookId(System.String)">
+            <summary>
+            Get the average rating for a specific book.
+            </summary>
+            <param name="ISBN">The ISBN of the book.</param>
+            <returns>The average rating.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.BookTransactionsController.ReserveBook(System.String)">
+            <summary>
+            Reserve a book for the current patron.
+            </summary>
+            <param name="ISBN">The ISBN of the book to reserve.</param>
+            <returns>The reserved book transaction details.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.BookTransactionsController.CheckoutBook(System.String,Libro.Domain.Dtos.BookTransactionDto)">
+            <summary>
+            Checkout a book for a patron by a librarian.
+            </summary>
+            <param name="ISBN">The ISBN of the book to checkout.</param>
+            <param name="bookCheckout">The book checkout data.</param>
+            <returns>The checked out book transaction details.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.BookTransactionsController.ReturnBook(System.String,Libro.Domain.Dtos.BookTransactionDto)">
+            <summary>
+            Return a book by a patron.
+            </summary>
+            <param name="ISBN">The ISBN of the book to return.</param>
+            <param name="bookReturn">The book return data.</param>
+            <returns>The returned book transaction details.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.BookTransactionsController.GetOverdueBooks">
+            <summary>
+            Get a list of overdue books.
+            </summary>
+            <returns>List of overdue books.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.BookTransactionsController.GetBorrowedBooks">
+            <summary>
+            Get a list of borrowed books.
+            </summary>
+            <returns>List of borrowed books.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.BookTransactionsController.GetBorrowedBookById(System.String)">
+            <summary>
+            Get a borrowed book by its ISBN.
+            </summary>
+            <param name="ISBN">The ISBN of the book.</param>
+            <returns>The borrowed book details.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.LibrarianController.GetAllLibrarians(System.Int32,System.Int32)">
+            <summary>
+            Get all librarians with pagination.
+            </summary>
+            <param name="pageNumber">The page number.</param>
+            <param name="pageSize">The page size.</param>
+            <returns>List of librarians.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.LibrarianController.GetLibrarianById(System.String)">
+            <summary>
+            Get a librarian by ID.
+            </summary>
+            <param name="librarianId">The ID of the librarian.</param>
+            <returns>The librarian details.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.LibrarianController.UpdateLibrarian(System.String,Libro.Domain.Dtos.LibrarianDto)">
+            <summary>
+            Update a librarian.
+            </summary>
+            <param name="librarianId">The ID of the librarian to update.</param>
+            <param name="librarianDto">The updated librarian data.</param>
+            <returns>The updated librarian details.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.LibrarianController.DeleteLibrarian(System.String)">
+            <summary>
+            Delete a librarian.
+            </summary>
+            <param name="librarianId">The ID of the librarian to delete.</param>
+            <returns>No content.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.NotificationController.SendOverdueNotification">
+            <summary>
+            Send overdue notifications for books.
+            </summary>
+            <returns>A response indicating the success of the operation.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.NotificationController.SendReminderNotification(Libro.Domain.Models.ReminderNotificationModel)">
+            <summary>
+            Send a reminder notification.
+            </summary>
+            <param name="request">The reminder notification request data.</param>
+            <returns>A response indicating the success of the operation.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.PatronController.GetPatronProfile(System.String)">
+            <summary>
+            Get a patron's profile by ID.
+            </summary>
+            <param name="patronId">The ID of the patron.</param>
+            <returns>The patron's profile.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.PatronController.GetAllPatrons(System.Int32,System.Int32)">
+            <summary>
+            Get all patrons.
+            </summary>
+            <returns>A list of all patrons.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.PatronController.UpdatePatronProfile(System.String,Libro.Domain.Dtos.PatronDto)">
+            <summary>
+            Update a patron's profile.
+            </summary>
+            <param name="patronId">The ID of the patron.</param>
+            <param name="patronDto">The updated patron profile data.</param>
+            <returns>The updated patron profile.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.PatronController.GetBorrowingHistory(System.String)">
+            <summary>
+            Get a patron's borrowing history.
+            </summary>
+            <param name="patronId">The ID of the patron.</param>
+            <returns>The patron's borrowing history.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.ReadingListController.CreateReadingList(Libro.Domain.Dtos.ReadingListDto)">
+            <summary>
+            Create a new reading list.
+            </summary>
+            <param name="readingListDto">The reading list data.</param>
+            <returns>The created reading list.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.ReadingListController.GetReadingListsByPatronId">
+            <summary>
+            Get all reading lists for the current patron.
+            </summary>
+            <returns>A list of reading lists.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.ReadingListController.GetReadingListById(System.Int32)">
+            <summary>
+            Get a reading list by ID.
+            </summary>
+            <param name="listId">The ID of the reading list.</param>
+            <returns>The reading list.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.ReadingListController.AddBookToReadingList(System.Int32,System.String)">
+            <summary>
+            Add a book to a reading list.
+            </summary>
+            <param name="listId">The ID of the reading list.</param>
+            <param name="ISBN">The ISBN of the book.</param>
+            <returns>No content.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.ReadingListController.GetBooksOfReadingList(System.Int32)">
+            <summary>
+            Get all books in a reading list.
+            </summary>
+            <param name="listId">The ID of the reading list.</param>
+            <returns>A list of books.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.ReadingListController.RemoveBookFromReadingList(System.Int32,System.String)">
+            <summary>
+            Remove a book from a reading list.
+            </summary>
+            <param name="listId">The ID of the reading list.</param>
+            <param name="ISBN">The ISBN of the book.</param>
+            <returns>No content.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.ReadingListController.RemoveReadingList(System.Int32)">
+            <summary>
+            Remove a reading list.
+            </summary>
+            <param name="listId">The ID of the reading list.</param>
+            <returns>No content.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.UserController.Register(Libro.Domain.Models.RegisterModel)">
+            <summary>
+            Register a new user.
+            </summary>
+            <param name="registerModel">The registration data.</param>
+            <returns>The registration response.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.UserController.Login(Libro.Domain.Models.LoginModel)">
+            <summary>
+            Authenticate user and generate an access token.
+            </summary>
+            <param name="loginModel">The login credentials.</param>
+            <returns>The access token.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.UserController.AssignRoleToUser(Libro.Domain.Models.UserRoleModel)">
+            <summary>
+            Assign a role to a user.
+            </summary>
+            <param name="request">The role assignment data.</param>
+            <returns>The assignment response.</returns>
+        </member>
+        <member name="M:Libro.WebAPI.Controllers.UserController.GetAllUsers">
+            <summary>
+            Get all users.
+            </summary>
+            <returns>A list of users.</returns>
+        </member>
     </members>
 </doc>
