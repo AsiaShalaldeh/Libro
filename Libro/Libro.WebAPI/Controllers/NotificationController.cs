@@ -11,7 +11,7 @@ namespace Libro.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/notifications")]
-    //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Librarian")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Librarian")]
     public class NotificationController : ControllerBase
     {
         private readonly INotificationService _notificationService;

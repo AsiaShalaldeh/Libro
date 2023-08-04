@@ -3,9 +3,7 @@ using Libro.Domain.Exceptions;
 using Libro.Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Libro.WebAPI.Controllers
 {
